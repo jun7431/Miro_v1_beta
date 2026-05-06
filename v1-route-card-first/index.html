@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Miro — Route Card First (V1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<a class="back-link" href="../index.html">← All directions</a>
+
+<div class="device">
+  <header class="app-bar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-name">Miro</span>
+    </div>
+    <button class="icon-btn" aria-label="Saved routes">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+    </button>
+  </header>
+
+  <!-- BUILDER VIEW -->
+  <main id="builder-view" class="screen active">
+    <div class="hello">
+      <div class="greet">Hi there 👋</div>
+      <h1 class="prompt-h1">Where are you, and how much time do you have?</h1>
+      <p class="prompt-sub">Tell Miro three things. Get one local route you can start right now.</p>
+    </div>
+
+    <section class="card builder-card">
+      <div class="field">
+        <div class="field-label">
+          <span class="field-num">1</span>
+          <span>Area</span>
+        </div>
+        <div class="chip-row" data-group="area">
+          <button class="chip selected" data-value="Hongdae">Hongdae</button>
+          <button class="chip" data-value="Seongsu">Seongsu</button>
+          <button class="chip" data-value="Itaewon">Itaewon</button>
+          <button class="chip" data-value="Bukchon">Bukchon</button>
+          <button class="chip" data-value="Yeonnam">Yeonnam</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <div class="field-label">
+          <span class="field-num">2</span>
+          <span>Available time</span>
+        </div>
+        <div class="chip-row" data-group="time">
+          <button class="chip" data-value="1 hour">1 hr</button>
+          <button class="chip selected" data-value="2 hours">2 hrs</button>
+          <button class="chip" data-value="3 hours">3 hrs</button>
+          <button class="chip" data-value="Half day">Half day</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <div class="field-label">
+          <span class="field-num">3</span>
+          <span>Mood</span>
+        </div>
+        <div class="chip-row" data-group="mood">
+          <button class="chip selected" data-value="Local food + quiet walk">🍜 Local food + quiet walk</button>
+          <button class="chip" data-value="Cafe hopping">☕ Cafe hopping</button>
+          <button class="chip" data-value="Hidden spots">🗝️ Hidden spots</button>
+          <button class="chip" data-value="Sunset stroll">🌇 Sunset stroll</button>
+          <button class="chip" data-value="Night vibe">🌙 Night vibe</button>
+        </div>
+      </div>
+    </section>
+
+    <button id="build-btn" class="cta-btn">
+      <span>Build my Miro route</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </button>
+
+    <div class="proof-row">
+      <div class="proof"><strong>3</strong><span>simple inputs</span></div>
+      <div class="proof"><strong>1</strong><span>local route</span></div>
+      <div class="proof"><strong>Seoul-first</strong><span>beta</span></div>
+    </div>
+  </main>
+
+  <!-- LOADING VIEW -->
+  <main id="loading-view" class="screen">
+    <div class="loader-wrap">
+      <div class="loader-glyph">
+        <span class="dot d1"></span>
+        <span class="dot d2"></span>
+        <span class="dot d3"></span>
+        <span class="dot d4"></span>
+        <svg class="loader-line" viewBox="0 0 200 80" preserveAspectRatio="none">
+          <path d="M 20 60 Q 60 10 100 40 T 180 30" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/>
+        </svg>
+      </div>
+      <h2 class="loader-h2">Building your Miro route…</h2>
+      <p class="loader-step" id="loader-step">Reading the streets of Hongdae</p>
+    </div>
+  </main>
+
+  <!-- RESULT VIEW -->
+  <main id="result-view" class="screen">
+    <div class="result-head">
+      <button class="back-btn" id="back-to-builder" aria-label="Back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <div class="result-meta-tag" id="result-tag">Hongdae · 2 hrs · Local food + quiet walk</div>
+    </div>
+
+    <section class="route-hero">
+      <h2 class="route-title" id="route-title">A quiet Hongdae plate-and-walk</h2>
+      <div class="route-stats">
+        <div class="stat"><span class="stat-num">4</span><span class="stat-lbl">stops</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><span class="stat-num">2h 05m</span><span class="stat-lbl">total</span></div>
+        <div class="stat-sep"></div>
+        <div class="stat"><span class="stat-num">18 min</span><span class="stat-lbl">walking</span></div>
+      </div>
+      <div class="route-tags">
+        <span class="tag">🚶 walkable</span>
+        <span class="tag">🤫 quiet</span>
+        <span class="tag">🍴 locals eat here</span>
+        <span class="tag">💸 ~₩28k pp</span>
+      </div>
+    </section>
+
+    <section class="card map-card">
+      <div class="map-head">
+        <span class="map-label">Map preview</span>
+        <span class="map-walk">~18 min on foot</span>
+      </div>
+      <svg class="mock-map" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid-v1" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E5E7EB" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="320" height="200" fill="#F8FAFC"/>
+        <rect width="320" height="200" fill="url(#grid-v1)"/>
+        <!-- streets -->
+        <path d="M 0 130 L 320 130" stroke="#E5E7EB" stroke-width="6"/>
+        <path d="M 120 0 L 120 200" stroke="#E5E7EB" stroke-width="6"/>
+        <path d="M 0 60 L 320 60" stroke="#E5E7EB" stroke-width="3"/>
+        <path d="M 240 0 L 240 200" stroke="#E5E7EB" stroke-width="3"/>
+        <!-- park -->
+        <rect x="40" y="20" width="60" height="40" rx="6" fill="#D1FAE5" opacity="0.7"/>
+        <text x="70" y="44" text-anchor="middle" font-size="9" fill="#047857" font-family="Inter">Yeonnam Park</text>
+        <!-- route line -->
+        <path class="route-path" d="M 50 100 Q 90 70 140 90 T 230 75 T 280 150" fill="none" stroke="#2563EB" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="6 5"/>
+        <!-- pins -->
+        <g class="pin" data-stop="0"><circle cx="50" cy="100" r="11" fill="#2563EB"/><text x="50" y="104" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="Inter">1</text></g>
+        <g class="pin" data-stop="1"><circle cx="140" cy="90" r="11" fill="#2563EB"/><text x="140" y="94" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="Inter">2</text></g>
+        <g class="pin" data-stop="2"><circle cx="230" cy="75" r="11" fill="#2563EB"/><text x="230" y="79" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="Inter">3</text></g>
+        <g class="pin" data-stop="3"><circle cx="280" cy="150" r="11" fill="#2563EB"/><text x="280" y="154" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="Inter">4</text></g>
+      </svg>
+    </section>
+
+    <section class="card why-card">
+      <div class="why-head">
+        <span class="why-icon">💡</span>
+        <span class="why-title">Why this route?</span>
+      </div>
+      <p class="why-body" id="why-body">
+        You picked <strong>quiet local food</strong>, so Miro skipped the main strip. We start with a backstreet BBQ where neighborhood families eat, then walk you through Yeonnam's residential lanes — the part of Hongdae that still feels lived-in. Dessert is a tiny ten-seat cafe locals don't post about.
+      </p>
+    </section>
+
+    <section class="timeline">
+      <div class="timeline-head">
+        <h3>Your route</h3>
+        <span class="timeline-sub">Tap a stop for details</span>
+      </div>
+      <div class="stops" id="stops"></div>
+    </section>
+
+    <section class="refine">
+      <div class="refine-head">Refine this route</div>
+      <div class="refine-chips" id="refine-chips">
+        <button class="refine-chip" data-refine="walk">🚶 Less walking</button>
+        <button class="refine-chip" data-refine="local">🏘️ More local</button>
+        <button class="refine-chip" data-refine="cheap">💸 Cheaper</button>
+        <button class="refine-chip" data-refine="cafe">☕ More cafes</button>
+        <button class="refine-chip" data-refine="quiet">🤫 Avoid crowds</button>
+        <button class="refine-chip" data-refine="open">🟢 Open now only</button>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button class="action-btn" data-action="save">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+        Save route
+      </button>
+      <button class="action-btn" data-action="share">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        Share
+      </button>
+      <button class="action-btn primary" data-action="map">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+        Open in map
+      </button>
+    </section>
+
+    <div class="walk-bar">
+      <div class="walk-bar-inner">
+        <span class="walk-pulse"></span>
+        Ready when you are. Start at stop 1.
+      </div>
+    </div>
+  </main>
+
+  <!-- BOTTOM SHEET — Place detail -->
+  <div id="sheet" class="sheet" aria-hidden="true">
+    <div class="sheet-overlay" id="sheet-overlay"></div>
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <div id="sheet-body"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast" role="status"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

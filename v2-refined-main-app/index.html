@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="miro-kakao-app-key" content="99e8b78e61d3a83ea4041db7fb1e33c7" />
+<title>Miro — Local route, ready to walk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<a class="back-link" href="../index.html">← All directions</a>
+
+<!-- ============== ONBOARDING ============== -->
+<div class="onboarding active" id="onboarding">
+  <header class="ob-header">
+    <div class="ob-brand">
+      <span class="ob-brand-mark"><span class="ob-brand-dot"></span></span>
+      <span class="ob-brand-name">Miro</span>
+    </div>
+    <div class="ob-progress-wrap">
+      <div class="ob-progress" aria-hidden="true">
+        <div class="ob-step active" data-step="1"></div>
+        <div class="ob-step" data-step="2"></div>
+        <div class="ob-step" data-step="3"></div>
+      </div>
+      <div class="ob-progress-label">Step <span id="ob-current">1</span> of 3</div>
+    </div>
+  </header>
+
+  <main class="ob-stage">
+
+    <!-- Step 1: Area -->
+    <section class="ob-screen active" data-step="1">
+      <h1 class="ob-q-h1">Where are you now?</h1>
+      <p class="ob-q-sub">Pick your starting area. Miro will build one local route from there.</p>
+      <div class="ob-options" data-group="area">
+        <button class="ob-option" data-value="Hongdae">
+          <span class="ob-emoji">🎨</span>
+          <span class="ob-option-label">Hongdae</span>
+          <span class="ob-option-sub">Indie + youth energy</span>
+        </button>
+        <button class="ob-option" data-value="Seongsu">
+          <span class="ob-emoji">🏭</span>
+          <span class="ob-option-label">Seongsu</span>
+          <span class="ob-option-sub">Cafes & workshops</span>
+        </button>
+        <button class="ob-option" data-value="Anguk">
+          <span class="ob-emoji">🏯</span>
+          <span class="ob-option-label">Anguk</span>
+          <span class="ob-option-sub">Tradition + small lanes</span>
+        </button>
+        <button class="ob-option" data-value="Euljiro">
+          <span class="ob-emoji">🍻</span>
+          <span class="ob-option-label">Euljiro</span>
+          <span class="ob-option-sub">Vintage + nightlife</span>
+        </button>
+        <button class="ob-option" data-value="Gangnam">
+          <span class="ob-emoji">💎</span>
+          <span class="ob-option-label">Gangnam</span>
+          <span class="ob-option-sub">Polished & busy</span>
+        </button>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-back" disabled>Back</button>
+        <button class="ob-next" disabled>Next →</button>
+      </div>
+    </section>
+
+    <!-- Step 2: Time -->
+    <section class="ob-screen" data-step="2">
+      <h1 class="ob-q-h1">How much time do you have?</h1>
+      <p class="ob-q-sub">Miro keeps the route realistic for your available time.</p>
+      <div class="ob-options ob-options-time" data-group="time">
+        <button class="ob-option" data-value="1 hour">
+          <span class="ob-emoji">⚡</span>
+          <span class="ob-option-label">1 hour</span>
+          <span class="ob-option-sub">A quick loop</span>
+        </button>
+        <button class="ob-option" data-value="2 hours">
+          <span class="ob-emoji">🚶</span>
+          <span class="ob-option-label">2 hours</span>
+          <span class="ob-option-sub">A relaxed walk</span>
+        </button>
+        <button class="ob-option" data-value="Half day">
+          <span class="ob-emoji">🌿</span>
+          <span class="ob-option-label">Half day</span>
+          <span class="ob-option-sub">Time to wander</span>
+        </button>
+        <button class="ob-option" data-value="Evening">
+          <span class="ob-emoji">🌙</span>
+          <span class="ob-option-label">Evening</span>
+          <span class="ob-option-sub">After-work pace</span>
+        </button>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-back">Back</button>
+        <button class="ob-next" disabled>Next →</button>
+      </div>
+    </section>
+
+    <!-- Step 3: Mood -->
+    <section class="ob-screen" data-step="3">
+      <h1 class="ob-q-h1">What kind of route do you want?</h1>
+      <p class="ob-q-sub">Choose the mood. Miro will handle the route.</p>
+      <div class="ob-options" data-group="mood">
+        <button class="ob-option" data-value="Local food">
+          <span class="ob-emoji">🍜</span>
+          <span class="ob-option-label">Local food</span>
+          <span class="ob-option-sub">Where neighbors actually eat</span>
+        </button>
+        <button class="ob-option" data-value="Quiet walk">
+          <span class="ob-emoji">🌳</span>
+          <span class="ob-option-label">Quiet walk</span>
+          <span class="ob-option-sub">Slow lanes, fewer crowds</span>
+        </button>
+        <button class="ob-option" data-value="Cafes">
+          <span class="ob-emoji">☕</span>
+          <span class="ob-option-label">Cafes</span>
+          <span class="ob-option-sub">One coffee, then the next</span>
+        </button>
+        <button class="ob-option" data-value="Night energy">
+          <span class="ob-emoji">🌃</span>
+          <span class="ob-option-label">Night energy</span>
+          <span class="ob-option-sub">Bars, lights, late spots</span>
+        </button>
+        <button class="ob-option" data-value="Hidden spots">
+          <span class="ob-emoji">🗝️</span>
+          <span class="ob-option-label">Hidden spots</span>
+          <span class="ob-option-sub">Off the obvious map</span>
+        </button>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-back">Back</button>
+        <button class="ob-next" disabled>Build my Miro route →</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============== FULL-PAGE LOADING ============== -->
+<div class="ob-loading" id="ob-loading" aria-hidden="true">
+  <div class="ob-loading-content">
+    <div class="ob-loading-pulse">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="ob-loading-title">Building your local route…</div>
+    <div class="ob-loading-step" id="ob-loading-step">Checking walking time</div>
+  </div>
+</div>
+
+<!-- ============== MAIN APP (hidden until onboarding finishes) ============== -->
+<div class="app hidden" id="main-app">
+
+  <!-- ============== TOP BAR ============== -->
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-mark"><span class="brand-dot"></span></span>
+      <span class="brand-name">Miro</span>
+      <span class="brand-tag">Local route, ready to walk</span>
+    </div>
+    <div class="top-right">
+      <button class="ghost-btn ghost-btn-accent" id="new-btn" title="Start a new route">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <span>New</span>
+      </button>
+      <button class="ghost-btn" id="saved-btn" title="Saved routes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+        <span>Saved</span>
+      </button>
+      <div class="avatar">JK</div>
+    </div>
+  </header>
+
+  <!-- ============== MAIN SPLIT ============== -->
+  <main class="split">
+
+    <!-- =========== LEFT PANE =========== -->
+    <aside class="left-pane">
+
+      <!-- Route summary header -->
+      <section class="route-summary-bar">
+        <div class="rs-current">
+          <div class="rs-label">Your route</div>
+          <div class="rs-value" id="rs-summary">Hongdae · 2 hours · Local food</div>
+        </div>
+        <button class="rs-toggle collapsed" id="builder-toggle" aria-expanded="false">
+          <span class="rs-toggle-label" id="rs-toggle-label">Edit</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" id="builder-chevron"><polyline points="18 15 12 9 6 15"></polyline></svg>
+        </button>
+      </section>
+
+      <!-- Compact route builder (V1-style chips, inline · collapsed by default after onboarding) -->
+      <section class="builder collapsed" id="builder">
+        <div class="builder-row">
+          <label class="builder-row-label">Area</label>
+          <div class="chip-scroller" data-group="area">
+            <button class="chip selected" data-value="Hongdae">Hongdae</button>
+            <button class="chip" data-value="Seongsu">Seongsu</button>
+            <button class="chip" data-value="Anguk">Anguk</button>
+            <button class="chip" data-value="Euljiro">Euljiro</button>
+            <button class="chip" data-value="Gangnam">Gangnam</button>
+          </div>
+        </div>
+        <div class="builder-row">
+          <label class="builder-row-label">Time</label>
+          <div class="chip-scroller" data-group="time">
+            <button class="chip" data-value="1 hour">1 hour</button>
+            <button class="chip selected" data-value="2 hours">2 hours</button>
+            <button class="chip" data-value="Half day">Half day</button>
+            <button class="chip" data-value="Evening">Evening</button>
+          </div>
+        </div>
+        <div class="builder-row">
+          <label class="builder-row-label">Mood</label>
+          <div class="chip-scroller" data-group="mood">
+            <button class="chip selected" data-value="Local food">🍜 Local food</button>
+            <button class="chip" data-value="Quiet walk">🌳 Quiet walk</button>
+            <button class="chip" data-value="Cafes">☕ Cafes</button>
+            <button class="chip" data-value="Night energy">🌃 Night energy</button>
+            <button class="chip" data-value="Hidden spots">🗝️ Hidden spots</button>
+          </div>
+        </div>
+        <button class="build-btn" id="build-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path><polyline points="1 20 1 14 7 14"></polyline><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          Build new route
+        </button>
+      </section>
+
+      <!-- Result wrap (loading + content) -->
+      <section class="result-wrap">
+
+        <!-- Loading overlay -->
+        <div class="loading-state" id="loading-state">
+          <div class="loading-pulse">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="loading-title">Building your local route…</div>
+          <div class="loading-step" id="loading-step">Reading the streets of Hongdae</div>
+        </div>
+
+        <!-- Why this route -->
+        <div class="why-card">
+          <div class="why-head">
+            <span class="why-icon">💡</span>
+            <span class="why-title">Why this route?</span>
+          </div>
+          <p class="why-body" id="why-body">
+            홍대 메인 거리는 지금 붐빌 수 있어서, 연남 쪽으로 살짝 빼서 걷기 좋은 루트로 잡았어요. We skip the strip and route you through Yeonnam's lived-in lanes — backstreet BBQ, residential walk, ten-seat cafe, hidden record shop.
+          </p>
+          <div class="route-meta">
+            <span><strong>4</strong> stops</span>
+            <span class="meta-sep"></span>
+            <span><strong>2h 05m</strong> total</span>
+            <span class="meta-sep"></span>
+            <span><strong>18 min</strong> walking</span>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-section">
+          <div class="section-head">
+            <h3>Your route</h3>
+            <span class="section-sub">Tap a stop for details</span>
+          </div>
+          <div class="stops" id="stops"></div>
+        </div>
+
+        <!-- Refine -->
+        <div class="refine-section">
+          <div class="section-head">
+            <h3>Refine this route</h3>
+          </div>
+          <div class="refine-chips" id="refine-chips">
+            <button class="refine-chip" data-refine="walk">🚶 Less walking</button>
+            <button class="refine-chip" data-refine="local">🏘️ More local</button>
+            <button class="refine-chip" data-refine="cheap">💸 Cheaper</button>
+            <button class="refine-chip" data-refine="cafe">☕ More cafes</button>
+            <button class="refine-chip" data-refine="quiet">🤫 Avoid crowds</button>
+            <button class="refine-chip" data-refine="open">🟢 Open now only</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sticky action bar -->
+      <div class="action-bar">
+        <button class="act-btn" data-action="save">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+          Save
+        </button>
+        <button class="act-btn" data-action="share">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          Share
+        </button>
+        <button class="act-btn primary" data-action="map">
+          Open in map
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- =========== RIGHT PANE: MAP =========== -->
+    <section class="right-pane">
+      <div class="map-toolbar">
+        <div class="map-loc">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span id="map-location-label">Hongdae · Yeonnam-dong, Mapo-gu</span>
+        </div>
+        <div class="map-controls">
+          <button class="map-ctrl" id="map-zoom-in" aria-label="Zoom in">+</button>
+          <button class="map-ctrl" id="map-zoom-out" aria-label="Zoom out">−</button>
+          <button class="map-ctrl" id="map-center-route" aria-label="Center selected route">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><line x1="12" y1="2" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="22"></line><line x1="2" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="22" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="map-stage" id="map-stage">
+        <div class="kakao-map" id="kakao-map" role="application" aria-label="Kakao map showing the selected route"></div>
+        <div class="map-status" id="map-status" role="status" hidden></div>
+
+        <!-- Floating place card -->
+        <div class="float-card" id="float-card">
+          <div class="fc-num" id="fc-num">1</div>
+          <div class="fc-body">
+            <div class="fc-name" id="fc-name">Yeonnam Galmaegisal</div>
+            <div class="fc-type" id="fc-type">Backstreet BBQ · Korean</div>
+            <div class="fc-meta">
+              <span id="fc-stay">⏱ 50 min</span>
+              <span id="fc-walk">📍 Start here</span>
+            </div>
+            <div class="fc-why" id="fc-why">Locals-only spot tucked behind the main drag.</div>
+          </div>
+          <button class="fc-close" id="fc-close" aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <!-- Map legend -->
+        <div class="map-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#2563EB"></span>Route</div>
+          <div class="legend-item"><span class="legend-dash"></span>Walking</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#10B981"></span>Subway</div>
+        </div>
+
+        <!-- Ask Miro FAB -->
+        <button class="ask-fab" id="ask-fab">
+          <span class="ask-ava">M</span>
+          <span class="ask-text">Ask Miro</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============== ASK MIRO DRAWER ============== -->
+  <aside class="ask-drawer" id="ask-drawer" aria-hidden="true">
+    <div class="ask-overlay" id="ask-overlay"></div>
+    <div class="ask-panel">
+      <header class="ask-header">
+        <div class="ask-id">
+          <div class="ask-ava-lg">M</div>
+          <div>
+            <div class="ask-name">Ask Miro</div>
+            <div class="ask-bio">Your local in Seoul · usually replies fast</div>
+          </div>
+        </div>
+        <button class="ask-close" id="ask-close" aria-label="Close drawer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </header>
+
+      <div class="ask-thread" id="ask-thread">
+        <div class="ask-msg from-miro">
+          <div class="ask-bubble">Hi 👋 I'm Miro. Ask me anything about your current route — I'll keep it short.</div>
+        </div>
+        <div class="ask-suggest-head">Try one of these</div>
+        <div class="ask-suggestions" id="ask-suggestions">
+          <button class="ask-suggest" data-q="why">Why this route?</button>
+          <button class="ask-suggest" data-q="crowd">Make this less crowded</button>
+          <button class="ask-suggest" data-q="time">Can I do this in 90 minutes?</button>
+          <button class="ask-suggest" data-q="cafe">More cafes, less walking</button>
+          <button class="ask-suggest" data-q="cheap">Make it cheaper</button>
+          <button class="ask-suggest" data-q="open">What's open right now?</button>
+        </div>
+      </div>
+
+      <footer class="ask-composer">
+        <input type="text" id="ask-input" placeholder="Ask about your route…" autocomplete="off" />
+        <button class="ask-send" id="ask-send" aria-label="Send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </footer>
+    </div>
+  </aside>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast" role="status"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

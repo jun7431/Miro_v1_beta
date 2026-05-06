@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Miro — Local Concierge (V3)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<a class="back-link" href="../index.html">← All directions</a>
+
+<div class="device">
+  <!-- Header with Miro persona -->
+  <header class="m-header">
+    <div class="miro-persona">
+      <div class="miro-ava">
+        <span class="ava-text">M</span>
+        <span class="ava-status"></span>
+      </div>
+      <div class="miro-info">
+        <div class="miro-name">Miro</div>
+        <div class="miro-bio">Your local in Seoul · online</div>
+      </div>
+    </div>
+    <button class="restart-btn" id="restart-btn" title="Start over">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+    </button>
+  </header>
+
+  <!-- Conversation -->
+  <main class="thread" id="thread">
+    <!-- Initial greeting (rendered by JS) -->
+  </main>
+
+  <!-- Quick reply input area -->
+  <footer class="composer" id="composer">
+    <div class="quick-replies" id="quick-replies"></div>
+    <div class="composer-input">
+      <input type="text" id="msg-input" placeholder="Or type your own…" autocomplete="off" />
+      <button class="send-btn" id="send-btn" aria-label="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Place detail modal -->
+  <div id="place-modal" class="place-modal" aria-hidden="true">
+    <div class="pm-overlay" id="pm-overlay"></div>
+    <div class="pm-panel">
+      <div class="pm-handle"></div>
+      <div id="pm-body"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -14,6 +14,25 @@ Miro_App_Design_Exploration/
 
 Open `Miro_App_Design_Exploration/index.html` for the comparison hub, or jump straight to `v2-refined-main-app/index.html` for the recommended app.
 
+## Kakao Maps configuration
+
+The refined app reads the Kakao JavaScript key from Vercel runtime config via:
+
+```text
+VITE_KAKAO_JAVASCRIPT_KEY=your_kakao_javascript_key_here
+```
+
+Add this as a Vercel Environment Variable for production. Do not commit a real key.
+
+In Kakao Developers → App settings → Platform → Web, also register every origin that will load the map, for example:
+
+```text
+http://localhost:3000
+http://localhost:4173
+https://your-vercel-project.vercel.app
+https://your-custom-domain.com
+```
+
 ---
 
 ## Strategic decisions (in order)

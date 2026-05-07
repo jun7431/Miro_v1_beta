@@ -14,15 +14,16 @@ Miro_App_Design_Exploration/
 
 Open `Miro_App_Design_Exploration/index.html` for the comparison hub, or jump straight to `v2-refined-main-app/index.html` for the recommended app.
 
-## Kakao Maps configuration
+## Map configuration
 
-The refined app reads the Kakao JavaScript key from Vercel runtime config via:
+The refined app reads map keys from Vercel runtime config via:
 
 ```text
 VITE_KAKAO_JAVASCRIPT_KEY=your_kakao_javascript_key_here
+VITE_NAVER_MAPS_NCP_KEY_ID=your_naver_maps_ncp_key_id_here
 ```
 
-Add this as a Vercel Environment Variable for production. Do not commit a real key.
+Add these as Vercel Environment Variables for production. Do not commit real keys or any Naver Client Secret.
 
 In Kakao Developers → App settings → Platform → Web, also register every origin that will load the map, for example:
 
@@ -32,6 +33,8 @@ http://localhost:4173
 https://your-vercel-project.vercel.app
 https://your-custom-domain.com
 ```
+
+In Naver Cloud Console, enable Maps / Web Dynamic Map / Dynamic Map for the application, and register the deployed domain if the console requires a web service URL/domain setting.
 
 ---
 

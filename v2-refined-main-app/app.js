@@ -428,8 +428,8 @@ function applyRouteForCurrentSelection() {
   hideFloatCard();
   updateMarkerActive();
 
-  if (kakaoMapState.map) {
-    renderKakaoRoute({ fit: true });
+  if (kakaoMapState.map || naverMapState.map) {
+    renderActiveMapRoute({ fit: true });
   }
 }
 
@@ -476,8 +476,33 @@ function renderStops() {
   });
 }
 
-// ========== Kakao Map ==========
+// ========== Map Providers ==========
+const MAP_PROVIDER_STORAGE_KEY = 'miro_map_provider';
+const MAP_PROVIDERS = new Set(['kakao', 'naver']);
+
+function getInitialMapProvider() {
+  try {
+    const storedProvider = window.localStorage.getItem(MAP_PROVIDER_STORAGE_KEY);
+    if (MAP_PROVIDERS.has(storedProvider)) return storedProvider;
+  } catch (error) {
+    // Remembering the provider is optional.
+  }
+  return 'kakao';
+}
+
+const mapProviderState = {
+  active: getInitialMapProvider(),
+};
+
 const kakaoMapState = {
+  map: null,
+  sdkPromise: null,
+  markers: [],
+  polyline: null,
+  requested: false,
+};
+
+const naverMapState = {
   map: null,
   sdkPromise: null,
   markers: [],
@@ -489,11 +514,18 @@ const mapStage = document.getElementById('map-stage');
 const mapEl = document.getElementById('kakao-map');
 const mapStatus = document.getElementById('map-status');
 const kakaoMapLoggedErrors = new Set();
+const naverMapLoggedErrors = new Set();
 
 function logKakaoMapError(message) {
   if (kakaoMapLoggedErrors.has(message)) return;
   console.error(message);
   kakaoMapLoggedErrors.add(message);
+}
+
+function logNaverMapError(message) {
+  if (naverMapLoggedErrors.has(message)) return;
+  console.error(message);
+  naverMapLoggedErrors.add(message);
 }
 
 // Static prototype config: Vercel runtime global, then local development fallbacks.
@@ -525,6 +557,60 @@ function getKakaoAppKey() {
   }
 }
 
+function getNaverMapsKeyId() {
+  return (window.MIRO_NAVER_MAPS_NCP_KEY_ID || '').trim();
+}
+
+function ensureActiveMap() {
+  if (mapProviderState.active === 'naver') {
+    ensureNaverMap();
+    return;
+  }
+  ensureKakaoMap();
+}
+
+function renderActiveMapRoute({ fit = false } = {}) {
+  if (mapProviderState.active === 'naver') {
+    renderNaverRoute({ fit });
+    return;
+  }
+  renderKakaoRoute({ fit });
+}
+
+function setMapProvider(provider) {
+  if (!MAP_PROVIDERS.has(provider)) return;
+
+  if (mapProviderState.active !== provider) {
+    clearRenderedMaps();
+    mapProviderState.active = provider;
+    try {
+      window.localStorage.setItem(MAP_PROVIDER_STORAGE_KEY, provider);
+    } catch (error) {
+      // Remembering the provider is optional.
+    }
+  }
+
+  syncMapProviderButtons();
+  hideFloatCard();
+  ensureActiveMap();
+}
+
+function syncMapProviderButtons() {
+  document.querySelectorAll('[data-map-provider]').forEach(button => {
+    const isActive = button.dataset.mapProvider === mapProviderState.active;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function clearRenderedMaps() {
+  clearKakaoRouteObjects();
+  clearNaverRouteObjects();
+  kakaoMapState.map = null;
+  naverMapState.map = null;
+  if (mapEl) mapEl.innerHTML = '';
+}
+
 function ensureKakaoMap() {
   kakaoMapState.requested = true;
 
@@ -549,6 +635,8 @@ function ensureKakaoMap() {
   setMapStatus('Loading Kakao Map…', 'loading');
   loadKakaoSdk(appKey)
     .then(() => {
+      if (mapProviderState.active !== 'kakao') return;
+
       const center = new window.kakao.maps.LatLng(currentRoute.center.lat, currentRoute.center.lng);
       kakaoMapState.map = new window.kakao.maps.Map(mapEl, {
         center,
@@ -627,6 +715,108 @@ function loadKakaoSdk(appKey = getKakaoAppKey()) {
   return kakaoMapState.sdkPromise;
 }
 
+function ensureNaverMap() {
+  naverMapState.requested = true;
+
+  if (!mapEl) {
+    logNaverMapError('Naver map container missing');
+    return;
+  }
+
+  if (naverMapState.map) {
+    relayoutNaverMap();
+    renderNaverRoute({ fit: true });
+    return;
+  }
+
+  const ncpKeyId = getNaverMapsKeyId();
+  if (!ncpKeyId) {
+    logNaverMapError('Missing window.MIRO_NAVER_MAPS_NCP_KEY_ID');
+    setMapStatus('Naver map needs an NCP Key ID. Set window.MIRO_NAVER_MAPS_NCP_KEY_ID via Vercel environment variables.', 'warning');
+    return;
+  }
+
+  setMapStatus('Loading Naver Map…', 'loading');
+  loadNaverSdk(ncpKeyId)
+    .then(() => {
+      if (mapProviderState.active !== 'naver') return;
+
+      const center = new window.naver.maps.LatLng(currentRoute.center.lat, currentRoute.center.lng);
+      naverMapState.map = new window.naver.maps.Map(mapEl, {
+        center,
+        zoom: 14,
+      });
+
+      window.naver.maps.Event.addListener(naverMapState.map, 'click', () => {
+        hideFloatCard();
+      });
+
+      hideMapStatus();
+      renderNaverRoute({ fit: true });
+    })
+    .catch(() => {
+      naverMapState.sdkPromise = null;
+      setMapStatus('Naver Map could not load. Check the NCP Key ID, allowed domains, and network access.', 'error');
+    });
+}
+
+function loadNaverSdk(ncpKeyId = getNaverMapsKeyId()) {
+  if (!ncpKeyId) {
+    logNaverMapError('Missing window.MIRO_NAVER_MAPS_NCP_KEY_ID');
+    return Promise.reject(new Error('Missing window.MIRO_NAVER_MAPS_NCP_KEY_ID'));
+  }
+
+  if (window.naver && window.naver.maps) {
+    return Promise.resolve(window.naver);
+  }
+
+  if (naverMapState.sdkPromise) {
+    return naverMapState.sdkPromise;
+  }
+
+  naverMapState.sdkPromise = new Promise((resolve, reject) => {
+    const finishLoad = () => {
+      if (!window.naver) {
+        logNaverMapError('window.naver missing after SDK load');
+        reject(new Error('window.naver missing after SDK load'));
+        return;
+      }
+
+      if (!window.naver.maps) {
+        logNaverMapError('window.naver.maps missing after SDK load');
+        reject(new Error('window.naver.maps missing after SDK load'));
+        return;
+      }
+
+      resolve(window.naver);
+    };
+
+    const failLoad = () => {
+      logNaverMapError('Naver SDK script failed to load');
+      reject(new Error('Naver SDK script failed to load'));
+    };
+
+    let script = document.querySelector('script[src*="oapi.map.naver.com/openapi/v3/maps.js"]');
+    let shouldAppendScript = false;
+
+    if (!script) {
+      script = document.createElement('script');
+      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${encodeURIComponent(ncpKeyId)}`;
+      script.async = true;
+      shouldAppendScript = true;
+    }
+
+    script.addEventListener('load', finishLoad, { once: true });
+    script.addEventListener('error', failLoad, { once: true });
+
+    if (shouldAppendScript) {
+      document.head.appendChild(script);
+    }
+  });
+
+  return naverMapState.sdkPromise;
+}
+
 function renderKakaoRoute({ fit = false } = {}) {
   if (!kakaoMapState.map) {
     ensureKakaoMap();
@@ -676,6 +866,55 @@ function renderKakaoRoute({ fit = false } = {}) {
   if (fit) fitKakaoRouteBounds();
 }
 
+function renderNaverRoute({ fit = false } = {}) {
+  if (!naverMapState.map) {
+    ensureNaverMap();
+    return;
+  }
+
+  if (!window.naver || !window.naver.maps) {
+    loadNaverSdk()
+      .then(() => renderNaverRoute({ fit }))
+      .catch(() => {
+        naverMapState.sdkPromise = null;
+      });
+    return;
+  }
+
+  clearNaverRouteObjects();
+
+  const path = currentRoute.stops.map(stop => (
+    new window.naver.maps.LatLng(stop.coords.lat, stop.coords.lng)
+  ));
+
+  naverMapState.polyline = new window.naver.maps.Polyline({
+    map: naverMapState.map,
+    path,
+    strokeWeight: 5,
+    strokeColor: '#2563EB',
+    strokeOpacity: 0.95,
+    strokeStyle: 'shortdash',
+  });
+
+  naverMapState.markers = currentRoute.stops.map((stop, idx) => {
+    const marker = new window.naver.maps.Marker({
+      map: naverMapState.map,
+      position: path[idx],
+      icon: createNaverMarkerIcon(stop, idx, state.activeStop === idx),
+      zIndex: 100 + idx,
+    });
+
+    window.naver.maps.Event.addListener(marker, 'click', () => {
+      activateStop(idx, { source: 'marker' });
+    });
+
+    return { marker, position: path[idx] };
+  });
+
+  updateMarkerActive();
+  if (fit) fitNaverRouteBounds();
+}
+
 function clearKakaoRouteObjects() {
   if (kakaoMapState.polyline) {
     kakaoMapState.polyline.setMap(null);
@@ -684,6 +923,16 @@ function clearKakaoRouteObjects() {
 
   kakaoMapState.markers.forEach(marker => marker.overlay.setMap(null));
   kakaoMapState.markers = [];
+}
+
+function clearNaverRouteObjects() {
+  if (naverMapState.polyline) {
+    naverMapState.polyline.setMap(null);
+    naverMapState.polyline = null;
+  }
+
+  naverMapState.markers.forEach(marker => marker.marker.setMap(null));
+  naverMapState.markers = [];
 }
 
 function createKakaoMarkerElement(stop, idx) {
@@ -701,6 +950,13 @@ function createKakaoMarkerElement(stop, idx) {
   return marker;
 }
 
+function createNaverMarkerIcon(stop, idx, isActive = false) {
+  return {
+    content: `<button class="kakao-route-marker${isActive ? ' active' : ''}" type="button" aria-label="Show route stop ${stop.num}">${stop.num}</button>`,
+    anchor: new window.naver.maps.Point(17, 34),
+  };
+}
+
 function fitKakaoRouteBounds() {
   if (!kakaoMapState.map || !window.kakao || !window.kakao.maps) return;
 
@@ -716,9 +972,31 @@ function fitKakaoRouteBounds() {
   }
 }
 
+function fitNaverRouteBounds() {
+  if (!naverMapState.map || !window.naver || !window.naver.maps) return;
+
+  const lats = currentRoute.stops.map(stop => stop.coords.lat);
+  const lngs = currentRoute.stops.map(stop => stop.coords.lng);
+  const bounds = new window.naver.maps.LatLngBounds(
+    new window.naver.maps.LatLng(Math.min(...lats), Math.min(...lngs)),
+    new window.naver.maps.LatLng(Math.max(...lats), Math.max(...lngs))
+  );
+
+  try {
+    naverMapState.map.fitBounds(bounds, { top: 64, right: 64, bottom: 104, left: 64 });
+  } catch (error) {
+    naverMapState.map.fitBounds(bounds);
+  }
+}
+
 function relayoutKakaoMap() {
   if (!kakaoMapState.map) return;
   kakaoMapState.map.relayout();
+}
+
+function relayoutNaverMap() {
+  if (!naverMapState.map || !window.naver || !window.naver.maps) return;
+  window.naver.maps.Event.trigger(naverMapState.map, 'resize');
 }
 
 function setMapStatus(message, mode = 'info') {
@@ -745,8 +1023,26 @@ function preloadKakaoSdk() {
   });
 }
 
+function bindMapProviderControls() {
+  document.querySelectorAll('[data-map-provider]').forEach(button => {
+    button.addEventListener('click', () => {
+      setMapProvider(button.dataset.mapProvider);
+    });
+  });
+  syncMapProviderButtons();
+}
+
 function bindMapControls() {
   document.getElementById('map-zoom-in').addEventListener('click', () => {
+    if (mapProviderState.active === 'naver') {
+      if (!naverMapState.map) {
+        ensureNaverMap();
+        return;
+      }
+      naverMapState.map.setZoom(naverMapState.map.getZoom() + 1);
+      return;
+    }
+
     if (!kakaoMapState.map) {
       ensureKakaoMap();
       return;
@@ -755,6 +1051,15 @@ function bindMapControls() {
   });
 
   document.getElementById('map-zoom-out').addEventListener('click', () => {
+    if (mapProviderState.active === 'naver') {
+      if (!naverMapState.map) {
+        ensureNaverMap();
+        return;
+      }
+      naverMapState.map.setZoom(Math.max(1, naverMapState.map.getZoom() - 1));
+      return;
+    }
+
     if (!kakaoMapState.map) {
       ensureKakaoMap();
       return;
@@ -763,6 +1068,17 @@ function bindMapControls() {
   });
 
   document.getElementById('map-center-route').addEventListener('click', () => {
+    if (mapProviderState.active === 'naver') {
+      if (!naverMapState.map) {
+        ensureNaverMap();
+        return;
+      }
+      relayoutNaverMap();
+      fitNaverRouteBounds();
+      showToast(`Centered on ${currentRoute.label}`);
+      return;
+    }
+
     if (!kakaoMapState.map) {
       ensureKakaoMap();
       return;
@@ -793,7 +1109,14 @@ function activateStop(idx, options = {}) {
   document.getElementById('fc-why').textContent = s.why;
   card.classList.add('show');
 
-  if (kakaoMapState.map && kakaoMapState.markers[idx] && options.pan !== false) {
+  if (
+    mapProviderState.active === 'naver' &&
+    naverMapState.map &&
+    naverMapState.markers[idx] &&
+    options.pan !== false
+  ) {
+    naverMapState.map.panTo(naverMapState.markers[idx].position);
+  } else if (kakaoMapState.map && kakaoMapState.markers[idx] && options.pan !== false) {
     kakaoMapState.map.panTo(kakaoMapState.markers[idx].position);
   }
 
@@ -809,6 +1132,14 @@ function updateMarkerActive() {
     marker.element.classList.toggle('active', isActive);
     if (typeof marker.overlay.setZIndex === 'function') {
       marker.overlay.setZIndex(isActive ? 1000 : 100 + idx);
+    }
+  });
+
+  naverMapState.markers.forEach((marker, idx) => {
+    const isActive = state.activeStop === idx;
+    marker.marker.setIcon(createNaverMarkerIcon(currentRoute.stops[idx], idx, isActive));
+    if (typeof marker.marker.setZIndex === 'function') {
+      marker.marker.setZIndex(isActive ? 1000 : 100 + idx);
     }
   });
 }
@@ -1090,7 +1421,7 @@ const onboarding = {
     document.getElementById('main-app').classList.remove('hidden');
 
     window.setTimeout(() => {
-      ensureKakaoMap();
+      ensureActiveMap();
     }, 0);
   },
 
@@ -1135,6 +1466,7 @@ document.getElementById('new-btn').addEventListener('click', () => {
 
 // ========== Init ==========
 applyRouteForCurrentSelection();
+bindMapProviderControls();
 bindMapControls();
 onboarding.init();
 preloadKakaoSdk();

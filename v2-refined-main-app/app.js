@@ -511,7 +511,7 @@ const naverMapState = {
 };
 
 const mapStage = document.getElementById('map-stage');
-const mapEl = document.getElementById('kakao-map');
+let mapEl = document.getElementById('kakao-map');
 const mapStatus = document.getElementById('map-status');
 const kakaoMapLoggedErrors = new Set();
 const naverMapLoggedErrors = new Set();
@@ -608,7 +608,15 @@ function clearRenderedMaps() {
   clearNaverRouteObjects();
   kakaoMapState.map = null;
   naverMapState.map = null;
-  if (mapEl) mapEl.innerHTML = '';
+  resetMapContainer();
+}
+
+function resetMapContainer() {
+  if (!mapEl) return;
+
+  const freshMapEl = mapEl.cloneNode(false);
+  mapEl.replaceWith(freshMapEl);
+  mapEl = freshMapEl;
 }
 
 function ensureKakaoMap() {

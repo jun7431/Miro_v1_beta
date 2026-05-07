@@ -488,9 +488,19 @@ const kakaoMapState = {
 const mapStage = document.getElementById('map-stage');
 const mapEl = document.getElementById('kakao-map');
 const mapStatus = document.getElementById('map-status');
+const kakaoMapLoggedErrors = new Set();
 
-// Static prototype config: query param, window global, meta tag, then localStorage.
+function logKakaoMapError(message) {
+  if (kakaoMapLoggedErrors.has(message)) return;
+  console.error(message);
+  kakaoMapLoggedErrors.add(message);
+}
+
+// Static prototype config: Vercel runtime global, then local development fallbacks.
 function getKakaoAppKey() {
+  const configuredKey = (window.MIRO_KAKAO_APP_KEY || '').trim();
+  if (configuredKey) return configuredKey;
+
   const params = new URLSearchParams(window.location.search);
   const queryKey = params.get('kakao_app_key') || params.get('kakaoKey');
   if (queryKey) {
@@ -502,7 +512,7 @@ function getKakaoAppKey() {
     return queryKey.trim();
   }
 
-  const windowKey = (window.MIRO_KAKAO_APP_KEY || window.KAKAO_JAVASCRIPT_KEY || '').trim();
+  const windowKey = (window.KAKAO_JAVASCRIPT_KEY || '').trim();
   if (windowKey) return windowKey;
 
   const metaKey = (document.querySelector('meta[name="miro-kakao-app-key"]')?.content || '').trim();
@@ -518,6 +528,11 @@ function getKakaoAppKey() {
 function ensureKakaoMap() {
   kakaoMapState.requested = true;
 
+  if (!mapEl) {
+    logKakaoMapError('map container missing');
+    return;
+  }
+
   if (kakaoMapState.map) {
     relayoutKakaoMap();
     renderKakaoRoute({ fit: true });
@@ -526,6 +541,7 @@ function ensureKakaoMap() {
 
   const appKey = getKakaoAppKey();
   if (!appKey) {
+    logKakaoMapError('Missing window.MIRO_KAKAO_APP_KEY');
     setMapStatus('Kakao map needs a JavaScript key. Set window.MIRO_KAKAO_APP_KEY, the meta tag, localStorage key miro_kakao_app_key, or add ?kakao_app_key=YOUR_KEY.', 'warning');
     return;
   }
@@ -552,7 +568,12 @@ function ensureKakaoMap() {
     });
 }
 
-function loadKakaoSdk(appKey) {
+function loadKakaoSdk(appKey = getKakaoAppKey()) {
+  if (!appKey) {
+    logKakaoMapError('Missing window.MIRO_KAKAO_APP_KEY');
+    return Promise.reject(new Error('Missing window.MIRO_KAKAO_APP_KEY'));
+  }
+
   if (window.kakao && window.kakao.maps) {
     return new Promise(resolve => {
       window.kakao.maps.load(() => resolve(window.kakao));
@@ -564,25 +585,60 @@ function loadKakaoSdk(appKey) {
   }
 
   kakaoMapState.sdkPromise = new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(appKey)}&autoload=false`;
-    script.async = true;
-    script.onload = () => {
-      if (!window.kakao || !window.kakao.maps) {
-        reject(new Error('Kakao Maps SDK loaded without maps.'));
+    const finishLoad = () => {
+      if (!window.kakao) {
+        logKakaoMapError('window.kakao missing after SDK script load');
+        reject(new Error('window.kakao missing after SDK script load'));
         return;
       }
+
+      if (!window.kakao.maps) {
+        logKakaoMapError('window.kakao.maps missing after SDK script load');
+        reject(new Error('window.kakao.maps missing after SDK script load'));
+        return;
+      }
+
       window.kakao.maps.load(() => resolve(window.kakao));
     };
-    script.onerror = () => reject(new Error('Kakao Maps SDK failed to load.'));
-    document.head.appendChild(script);
+
+    const failLoad = () => {
+      logKakaoMapError('SDK script failed to load');
+      reject(new Error('SDK script failed to load'));
+    };
+
+    let script = document.querySelector('script[src*="dapi.kakao.com/v2/maps/sdk.js"]');
+    let shouldAppendScript = false;
+
+    if (!script) {
+      script = document.createElement('script');
+      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(appKey)}&autoload=false&libraries=services`;
+      script.async = true;
+      shouldAppendScript = true;
+    }
+
+    script.addEventListener('load', finishLoad, { once: true });
+    script.addEventListener('error', failLoad, { once: true });
+
+    if (shouldAppendScript) {
+      document.head.appendChild(script);
+    }
   });
 
   return kakaoMapState.sdkPromise;
 }
 
 function renderKakaoRoute({ fit = false } = {}) {
-  if (!kakaoMapState.map || !window.kakao || !window.kakao.maps) {
+  if (!kakaoMapState.map) {
+    ensureKakaoMap();
+    return;
+  }
+
+  if (!window.kakao || !window.kakao.maps) {
+    loadKakaoSdk()
+      .then(() => renderKakaoRoute({ fit }))
+      .catch(() => {
+        kakaoMapState.sdkPromise = null;
+      });
     return;
   }
 
@@ -666,13 +722,27 @@ function relayoutKakaoMap() {
 }
 
 function setMapStatus(message, mode = 'info') {
+  if (!mapStatus) return;
   mapStatus.textContent = message;
   mapStatus.dataset.mode = mode;
   mapStatus.hidden = false;
 }
 
 function hideMapStatus() {
+  if (!mapStatus) return;
   mapStatus.hidden = true;
+}
+
+function preloadKakaoSdk() {
+  const appKey = getKakaoAppKey();
+  if (!appKey) {
+    logKakaoMapError('Missing window.MIRO_KAKAO_APP_KEY');
+    return;
+  }
+
+  loadKakaoSdk(appKey).catch(() => {
+    kakaoMapState.sdkPromise = null;
+  });
 }
 
 function bindMapControls() {
@@ -1067,3 +1137,4 @@ document.getElementById('new-btn').addEventListener('click', () => {
 applyRouteForCurrentSelection();
 bindMapControls();
 onboarding.init();
+preloadKakaoSdk();

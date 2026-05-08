@@ -975,7 +975,41 @@ function getKakaoAppKey() {
 }
 
 function getNaverMapsKeyId() {
-  return (window.MIRO_NAVER_MAPS_NCP_KEY_ID || '').trim();
+  const candidates = [
+    {
+      source: 'window',
+      value: window.MIRO_NAVER_MAPS_NCP_KEY_ID,
+    },
+    {
+      source: 'meta',
+      value: document.querySelector('meta[name="miro-naver-maps-ncp-key-id"]')?.content,
+    },
+    {
+      source: 'localStorage',
+      value: (() => {
+        try {
+          return window.localStorage.getItem('miro_naver_maps_ncp_key_id');
+        } catch (error) {
+          return '';
+        }
+      })(),
+    },
+    {
+      source: 'query',
+      value: new URLSearchParams(window.location.search).get('naver_maps_ncp_key_id'),
+    },
+  ];
+
+  const match = candidates.find(candidate => String(candidate.value || '').trim());
+  const key = match ? String(match.value).trim() : '';
+
+  if (key) {
+    window.MIRO_NAVER_MAPS_NCP_KEY_ID = key;
+    console.log(`Naver key source: ${match.source}`);
+  }
+  console.log(`Resolved Naver key exists: ${Boolean(key)}`);
+
+  return key;
 }
 
 function ensureActiveMap() {
@@ -1166,7 +1200,44 @@ function loadKakaoSdk(appKey = getKakaoAppKey()) {
   return kakaoMapState.sdkPromise;
 }
 
-function ensureNaverMap() {
+function getMapContainerSize(mapEl) {
+  if (!mapEl) return { width: 0, height: 0 };
+
+  const rect = mapEl.getBoundingClientRect();
+  return {
+    width: Math.round(rect.width || mapEl.offsetWidth || mapEl.clientWidth || 0),
+    height: Math.round(rect.height || mapEl.offsetHeight || mapEl.clientHeight || 0),
+  };
+}
+
+function getLoggedNaverMapContainerSize(mapEl) {
+  const size = getMapContainerSize(mapEl);
+  console.log(`Naver map container size: ${size.width} ${size.height}`);
+  return size;
+}
+
+function scheduleNaverMapRetry(renderToken, attempt) {
+  if (attempt >= 10) {
+    setMapStatus('Naver map is waiting for the map container to become visible.', 'warning');
+    return;
+  }
+
+  const retry = () => {
+    if (renderToken !== mapSwitchToken) return;
+    if (mapProviderState.active !== 'naver') return;
+    if (naverMapState.map) return;
+    ensureNaverMap(attempt + 1);
+  };
+
+  if (attempt < 2) {
+    window.requestAnimationFrame(retry);
+    return;
+  }
+
+  window.setTimeout(retry, 120);
+}
+
+function ensureNaverMap(attempt = 0) {
   naverMapState.requested = true;
 
   const mapEl = getMapElement();
@@ -1194,10 +1265,22 @@ function ensureNaverMap() {
     .then(() => {
       if (renderToken !== mapSwitchToken) return;
       if (mapProviderState.active !== 'naver') return;
+      if (!window.naver || !window.naver.maps) return;
+      if (naverMapState.map) {
+        relayoutNaverMap();
+        renderNaverRoute({ fit: true });
+        return;
+      }
 
       const mapEl = getMapElement();
       if (!mapEl) {
         logNaverMapError('Naver map container missing');
+        return;
+      }
+
+      const size = getLoggedNaverMapContainerSize(mapEl);
+      if (!size.width || !size.height) {
+        scheduleNaverMapRetry(renderToken, attempt);
         return;
       }
 
@@ -1206,6 +1289,7 @@ function ensureNaverMap() {
         center,
         zoom: 14,
       });
+      console.log('Naver map initialized');
 
       window.naver.maps.Event.addListener(naverMapState.map, 'click', () => {
         hideFloatCard();
@@ -1232,6 +1316,7 @@ function loadNaverSdk(ncpKeyId = getNaverMapsKeyId()) {
   }
 
   if (window.naver && window.naver.maps) {
+    console.log('Naver SDK already loaded');
     return Promise.resolve(window.naver);
   }
 
@@ -1253,6 +1338,7 @@ function loadNaverSdk(ncpKeyId = getNaverMapsKeyId()) {
         return;
       }
 
+      console.log('Naver SDK loaded');
       resolve(window.naver);
     };
 
@@ -1270,6 +1356,7 @@ function loadNaverSdk(ncpKeyId = getNaverMapsKeyId()) {
       script.async = true;
       shouldAppendScript = true;
     }
+    console.log('Naver SDK load start');
 
     script.addEventListener('load', finishLoad, { once: true });
     script.addEventListener('error', failLoad, { once: true });

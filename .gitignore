@@ -1,0 +1,4 @@
+imports/naver/raw/*
+*.har
+*.cookies
+*.headers

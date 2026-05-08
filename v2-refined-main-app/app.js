@@ -297,6 +297,420 @@ const ROUTES = {
   },
 };
 
+// ========== Curated Naver bookmark place data ==========
+const CURATED_PLACES_URL = 'data/curatedPlaces.json';
+
+const AREA_FILTERS = {
+  hongdae: {
+    label: 'Hongdae',
+    mapLabel: 'Hongdae · curated saved places',
+    center: { lat: 37.5613, lng: 126.9254 },
+    terms: ['홍대', '연남', '서교', '동교', '합정', '상수', '망원', '마포구'],
+    radiusKm: 4,
+  },
+  seongsu: {
+    label: 'Seongsu',
+    mapLabel: 'Seongsu · curated saved places',
+    center: { lat: 37.5447, lng: 127.0546 },
+    terms: ['성수', '서울숲', '뚝섬', '성동구'],
+    radiusKm: 4,
+  },
+  anguk: {
+    label: 'Anguk',
+    mapLabel: 'Anguk · curated saved places',
+    center: { lat: 37.5783, lng: 126.9853 },
+    terms: ['안국', '북촌', '삼청', '인사', '익선', '운니', '계동', '가회', '종로구'],
+    radiusKm: 4,
+  },
+  euljiro: {
+    label: 'Euljiro',
+    mapLabel: 'Euljiro · curated saved places',
+    center: { lat: 37.5668, lng: 126.9931 },
+    terms: ['을지로', '충무로', '명동', '청계', '종로', '중구'],
+    radiusKm: 4,
+  },
+  gangnam: {
+    label: 'Gangnam',
+    mapLabel: 'Gangnam · curated saved places',
+    center: { lat: 37.5011, lng: 127.0278 },
+    terms: ['강남', '역삼', '신논현', '논현', '신사', '압구정', '잠원', '강남구', '서초구'],
+    radiusKm: 5,
+  },
+};
+
+const ROUTE_TEMPLATES = {
+  balanced: ['see', 'eat', 'walk', 'cafe'],
+  'food-focused': ['eat', 'walk', 'cafe', 'eat'],
+  'cafe-slow-walk': ['cafe', 'walk', 'see', 'cafe'],
+  'culture-local-streets': ['see', 'walk', 'cafe', 'shop'],
+  'shopping-browsing': ['shop', 'cafe', 'walk', 'eat'],
+  'do-something-fun': ['activity', 'cafe', 'walk', 'eat'],
+  'night-energy': ['eat', 'night', 'walk', 'eat'],
+};
+
+const MOOD_TO_ROUTE_MODE = {
+  'local food': 'food-focused',
+  'quiet walk': 'cafe-slow-walk',
+  cafes: 'cafe-slow-walk',
+  'night energy': 'night-energy',
+  'hidden spots': 'culture-local-streets',
+};
+
+const MIRO_CATEGORY_LABELS = {
+  eat: 'Food',
+  cafe: 'Cafe',
+  see: 'See',
+  walk: 'Walk',
+  shop: 'Shop',
+  activity: 'Activity',
+  night: 'Night',
+  practical: 'Practical',
+  unknown: 'Saved place',
+};
+
+const CATEGORY_STAY_MINUTES = {
+  eat: 45,
+  cafe: 35,
+  see: 35,
+  walk: 25,
+  shop: 30,
+  activity: 45,
+  night: 45,
+  practical: 20,
+  unknown: 25,
+};
+
+const curatedPlaceState = {
+  loaded: false,
+  failed: false,
+  meta: null,
+  places: [],
+};
+
+function normalizeCuratedPlacesPayload(payload) {
+  const rawPlaces = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.places)
+      ? payload.places
+      : [];
+
+  const places = rawPlaces
+    .filter(place => place && typeof place === 'object')
+    .map(place => ({
+      ...place,
+      id: String(place.id || ''),
+      placeId: String(place.placeId || ''),
+      name: String(place.name || '').trim(),
+      lng: Number(place.lng),
+      lat: Number(place.lat),
+      address: String(place.address || ''),
+      categoryCode: String(place.categoryCode || ''),
+      categoryName: String(place.categoryName || ''),
+      miroCategory: String(place.miroCategory || 'unknown'),
+      sourceList: String(place.sourceList || ''),
+      sourceType: String(place.sourceType || ''),
+      sourcePriority: Number.isFinite(Number(place.sourcePriority)) ? Number(place.sourcePriority) : 0,
+      available: place.available === true,
+      isMatched: place.isMatched === true,
+    }))
+    .filter(place => place.name && hasValidCoords(place));
+
+  return {
+    meta: payload && !Array.isArray(payload) && payload.meta ? payload.meta : null,
+    places,
+  };
+}
+
+function loadCuratedPlaces() {
+  if (typeof fetch !== 'function') {
+    curatedPlaceState.failed = true;
+    return Promise.resolve([]);
+  }
+
+  return fetch(CURATED_PLACES_URL, { cache: 'no-store' })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`curatedPlaces.json returned ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(payload => {
+      const normalized = normalizeCuratedPlacesPayload(payload);
+      curatedPlaceState.loaded = true;
+      curatedPlaceState.failed = false;
+      curatedPlaceState.meta = normalized.meta;
+      curatedPlaceState.places = normalized.places;
+      return normalized.places;
+    })
+    .catch(error => {
+      curatedPlaceState.loaded = true;
+      curatedPlaceState.failed = true;
+      curatedPlaceState.meta = null;
+      curatedPlaceState.places = [];
+      console.warn('Using prototype route fallback because curatedPlaces.json could not be loaded.', error);
+      return [];
+    });
+}
+
+function hasValidCoords(place) {
+  return Number.isFinite(Number(place?.lat)) && Number.isFinite(Number(place?.lng));
+}
+
+function getRouteMode(mood) {
+  return MOOD_TO_ROUTE_MODE[String(mood || '').trim().toLowerCase()] || 'balanced';
+}
+
+function getAreaConfig(routeKey) {
+  return AREA_FILTERS[routeKey] || AREA_FILTERS.hongdae;
+}
+
+function addressMatchesArea(place, areaConfig) {
+  const address = String(place.address || '');
+  return areaConfig.terms.some(term => address.includes(term));
+}
+
+function distanceKm(a, b) {
+  if (!hasValidCoords(a) || !hasValidCoords(b)) return Infinity;
+  const earthRadiusKm = 6371;
+  const latDelta = toRadians(Number(b.lat) - Number(a.lat));
+  const lngDelta = toRadians(Number(b.lng) - Number(a.lng));
+  const lat1 = toRadians(Number(a.lat));
+  const lat2 = toRadians(Number(b.lat));
+  const h =
+    Math.sin(latDelta / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(lngDelta / 2) ** 2;
+  return earthRadiusKm * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+function toRadians(value) {
+  return value * Math.PI / 180;
+}
+
+function getAreaCandidates(places, areaConfig) {
+  const usablePlaces = places.filter(place => place.name && hasValidCoords(place));
+  const addressMatches = usablePlaces.filter(place => addressMatchesArea(place, areaConfig));
+  const nearbyMatches = usablePlaces.filter(place => (
+    distanceKm(place, areaConfig.center) <= areaConfig.radiusKm
+  ));
+  const merged = dedupeRuntimePlaces([...addressMatches, ...nearbyMatches]);
+  return merged.length ? merged : usablePlaces;
+}
+
+function dedupeRuntimePlaces(places) {
+  const byKey = new Map();
+  places.forEach(place => {
+    const key = getRuntimePlaceKey(place);
+    if (!byKey.has(key)) byKey.set(key, place);
+  });
+  return Array.from(byKey.values());
+}
+
+function getRuntimePlaceKey(place) {
+  if (place.placeId) return `place:${place.placeId}`;
+  if (place.id) return `bookmark:${place.id}`;
+  return `name-address:${place.name}|${place.address}`;
+}
+
+function sourceListMatchesMode(sourceList, mode) {
+  const value = String(sourceList || '').toLowerCase();
+  if (mode === 'food-focused') return value.includes('맛집') || value.includes('식당') || value.includes('food');
+  if (mode === 'cafe-slow-walk') return value.includes('카페') || value.includes('커피') || value.includes('cafe') || value.includes('coffee');
+  if (mode === 'night-energy') return value.includes('술') || value.includes('bar') || value.includes('night');
+  if (mode === 'culture-local-streets') return value.includes('데이트') || value.includes('전시') || value.includes('문화');
+  if (mode === 'shopping-browsing') return value.includes('쇼핑') || value.includes('shop');
+  if (mode === 'do-something-fun') return value.includes('체험') || value.includes('activity');
+  return false;
+}
+
+function scorePlace(place, context) {
+  let score = 0;
+  const category = place.miroCategory || 'unknown';
+
+  if (context.targetCategory && category === context.targetCategory) score += 30;
+  if (addressMatchesArea(place, context.areaConfig)) score += 20;
+  if (sourceListMatchesMode(place.sourceList, context.mode)) score += 15;
+  if (place.available === true) score += 10;
+  if (place.isMatched === true) score += 10;
+  if (hasValidCoords(place)) score += 10;
+  score += Number(place.sourcePriority || 0);
+
+  if (place.available === false) score -= 20;
+  if (category === 'unknown') score -= 10;
+
+  const categoryCount = context.categoryCounts[category] || 0;
+  if (context.mode !== 'food-focused' && categoryCount > 0) {
+    score -= categoryCount * 12;
+  }
+
+  const distanceFromArea = distanceKm(place, context.areaConfig.center);
+  if (Number.isFinite(distanceFromArea)) {
+    score -= Math.min(distanceFromArea * 2, 18);
+  }
+
+  return score;
+}
+
+function selectBestPlace(candidates, context, selectedKeys) {
+  let best = null;
+  let bestScore = -Infinity;
+
+  candidates.forEach(place => {
+    const key = getRuntimePlaceKey(place);
+    if (selectedKeys.has(key)) return;
+    const score = scorePlace(place, context);
+    if (score > bestScore) {
+      best = place;
+      bestScore = score;
+    }
+  });
+
+  return best;
+}
+
+function buildCuratedRoute(routeKey, mood) {
+  const places = curatedPlaceState.places;
+  if (!places.length) return null;
+
+  const areaConfig = getAreaConfig(routeKey);
+  const mode = getRouteMode(mood);
+  const template = ROUTE_TEMPLATES[mode] || ROUTE_TEMPLATES.balanced;
+  const candidates = getAreaCandidates(places, areaConfig);
+  if (!candidates.length) return null;
+
+  const selected = [];
+  const selectedKeys = new Set();
+  const categoryCounts = {};
+
+  template.forEach(targetCategory => {
+    const exactMatches = candidates.filter(place => place.miroCategory === targetCategory);
+    const pool = exactMatches.length ? exactMatches : candidates;
+    const place = selectBestPlace(pool, {
+      areaConfig,
+      mode,
+      targetCategory,
+      categoryCounts,
+    }, selectedKeys);
+
+    if (!place) return;
+    selected.push(place);
+    selectedKeys.add(getRuntimePlaceKey(place));
+    categoryCounts[place.miroCategory] = (categoryCounts[place.miroCategory] || 0) + 1;
+  });
+
+  while (selected.length < Math.min(4, candidates.length)) {
+    const place = selectBestPlace(candidates, {
+      areaConfig,
+      mode,
+      targetCategory: null,
+      categoryCounts,
+    }, selectedKeys);
+    if (!place) break;
+    selected.push(place);
+    selectedKeys.add(getRuntimePlaceKey(place));
+    categoryCounts[place.miroCategory] = (categoryCounts[place.miroCategory] || 0) + 1;
+  }
+
+  if (!selected.length) return null;
+
+  const stops = selected.map((place, index) => placeToRouteStop(place, index, selected[index - 1]));
+  const walkingMinutes = stops.reduce((sum, stop) => sum + Number(stop.walk || 0), 0);
+  const stayMinutes = stops.reduce((sum, stop) => sum + Number(stop.stay || 0), 0);
+
+  return {
+    label: areaConfig.label,
+    mapLabel: areaConfig.mapLabel,
+    center: getRouteCenter(stops) || areaConfig.center,
+    defaultMood: state.mood,
+    meta: {
+      total: formatMinutes(stayMinutes + walkingMinutes),
+      walking: `${walkingMinutes} min`,
+    },
+    why: `Curated from saved Naver bookmark lists for ${areaConfig.label}. Stops are ranked by category fit, area match, availability, and saved-list priority.`,
+    ask: {
+      why: `This route uses imported Naver bookmark places first, then ranks them for ${areaConfig.label} and your selected mood.`,
+      crowd: 'I can prefer quieter categories and nearby side-street matches, but this static version does not check live crowd levels.',
+      cafe: 'I can prioritize cafe-category saved places when the curated list has enough nearby candidates.',
+    },
+    sourceKind: 'curated',
+    sourceLabel: 'Curated from saved lists',
+    mode,
+    stops,
+  };
+}
+
+function placeToRouteStop(place, index, previousPlace) {
+  const category = place.miroCategory || 'unknown';
+  const categoryLabel = place.categoryName || MIRO_CATEGORY_LABELS[category] || 'Saved place';
+  const walk = index === 0 ? 0 : estimateWalkMinutes(previousPlace, place);
+  const addressTag = getShortAddress(place.address);
+  const sourceTag = place.sourceType === 'SHARED' ? 'Shared saved list' : 'Naver bookmark';
+
+  return {
+    num: index + 1,
+    name: place.displayName || place.name,
+    type: place.address ? `${categoryLabel} · ${place.address}` : categoryLabel,
+    stay: CATEGORY_STAY_MINUTES[category] || CATEGORY_STAY_MINUTES.unknown,
+    walk,
+    coords: { lat: Number(place.lat), lng: Number(place.lng) },
+    why: buildPlaceWhy(place, sourceTag),
+    next: index === 3 ? 'Route complete' : 'Continue to the next saved place',
+    tags: [sourceTag, categoryLabel, addressTag].filter(Boolean),
+    place,
+  };
+}
+
+function buildPlaceWhy(place, sourceTag) {
+  const category = place.categoryName || MIRO_CATEGORY_LABELS[place.miroCategory] || 'saved place';
+  const status = place.available === false ? ' It is marked unavailable in the source export.' : '';
+  return `${sourceTag} · ${category}${place.address ? ` near ${place.address}` : ''}.${status}`;
+}
+
+function getShortAddress(address) {
+  const parts = String(address || '').split(/\s+/).filter(Boolean);
+  return parts.slice(0, 2).join(' ');
+}
+
+function estimateWalkMinutes(previousPlace, place) {
+  const km = distanceKm(previousPlace, place);
+  if (!Number.isFinite(km)) return 6;
+  return Math.max(3, Math.min(18, Math.round(km * 13)));
+}
+
+function getRouteCenter(stops) {
+  const validStops = stops.filter(stop => hasValidCoords(stop.coords));
+  if (!validStops.length) return null;
+  return {
+    lat: validStops.reduce((sum, stop) => sum + stop.coords.lat, 0) / validStops.length,
+    lng: validStops.reduce((sum, stop) => sum + stop.coords.lng, 0) / validStops.length,
+  };
+}
+
+function formatMinutes(minutes) {
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const remainder = minutes % 60;
+  return remainder ? `${hours}h ${String(remainder).padStart(2, '0')}m` : `${hours}h`;
+}
+
+function getStopsWithCoords() {
+  return currentRoute.stops
+    .map((stop, index) => ({ stop, index }))
+    .filter(item => hasValidCoords(item.stop.coords));
+}
+
+function buildMockFallbackRoute(routeKey) {
+  const fallback = ROUTES[routeKey] || ROUTES.hongdae;
+  return {
+    ...fallback,
+    sourceKind: 'mock',
+    sourceLabel: 'Prototype fallback',
+  };
+}
+
+function resolveRouteForCurrentSelection(routeKey) {
+  return buildCuratedRoute(routeKey, state.mood) || buildMockFallbackRoute(routeKey);
+}
+
 const AREA_KEY_BY_LABEL = Object.values(ROUTES).reduce((acc, route) => {
   acc[route.label.toLowerCase()] = route.label.toLowerCase();
   return acc;
@@ -419,7 +833,7 @@ function getRouteKey(area) {
 
 function applyRouteForCurrentSelection() {
   state.routeKey = getRouteKey(state.area);
-  currentRoute = ROUTES[state.routeKey];
+  currentRoute = resolveRouteForCurrentSelection(state.routeKey);
   state.area = currentRoute.label;
   state.activeStop = null;
 
@@ -434,9 +848,12 @@ function applyRouteForCurrentSelection() {
 }
 
 function updateRouteCopy() {
-  rsSummary.textContent = `${currentRoute.label} · ${state.time} · ${state.mood}`;
+  const sourceLabel = currentRoute.sourceKind === 'mock' ? 'Prototype fallback' : currentRoute.sourceLabel;
+  rsSummary.textContent = [currentRoute.label, state.time, state.mood, sourceLabel].filter(Boolean).join(' · ');
   document.getElementById('map-location-label').textContent = currentRoute.mapLabel;
-  document.getElementById('why-body').textContent = currentRoute.why;
+  document.getElementById('why-body').textContent = currentRoute.sourceKind === 'mock'
+    ? `Prototype fallback route shown because curatedPlaces.json is unavailable or empty. ${currentRoute.why}`
+    : currentRoute.why;
 
   const metaValues = document.querySelectorAll('.route-meta strong');
   if (metaValues[0]) metaValues[0].textContent = String(currentRoute.stops.length);
@@ -463,11 +880,11 @@ function renderStops() {
         <div class="stop-line"></div>
       </div>
       <div class="stop-body">
-        <div class="stop-name">${s.name}</div>
-        <div class="stop-type">${s.type}</div>
+        <div class="stop-name">${escapeHtml(s.name)}</div>
+        <div class="stop-type">${escapeHtml(s.type)}</div>
         <div class="stop-meta">
           <span class="stop-tag">⏱ ${s.stay} min</span>
-          ${s.tags.map(t => `<span class="stop-tag">${t}</span>`).join('')}
+          ${(s.tags || []).map(t => `<span class="stop-tag">${escapeHtml(t)}</span>`).join('')}
         </div>
       </div>
     `;
@@ -882,32 +1299,38 @@ function renderKakaoRoute({ fit = false } = {}) {
 
   clearKakaoRouteObjects();
 
-  const path = currentRoute.stops.map(stop => (
+  const stopsWithCoords = getStopsWithCoords();
+  if (!stopsWithCoords.length) return;
+
+  const path = stopsWithCoords.map(({ stop }) => (
     new window.kakao.maps.LatLng(stop.coords.lat, stop.coords.lng)
   ));
 
-  kakaoMapState.polyline = new window.kakao.maps.Polyline({
-    path,
-    strokeWeight: 5,
-    strokeColor: '#2563EB',
-    strokeOpacity: 0.95,
-    strokeStyle: 'shortdash',
-  });
-  kakaoMapState.polyline.setMap(kakaoMapState.map);
+  if (path.length > 1) {
+    kakaoMapState.polyline = new window.kakao.maps.Polyline({
+      path,
+      strokeWeight: 5,
+      strokeColor: '#2563EB',
+      strokeOpacity: 0.95,
+      strokeStyle: 'shortdash',
+    });
+    kakaoMapState.polyline.setMap(kakaoMapState.map);
+  }
 
-  kakaoMapState.markers = currentRoute.stops.map((stop, idx) => {
-    const position = path[idx];
-    const content = createKakaoMarkerElement(stop, idx);
+  kakaoMapState.markers = currentRoute.stops.map(() => null);
+  stopsWithCoords.forEach(({ stop, index }, markerIndex) => {
+    const position = path[markerIndex];
+    const content = createKakaoMarkerElement(stop, index);
     const overlay = new window.kakao.maps.CustomOverlay({
       position,
       content,
       xAnchor: 0.5,
       yAnchor: 1.05,
-      zIndex: 100 + idx,
+      zIndex: 100 + index,
     });
 
     overlay.setMap(kakaoMapState.map);
-    return { overlay, element: content, position };
+    kakaoMapState.markers[index] = { overlay, element: content, position };
   });
 
   updateMarkerActive();
@@ -931,32 +1354,38 @@ function renderNaverRoute({ fit = false } = {}) {
 
   clearNaverRouteObjects();
 
-  const path = currentRoute.stops.map(stop => (
+  const stopsWithCoords = getStopsWithCoords();
+  if (!stopsWithCoords.length) return;
+
+  const path = stopsWithCoords.map(({ stop }) => (
     new window.naver.maps.LatLng(stop.coords.lat, stop.coords.lng)
   ));
 
-  naverMapState.polyline = new window.naver.maps.Polyline({
-    map: naverMapState.map,
-    path,
-    strokeWeight: 5,
-    strokeColor: '#2563EB',
-    strokeOpacity: 0.95,
-    strokeStyle: 'shortdash',
-  });
+  if (path.length > 1) {
+    naverMapState.polyline = new window.naver.maps.Polyline({
+      map: naverMapState.map,
+      path,
+      strokeWeight: 5,
+      strokeColor: '#2563EB',
+      strokeOpacity: 0.95,
+      strokeStyle: 'shortdash',
+    });
+  }
 
-  naverMapState.markers = currentRoute.stops.map((stop, idx) => {
+  naverMapState.markers = currentRoute.stops.map(() => null);
+  stopsWithCoords.forEach(({ stop, index }, markerIndex) => {
     const marker = new window.naver.maps.Marker({
       map: naverMapState.map,
-      position: path[idx],
-      icon: createNaverMarkerIcon(stop, idx, state.activeStop === idx),
-      zIndex: 100 + idx,
+      position: path[markerIndex],
+      icon: createNaverMarkerIcon(stop, index, state.activeStop === index),
+      zIndex: 100 + index,
     });
 
     window.naver.maps.Event.addListener(marker, 'click', () => {
-      activateStop(idx, { source: 'marker' });
+      activateStop(index, { source: 'marker' });
     });
 
-    return { marker, position: path[idx] };
+    naverMapState.markers[index] = { marker, position: path[markerIndex] };
   });
 
   updateMarkerActive();
@@ -969,7 +1398,9 @@ function clearKakaoRouteObjects() {
     kakaoMapState.polyline = null;
   }
 
-  kakaoMapState.markers.forEach(marker => marker.overlay.setMap(null));
+  kakaoMapState.markers.forEach(marker => {
+    if (marker) marker.overlay.setMap(null);
+  });
   kakaoMapState.markers = [];
 }
 
@@ -979,7 +1410,9 @@ function clearNaverRouteObjects() {
     naverMapState.polyline = null;
   }
 
-  naverMapState.markers.forEach(marker => marker.marker.setMap(null));
+  naverMapState.markers.forEach(marker => {
+    if (marker) marker.marker.setMap(null);
+  });
   naverMapState.markers = [];
 }
 
@@ -1009,7 +1442,9 @@ function fitKakaoRouteBounds() {
   if (!kakaoMapState.map || !window.kakao || !window.kakao.maps) return;
 
   const bounds = new window.kakao.maps.LatLngBounds();
-  currentRoute.stops.forEach(stop => {
+  const stopsWithCoords = getStopsWithCoords();
+  if (!stopsWithCoords.length) return;
+  stopsWithCoords.forEach(({ stop }) => {
     bounds.extend(new window.kakao.maps.LatLng(stop.coords.lat, stop.coords.lng));
   });
 
@@ -1023,8 +1458,10 @@ function fitKakaoRouteBounds() {
 function fitNaverRouteBounds() {
   if (!naverMapState.map || !window.naver || !window.naver.maps) return;
 
-  const lats = currentRoute.stops.map(stop => stop.coords.lat);
-  const lngs = currentRoute.stops.map(stop => stop.coords.lng);
+  const stopsWithCoords = getStopsWithCoords();
+  if (!stopsWithCoords.length) return;
+  const lats = stopsWithCoords.map(({ stop }) => stop.coords.lat);
+  const lngs = stopsWithCoords.map(({ stop }) => stop.coords.lng);
   const bounds = new window.naver.maps.LatLngBounds(
     new window.naver.maps.LatLng(Math.min(...lats), Math.min(...lngs)),
     new window.naver.maps.LatLng(Math.max(...lats), Math.max(...lngs))
@@ -1176,6 +1613,7 @@ function activateStop(idx, options = {}) {
 
 function updateMarkerActive() {
   kakaoMapState.markers.forEach((marker, idx) => {
+    if (!marker) return;
     const isActive = state.activeStop === idx;
     marker.element.classList.toggle('active', isActive);
     if (typeof marker.overlay.setZIndex === 'function') {
@@ -1184,6 +1622,7 @@ function updateMarkerActive() {
   });
 
   naverMapState.markers.forEach((marker, idx) => {
+    if (!marker) return;
     const isActive = state.activeStop === idx;
     marker.marker.setIcon(createNaverMarkerIcon(currentRoute.stops[idx], idx, isActive));
     if (typeof marker.marker.setZIndex === 'function') {
@@ -1336,7 +1775,7 @@ function scrollAsk() {
 }
 
 function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 // ========== Toast ==========
@@ -1518,3 +1957,13 @@ bindMapProviderControls();
 bindMapControls();
 onboarding.init();
 preloadKakaoSdk();
+loadCuratedPlaces().then(places => {
+  if (!places.length) return;
+  applyRouteForCurrentSelection();
+  if (
+    !document.getElementById('main-app').classList.contains('hidden') &&
+    (kakaoMapState.map || naverMapState.map)
+  ) {
+    renderActiveMapRoute({ fit: true });
+  }
+});

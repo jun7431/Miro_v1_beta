@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "generatedAt": "2026-05-08T00:00:00.000Z",
+    "sources": [
+      {
+        "sourceList": "Example saved list",
+        "sourceType": "SHARED",
+        "bookmarkCount": 1,
+        "importedCount": 1,
+        "unavailableCount": 0,
+        "mismatchedCount": 0,
+        "removed": false
+      }
+    ]
+  },
+  "places": [
+    {
+      "id": "3914230281",
+      "placeId": "1877474991",
+      "name": "띠엘로",
+      "lng": 127.022465,
+      "lat": 37.5188116,
+      "type": "place",
+      "address": "서울특별시 강남구 신사동 516-9 1층",
+      "categoryCode": "DINING",
+      "categoryName": "양식",
+      "miroCategory": "eat",
+      "available": true,
+      "isMatched": true,
+      "mismatchDetails": [
+        "AVAILABLE"
+      ],
+      "source": "naver-bookmark",
+      "sourceList": "Example saved list",
+      "sourceType": "SHARED",
+      "naverMapUrl": "https://map.naver.com/p/entry/place/1877474991",
+      "thumbnailUrls": []
+    }
+  ]
+}

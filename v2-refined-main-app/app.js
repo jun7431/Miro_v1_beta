@@ -298,7 +298,8 @@ const ROUTES = {
 };
 
 // ========== Curated Naver bookmark place data ==========
-const CURATED_PLACES_URL = 'data/curatedPlaces.json';
+const CURATED_PLACES_URL = 'data/miro_places.json';
+const MOCK_ROUTES_ENABLED = new URLSearchParams(window.location.search).get('mock') === '1';
 
 const AREA_FILTERS = {
   hongdae: {
@@ -396,24 +397,7 @@ function normalizeCuratedPlacesPayload(payload) {
 
   const places = rawPlaces
     .filter(place => place && typeof place === 'object')
-    .map(place => ({
-      ...place,
-      id: String(place.id || ''),
-      placeId: String(place.placeId || ''),
-      name: String(place.name || '').trim(),
-      lng: Number(place.lng),
-      lat: Number(place.lat),
-      address: String(place.address || ''),
-      categoryCode: String(place.categoryCode || ''),
-      categoryName: String(place.categoryName || ''),
-      miroCategory: String(place.miroCategory || 'unknown'),
-      sourceList: String(place.sourceList || ''),
-      sourceType: String(place.sourceType || ''),
-      sourcePriority: Number.isFinite(Number(place.sourcePriority)) ? Number(place.sourcePriority) : 0,
-      available: place.available === true,
-      isMatched: place.isMatched === true,
-    }))
-    .filter(place => place.name && hasValidCoords(place));
+    .map(place => normalizeRealPlace(place));
 
   return {
     meta: payload && !Array.isArray(payload) && payload.meta ? payload.meta : null,
@@ -421,16 +405,71 @@ function normalizeCuratedPlacesPayload(payload) {
   };
 }
 
+function normalizeRealPlace(place) {
+  const sourceFile = String(place.sourceFile || '').trim();
+  const source = String(place.source || 'naver').trim() || 'naver';
+  const categoryCode = String(place.categoryCode || '').trim();
+  const categoryName = String(place.categoryName || '').trim();
+
+  return {
+    ...place,
+    id: String(place.id || ''),
+    placeId: String(place.placeId || ''),
+    name: String(place.name || place.displayName || '').trim(),
+    lng: numberOrNull(place.lng),
+    lat: numberOrNull(place.lat),
+    address: String(place.address || ''),
+    categoryCode,
+    categoryName,
+    miroCategory: inferMiroCategory({ ...place, categoryCode, categoryName }),
+    source,
+    sourceFile,
+    sourceKind: String(place.sourceKind || source || 'naver'),
+    sourceList: String(place.sourceList || sourceFile),
+    sourceType: String(place.sourceType || source),
+    sourcePriority: Number.isFinite(Number(place.sourcePriority)) ? Number(place.sourcePriority) : 0,
+    available: typeof place.available === 'boolean' ? place.available : null,
+    isMatched: typeof place.isMatched === 'boolean' ? place.isMatched : null,
+  };
+}
+
+function numberOrNull(value) {
+  if (value === undefined || value === null || String(value).trim() === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function inferMiroCategory(place) {
+  const code = String(place.miroCategory || place.categoryCode || '').toUpperCase();
+  const name = String(place.categoryName || '').toLowerCase();
+
+  if (place.miroCategory && MIRO_CATEGORY_LABELS[place.miroCategory]) return place.miroCategory;
+  if (code.includes('CAFE') || name.includes('카페') || name.includes('coffee')) return 'cafe';
+  if (code.includes('DINING') || code.includes('FOOD') || code.includes('RESTAURANT') || name.includes('음식') || name.includes('맛집')) return 'eat';
+  if (code.includes('BAR') || name.includes('바') || name.includes('술') || name.includes('pub')) return 'night';
+  if (code.includes('SHOP') || name.includes('쇼핑') || name.includes('상점')) return 'shop';
+  if (code.includes('LIFE_CULTURE') || code.includes('ACTIVITY') || name.includes('생활') || name.includes('문화')) return 'activity';
+  if (name.includes('전시') || name.includes('미술') || name.includes('박물')) return 'see';
+  return 'unknown';
+}
+
 function loadCuratedPlaces() {
+  if (curatedPlaceState.loaded) {
+    return Promise.resolve(curatedPlaceState.places);
+  }
+
   if (typeof fetch !== 'function') {
+    console.warn('Miro real places dataset could not be loaded because fetch is unavailable.');
+    curatedPlaceState.loaded = true;
     curatedPlaceState.failed = true;
     return Promise.resolve([]);
   }
 
+  console.log(`Miro real places dataset URL: ${CURATED_PLACES_URL}`);
   return fetch(CURATED_PLACES_URL, { cache: 'no-store' })
     .then(response => {
       if (!response.ok) {
-        throw new Error(`curatedPlaces.json returned ${response.status}`);
+        throw new Error(`miro_places.json returned ${response.status}`);
       }
       return response.json();
     })
@@ -440,6 +479,7 @@ function loadCuratedPlaces() {
       curatedPlaceState.failed = false;
       curatedPlaceState.meta = normalized.meta;
       curatedPlaceState.places = normalized.places;
+      console.log(`Miro real places loaded: ${normalized.places.length}`);
       return normalized.places;
     })
     .catch(error => {
@@ -447,13 +487,23 @@ function loadCuratedPlaces() {
       curatedPlaceState.failed = true;
       curatedPlaceState.meta = null;
       curatedPlaceState.places = [];
-      console.warn('Using prototype route fallback because curatedPlaces.json could not be loaded.', error);
+      console.warn('Miro real places dataset failed to load; not using mock fallback.', error);
       return [];
     });
 }
 
+function ensureRealPlacesLoaded() {
+  if (!realPlacesLoadPromise) {
+    realPlacesLoadPromise = loadCuratedPlaces();
+  }
+  return realPlacesLoadPromise;
+}
+
 function hasValidCoords(place) {
-  return Number.isFinite(Number(place?.lat)) && Number.isFinite(Number(place?.lng));
+  if (!place) return false;
+  if (place.lat === undefined || place.lat === null || place.lat === '') return false;
+  if (place.lng === undefined || place.lng === null || place.lng === '') return false;
+  return Number.isFinite(Number(place.lat)) && Number.isFinite(Number(place.lng));
 }
 
 function getRouteMode(mood) {
@@ -625,14 +675,14 @@ function buildCuratedRoute(routeKey, mood) {
       total: formatMinutes(stayMinutes + walkingMinutes),
       walking: `${walkingMinutes} min`,
     },
-    why: `Curated from saved Naver bookmark lists for ${areaConfig.label}. Stops are ranked by category fit, area match, availability, and saved-list priority.`,
+    why: `Built from the processed Naver place dataset for ${areaConfig.label}. Stops are ranked by category fit, area match, availability, and saved-list priority.`,
     ask: {
-      why: `This route uses imported Naver bookmark places first, then ranks them for ${areaConfig.label} and your selected mood.`,
+      why: `This route uses processed Naver place data first, then ranks places for ${areaConfig.label} and your selected mood.`,
       crowd: 'I can prefer quieter categories and nearby side-street matches, but this static version does not check live crowd levels.',
       cafe: 'I can prioritize cafe-category saved places when the curated list has enough nearby candidates.',
     },
-    sourceKind: 'curated',
-    sourceLabel: 'Curated from saved lists',
+    sourceKind: 'processed',
+    sourceLabel: 'Real Naver places',
     mode,
     stops,
   };
@@ -643,7 +693,9 @@ function placeToRouteStop(place, index, previousPlace) {
   const categoryLabel = place.categoryName || MIRO_CATEGORY_LABELS[category] || 'Saved place';
   const walk = index === 0 ? 0 : estimateWalkMinutes(previousPlace, place);
   const addressTag = getShortAddress(place.address);
-  const sourceTag = place.sourceType === 'SHARED' ? 'Shared saved list' : 'Naver bookmark';
+  const sourceTag = place.sourceFile
+    ? place.sourceFile.replace(/\.json$/i, '')
+    : 'Naver saved place';
 
   return {
     num: index + 1,
@@ -693,6 +745,7 @@ function formatMinutes(minutes) {
 }
 
 function getStopsWithCoords() {
+  if (!currentRoute || !Array.isArray(currentRoute.stops)) return [];
   return currentRoute.stops
     .map((stop, index) => ({ stop, index }))
     .filter(item => hasValidCoords(item.stop.coords));
@@ -700,6 +753,7 @@ function getStopsWithCoords() {
 
 function buildMockFallbackRoute(routeKey) {
   const fallback = ROUTES[routeKey] || ROUTES.hongdae;
+  console.warn('Miro route source: mock');
   return {
     ...fallback,
     sourceKind: 'mock',
@@ -707,8 +761,52 @@ function buildMockFallbackRoute(routeKey) {
   };
 }
 
+function buildEmptyRealRoute(routeKey, message) {
+  const areaConfig = getAreaConfig(routeKey);
+  return {
+    label: areaConfig.label,
+    mapLabel: areaConfig.mapLabel,
+    center: areaConfig.center,
+    defaultMood: state.mood,
+    meta: {
+      total: '0 min',
+      walking: '0 min',
+    },
+    why: message,
+    ask: {
+      why: message,
+      crowd: message,
+      cafe: message,
+    },
+    sourceKind: 'processed',
+    sourceLabel: 'Real Naver places',
+    mode: getRouteMode(state.mood),
+    stops: [],
+  };
+}
+
 function resolveRouteForCurrentSelection(routeKey) {
-  return buildCuratedRoute(routeKey, state.mood) || buildMockFallbackRoute(routeKey);
+  const realRoute = buildCuratedRoute(routeKey, state.mood);
+  if (realRoute) {
+    console.log('Miro route source: real');
+    return realRoute;
+  }
+
+  if (MOCK_ROUTES_ENABLED) {
+    return buildMockFallbackRoute(routeKey);
+  }
+
+  console.warn('No matching real places found; not using mock fallback');
+
+  if (curatedPlaceState.failed) {
+    return buildEmptyRealRoute(routeKey, 'Real place data could not be loaded. Check that the processed Miro places file is deployed.');
+  }
+
+  if (!curatedPlaceState.places.length) {
+    return buildEmptyRealRoute(routeKey, 'No real places are loaded yet.');
+  }
+
+  return buildEmptyRealRoute(routeKey, 'No matching real places found for this area and mood.');
 }
 
 const AREA_KEY_BY_LABEL = Object.values(ROUTES).reduce((acc, route) => {
@@ -739,7 +837,7 @@ const ASK_RESPONSES = {
   time: route => `Yes — for ${route.label}, cut stop 4 and trim the longest stay. You can keep the first three stops to about 90 minutes.`,
   cafe: route => route.ask.cafe,
   cheap: route => `I can keep ${route.label} budget-friendly by making stop 1 the main spend and turning the last stop into a browse-only stop.`,
-  open: route => `For this mock route, I am not checking live hours yet. Before going, verify ${route.stops.map(stop => stop.name).slice(0, 2).join(' and ')} first.`,
+  open: route => `For this real saved-place route, I am not checking live hours yet. Before going, verify ${route.stops.map(stop => stop.name).slice(0, 2).join(' and ')} first.`,
 };
 
 // ========== State ==========
@@ -752,7 +850,8 @@ const state = {
   routeKey: 'hongdae',
 };
 
-let currentRoute = ROUTES[state.routeKey];
+let currentRoute = null;
+let realPlacesLoadPromise = null;
 
 // ========== Builder collapse ==========
 const builderToggle = document.getElementById('builder-toggle');
@@ -848,12 +947,10 @@ function applyRouteForCurrentSelection() {
 }
 
 function updateRouteCopy() {
-  const sourceLabel = currentRoute.sourceKind === 'mock' ? 'Prototype fallback' : currentRoute.sourceLabel;
+  const sourceLabel = currentRoute.sourceLabel;
   rsSummary.textContent = [currentRoute.label, state.time, state.mood, sourceLabel].filter(Boolean).join(' · ');
   document.getElementById('map-location-label').textContent = currentRoute.mapLabel;
-  document.getElementById('why-body').textContent = currentRoute.sourceKind === 'mock'
-    ? `Prototype fallback route shown because curatedPlaces.json is unavailable or empty. ${currentRoute.why}`
-    : currentRoute.why;
+  document.getElementById('why-body').textContent = currentRoute.why;
 
   setRouteMetaDefault();
 }
@@ -889,6 +986,20 @@ function setNaverDirectionsMeta(directions) {
 function renderStops() {
   const list = document.getElementById('stops');
   list.innerHTML = '';
+
+  if (!currentRoute.stops.length) {
+    const item = document.createElement('div');
+    item.className = 'stop';
+    item.innerHTML = `
+      <div class="stop-body">
+        <div class="stop-name">No matching real places found</div>
+        <div class="stop-type">Try another area or mood once the real places dataset is loaded.</div>
+      </div>
+    `;
+    list.appendChild(item);
+    return;
+  }
+
   currentRoute.stops.forEach((s, idx) => {
     if (s.walk > 0) {
       const w = document.createElement('div');
@@ -2134,19 +2245,23 @@ const onboarding = {
 
   reveal() {
     Object.assign(state, this.selections);
-    applyRouteForCurrentSelection();
     syncBuilderChips();
 
     setBuilderCollapsed(true);
     loadingState.classList.remove('active');
+    this.loadingStepEl.textContent = 'Loading real places...';
 
-    this.loadingEl.classList.remove('active');
-    this.loadingEl.setAttribute('aria-hidden', 'true');
-    document.getElementById('main-app').classList.remove('hidden');
+    ensureRealPlacesLoaded().then(() => {
+      applyRouteForCurrentSelection();
 
-    window.setTimeout(() => {
-      ensureActiveMap();
-    }, 0);
+      this.loadingEl.classList.remove('active');
+      this.loadingEl.setAttribute('aria-hidden', 'true');
+      document.getElementById('main-app').classList.remove('hidden');
+
+      window.setTimeout(() => {
+        ensureActiveMap();
+      }, 0);
+    });
   },
 
   restart(preserveSelections = true) {
@@ -2189,18 +2304,11 @@ document.getElementById('new-btn').addEventListener('click', () => {
 });
 
 // ========== Init ==========
-applyRouteForCurrentSelection();
 bindMapProviderControls();
 bindMapControls();
 onboarding.init();
 preloadKakaoSdk();
-loadCuratedPlaces().then(places => {
-  if (!places.length) return;
-  applyRouteForCurrentSelection();
-  if (
-    !document.getElementById('main-app').classList.contains('hidden') &&
-    (kakaoMapState.map || naverMapState.map)
-  ) {
-    renderActiveMapRoute({ fit: true });
-  }
-});
+if (!MOCK_ROUTES_ENABLED) {
+  console.log('Miro mock fallback disabled');
+}
+ensureRealPlacesLoaded();

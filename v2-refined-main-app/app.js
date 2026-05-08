@@ -855,10 +855,35 @@ function updateRouteCopy() {
     ? `Prototype fallback route shown because curatedPlaces.json is unavailable or empty. ${currentRoute.why}`
     : currentRoute.why;
 
+  setRouteMetaDefault();
+}
+
+function setRouteMetaItem(index, value, label) {
   const metaValues = document.querySelectorAll('.route-meta strong');
-  if (metaValues[0]) metaValues[0].textContent = String(currentRoute.stops.length);
-  if (metaValues[1]) metaValues[1].textContent = currentRoute.meta.total;
-  if (metaValues[2]) metaValues[2].textContent = currentRoute.meta.walking;
+  const valueEl = metaValues[index];
+  if (!valueEl) return;
+
+  valueEl.textContent = value;
+
+  const item = valueEl.parentElement;
+  if (!item) return;
+
+  const textNode = Array.from(item.childNodes).find(node => node.nodeType === 3);
+  if (textNode) {
+    textNode.nodeValue = ` ${label}`;
+  }
+}
+
+function setRouteMetaDefault() {
+  setRouteMetaItem(0, String(currentRoute.stops.length), 'stops');
+  setRouteMetaItem(1, currentRoute.meta.total, 'total');
+  setRouteMetaItem(2, currentRoute.meta.walking, 'walking');
+}
+
+function setNaverDirectionsMeta(directions) {
+  setRouteMetaItem(0, String(currentRoute.stops.length), 'stops');
+  setRouteMetaItem(1, directions.durationText, 'Naver ETA');
+  setRouteMetaItem(2, directions.distanceText, 'real route');
 }
 
 function renderStops() {
@@ -925,6 +950,9 @@ const naverMapState = {
   markers: [],
   polyline: null,
   requested: false,
+  directionsKey: '',
+  directions: null,
+  directionsPromise: null,
 };
 
 const mapStage = document.getElementById('map-stage');
@@ -1044,6 +1072,9 @@ function setMapProvider(provider) {
 
   syncMapProviderButtons();
   hideFloatCard();
+  if (provider !== 'naver') {
+    setRouteMetaDefault();
+  }
   ensureActiveMap();
 }
 
@@ -1424,6 +1455,110 @@ function renderKakaoRoute({ fit = false } = {}) {
   if (fit) fitKakaoRouteBounds();
 }
 
+function getNaverDirectionsPoints(stopsWithCoords) {
+  return stopsWithCoords.map(({ stop }) => ({
+    lat: stop.coords.lat,
+    lng: stop.coords.lng,
+  })).slice(0, 7);
+}
+
+function getNaverDirectionsKey(points) {
+  return points.map(point => `${point.lng},${point.lat}`).join('|');
+}
+
+function buildNaverDirectionsUrl(points) {
+  const params = new URLSearchParams();
+  const start = points[0];
+  const goal = points[points.length - 1];
+  const waypoints = points.slice(1, -1).slice(0, 5);
+
+  params.set('startLng', start.lng);
+  params.set('startLat', start.lat);
+  params.set('goalLng', goal.lng);
+  params.set('goalLat', goal.lat);
+
+  if (waypoints.length) {
+    params.set('waypoints', waypoints.map(point => `${point.lng},${point.lat}`).join('|'));
+  }
+
+  return `/api/naver-directions?${params.toString()}`;
+}
+
+function getNaverDirections(points) {
+  if (points.length < 2) return Promise.resolve(null);
+
+  const directionsKey = getNaverDirectionsKey(points);
+  if (naverMapState.directionsKey === directionsKey && naverMapState.directions) {
+    return Promise.resolve(naverMapState.directions);
+  }
+
+  if (naverMapState.directionsKey === directionsKey && naverMapState.directionsPromise) {
+    return naverMapState.directionsPromise;
+  }
+
+  naverMapState.directionsKey = directionsKey;
+  naverMapState.directions = null;
+  console.log('Naver Directions request start');
+
+  naverMapState.directionsPromise = fetch(buildNaverDirectionsUrl(points))
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Naver Directions returned ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(payload => {
+      if (!payload || !payload.ok || !Array.isArray(payload.path) || payload.path.length < 2) {
+        throw new Error('Naver Directions response did not include a usable path');
+      }
+
+      naverMapState.directions = payload;
+      console.log('Naver Directions response ok');
+      console.log(`Naver real route path points: ${payload.path.length}`);
+      return payload;
+    })
+    .catch(error => {
+      if (naverMapState.directionsKey === directionsKey) {
+        naverMapState.directions = null;
+      }
+      console.warn('Naver real route unavailable; using straight-line fallback');
+      return null;
+    })
+    .finally(() => {
+      if (naverMapState.directionsKey === directionsKey) {
+        naverMapState.directionsPromise = null;
+      }
+    });
+
+  return naverMapState.directionsPromise;
+}
+
+function toNaverLatLngPath(points) {
+  return points.map(point => new window.naver.maps.LatLng(point.lat, point.lng));
+}
+
+function renderNaverPolyline(points, { realRoute = false } = {}) {
+  if (!points.length || !naverMapState.map || !window.naver || !window.naver.maps) return;
+
+  if (naverMapState.polyline) {
+    naverMapState.polyline.setMap(null);
+    naverMapState.polyline = null;
+  }
+
+  naverMapState.polyline = new window.naver.maps.Polyline({
+    map: naverMapState.map,
+    path: toNaverLatLngPath(points),
+    strokeWeight: 5,
+    strokeColor: '#2563EB',
+    strokeOpacity: 0.95,
+    strokeStyle: 'shortdash',
+  });
+
+  if (realRoute) {
+    console.log('Naver real route polyline rendered');
+  }
+}
+
 function renderNaverRoute({ fit = false } = {}) {
   if (!naverMapState.map) {
     ensureNaverMap();
@@ -1444,26 +1579,22 @@ function renderNaverRoute({ fit = false } = {}) {
   const stopsWithCoords = getStopsWithCoords();
   if (!stopsWithCoords.length) return;
 
-  const path = stopsWithCoords.map(({ stop }) => (
-    new window.naver.maps.LatLng(stop.coords.lat, stop.coords.lng)
-  ));
+  const directRoutePoints = stopsWithCoords.map(({ stop }) => ({
+    lat: stop.coords.lat,
+    lng: stop.coords.lng,
+  }));
+  const directionsPoints = getNaverDirectionsPoints(stopsWithCoords);
+  const directionsKey = getNaverDirectionsKey(directionsPoints);
 
-  if (path.length > 1) {
-    naverMapState.polyline = new window.naver.maps.Polyline({
-      map: naverMapState.map,
-      path,
-      strokeWeight: 5,
-      strokeColor: '#2563EB',
-      strokeOpacity: 0.95,
-      strokeStyle: 'shortdash',
-    });
+  if (directRoutePoints.length > 1) {
+    renderNaverPolyline(directRoutePoints);
   }
 
   naverMapState.markers = currentRoute.stops.map(() => null);
   stopsWithCoords.forEach(({ stop, index }, markerIndex) => {
     const marker = new window.naver.maps.Marker({
       map: naverMapState.map,
-      position: path[markerIndex],
+      position: new window.naver.maps.LatLng(stop.coords.lat, stop.coords.lng),
       icon: createNaverMarkerIcon(stop, index, state.activeStop === index),
       zIndex: 100 + index,
     });
@@ -1472,11 +1603,27 @@ function renderNaverRoute({ fit = false } = {}) {
       activateStop(index, { source: 'marker' });
     });
 
-    naverMapState.markers[index] = { marker, position: path[markerIndex] };
+    naverMapState.markers[index] = {
+      marker,
+      position: new window.naver.maps.LatLng(stop.coords.lat, stop.coords.lng),
+    };
   });
 
   updateMarkerActive();
   if (fit) fitNaverRouteBounds();
+
+  getNaverDirections(directionsPoints).then(directions => {
+    if (!directions || mapProviderState.active !== 'naver' || !naverMapState.map) {
+      setRouteMetaDefault();
+      return;
+    }
+
+    if (directionsKey !== naverMapState.directionsKey) return;
+
+    renderNaverPolyline(directions.path, { realRoute: true });
+    setNaverDirectionsMeta(directions);
+    if (fit) fitNaverRouteBounds(directions.path);
+  });
 }
 
 function clearKakaoRouteObjects() {
@@ -1542,13 +1689,16 @@ function fitKakaoRouteBounds() {
   }
 }
 
-function fitNaverRouteBounds() {
+function fitNaverRouteBounds(routePoints = null) {
   if (!naverMapState.map || !window.naver || !window.naver.maps) return;
 
-  const stopsWithCoords = getStopsWithCoords();
-  if (!stopsWithCoords.length) return;
-  const lats = stopsWithCoords.map(({ stop }) => stop.coords.lat);
-  const lngs = stopsWithCoords.map(({ stop }) => stop.coords.lng);
+  const points = Array.isArray(routePoints) && routePoints.length
+    ? routePoints
+    : getStopsWithCoords().map(({ stop }) => stop.coords);
+  if (!points.length) return;
+
+  const lats = points.map(point => point.lat);
+  const lngs = points.map(point => point.lng);
   const bounds = new window.naver.maps.LatLngBounds(
     new window.naver.maps.LatLng(Math.min(...lats), Math.min(...lngs)),
     new window.naver.maps.LatLng(Math.max(...lats), Math.max(...lngs))

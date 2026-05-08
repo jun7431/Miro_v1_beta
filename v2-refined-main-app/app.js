@@ -516,6 +516,19 @@ const kakaoMapLoggedErrors = new Set();
 const naverMapLoggedErrors = new Set();
 let mapSwitchToken = 0;
 
+const MAP_CONFIG_ENDPOINTS = {
+  kakao: {
+    src: '/api/kakao-config',
+    globalName: 'MIRO_KAKAO_APP_KEY',
+  },
+  naver: {
+    src: '/api/naver-config',
+    globalName: 'MIRO_NAVER_MAPS_NCP_KEY_ID',
+  },
+};
+
+const mapConfigScriptPromises = {};
+
 function logKakaoMapError(message) {
   if (kakaoMapLoggedErrors.has(message)) return;
   console.error(message);
@@ -526,6 +539,71 @@ function logNaverMapError(message) {
   if (naverMapLoggedErrors.has(message)) return;
   console.error(message);
   naverMapLoggedErrors.add(message);
+}
+
+function warnKakaoMapConfig(message) {
+  if (kakaoMapLoggedErrors.has(message)) return;
+  console.warn(message);
+  kakaoMapLoggedErrors.add(message);
+}
+
+function warnNaverMapConfig(message) {
+  if (naverMapLoggedErrors.has(message)) return;
+  console.warn(message);
+  naverMapLoggedErrors.add(message);
+}
+
+function loadMapConfigScript(provider) {
+  const config = MAP_CONFIG_ENDPOINTS[provider];
+  if (!config) return Promise.resolve(false);
+
+  if (String(window[config.globalName] || '').trim()) {
+    return Promise.resolve(true);
+  }
+
+  if (mapConfigScriptPromises[provider]) {
+    return mapConfigScriptPromises[provider];
+  }
+
+  mapConfigScriptPromises[provider] = new Promise(resolve => {
+    const script = document.createElement('script');
+    script.src = config.src;
+    script.async = true;
+    script.onload = () => {
+      resolve(Boolean(String(window[config.globalName] || '').trim()));
+    };
+    script.onerror = () => {
+      const message = `Map config script ${config.src} could not be loaded.`;
+      if (provider === 'kakao') warnKakaoMapConfig(message);
+      else warnNaverMapConfig(message);
+      resolve(false);
+    };
+    document.head.appendChild(script);
+  });
+
+  return mapConfigScriptPromises[provider];
+}
+
+function loadKakaoRuntimeConfig() {
+  if (getKakaoAppKey()) return Promise.resolve(true);
+  return loadMapConfigScript('kakao').then(() => Boolean(getKakaoAppKey()));
+}
+
+function loadNaverRuntimeConfig() {
+  if (getNaverMapsKeyId()) return Promise.resolve(true);
+  return loadMapConfigScript('naver').then(() => Boolean(getNaverMapsKeyId()));
+}
+
+function warnMissingKakaoKey() {
+  warnKakaoMapConfig(
+    'Kakao map key is missing. Configure VITE_KAKAO_JAVASCRIPT_KEY in Vercel or provide window.MIRO_KAKAO_APP_KEY, meta[name="miro-kakao-app-key"], localStorage key miro_kakao_app_key, or ?kakao_app_key=YOUR_KEY.'
+  );
+}
+
+function warnMissingNaverKey() {
+  warnNaverMapConfig(
+    'Naver map key is missing. Configure VITE_NAVER_MAPS_NCP_KEY_ID in Vercel or provide window.MIRO_NAVER_MAPS_NCP_KEY_ID, meta[name="miro-naver-maps-ncp-key-id"], localStorage key miro_naver_maps_ncp_key_id, or ?naver_maps_ncp_key_id=YOUR_KEY.'
+  );
 }
 
 // Static prototype config: Vercel runtime global, then local development fallbacks.
@@ -558,7 +636,28 @@ function getKakaoAppKey() {
 }
 
 function getNaverMapsKeyId() {
-  return (window.MIRO_NAVER_MAPS_NCP_KEY_ID || '').trim();
+  const configuredKey = (window.MIRO_NAVER_MAPS_NCP_KEY_ID || '').trim();
+  if (configuredKey) return configuredKey;
+
+  const params = new URLSearchParams(window.location.search);
+  const queryKey = params.get('naver_maps_ncp_key_id') || params.get('naverKeyId');
+  if (queryKey) {
+    try {
+      window.localStorage.setItem('miro_naver_maps_ncp_key_id', queryKey.trim());
+    } catch (error) {
+      // localStorage persistence is optional for the static prototype.
+    }
+    return queryKey.trim();
+  }
+
+  const metaKey = (document.querySelector('meta[name="miro-naver-maps-ncp-key-id"]')?.content || '').trim();
+  if (metaKey) return metaKey;
+
+  try {
+    return (window.localStorage.getItem('miro_naver_maps_ncp_key_id') || '').trim();
+  } catch (error) {
+    return '';
+  }
 }
 
 function ensureActiveMap() {
@@ -648,8 +747,16 @@ function ensureKakaoMap() {
 
   const appKey = getKakaoAppKey();
   if (!appKey) {
-    logKakaoMapError('Missing window.MIRO_KAKAO_APP_KEY');
-    setMapStatus('Kakao map needs a JavaScript key. Set window.MIRO_KAKAO_APP_KEY, the meta tag, localStorage key miro_kakao_app_key, or add ?kakao_app_key=YOUR_KEY.', 'warning');
+    setMapStatus('Loading Kakao map configuration…', 'loading');
+    loadKakaoRuntimeConfig().then(hasKey => {
+      if (mapProviderState.active !== 'kakao') return;
+      if (!hasKey) {
+        warnMissingKakaoKey();
+        setMapStatus('Kakao map needs a JavaScript key. Set window.MIRO_KAKAO_APP_KEY, the meta tag, localStorage key miro_kakao_app_key, or add ?kakao_app_key=YOUR_KEY.', 'warning');
+        return;
+      }
+      ensureKakaoMap();
+    });
     return;
   }
 
@@ -692,7 +799,7 @@ function ensureKakaoMap() {
 
 function loadKakaoSdk(appKey = getKakaoAppKey()) {
   if (!appKey) {
-    logKakaoMapError('Missing window.MIRO_KAKAO_APP_KEY');
+    warnMissingKakaoKey();
     return Promise.reject(new Error('Missing window.MIRO_KAKAO_APP_KEY'));
   }
 
@@ -766,8 +873,16 @@ function ensureNaverMap() {
 
   const ncpKeyId = getNaverMapsKeyId();
   if (!ncpKeyId) {
-    logNaverMapError('Missing window.MIRO_NAVER_MAPS_NCP_KEY_ID');
-    setMapStatus('Naver map needs an NCP Key ID. Set window.MIRO_NAVER_MAPS_NCP_KEY_ID via Vercel environment variables.', 'warning');
+    setMapStatus('Loading Naver map configuration…', 'loading');
+    loadNaverRuntimeConfig().then(hasKey => {
+      if (mapProviderState.active !== 'naver') return;
+      if (!hasKey) {
+        warnMissingNaverKey();
+        setMapStatus('Naver map needs an NCP Key ID. Set window.MIRO_NAVER_MAPS_NCP_KEY_ID via Vercel environment variables.', 'warning');
+        return;
+      }
+      ensureNaverMap();
+    });
     return;
   }
 
@@ -810,7 +925,7 @@ function ensureNaverMap() {
 
 function loadNaverSdk(ncpKeyId = getNaverMapsKeyId()) {
   if (!ncpKeyId) {
-    logNaverMapError('Missing window.MIRO_NAVER_MAPS_NCP_KEY_ID');
+    warnMissingNaverKey();
     return Promise.reject(new Error('Missing window.MIRO_NAVER_MAPS_NCP_KEY_ID'));
   }
 
@@ -1062,7 +1177,16 @@ function hideMapStatus() {
 function preloadKakaoSdk() {
   const appKey = getKakaoAppKey();
   if (!appKey) {
-    logKakaoMapError('Missing window.MIRO_KAKAO_APP_KEY');
+    loadKakaoRuntimeConfig().then(hasKey => {
+      if (!hasKey) {
+        warnMissingKakaoKey();
+        return;
+      }
+
+      loadKakaoSdk(getKakaoAppKey()).catch(() => {
+        kakaoMapState.sdkPromise = null;
+      });
+    });
     return;
   }
 

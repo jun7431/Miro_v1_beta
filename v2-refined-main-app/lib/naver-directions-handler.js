@@ -1,5 +1,12 @@
 const DIRECTIONS_ENDPOINT = 'https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving';
 const MAX_DIRECTIONS_5_WAYPOINTS = 5;
+const SAFE_ERROR_FIELDS = [
+  'code',
+  'message',
+  'errorCode',
+  'errorMessage',
+  'details',
+];
 
 function sendJson(response, statusCode, payload) {
   response.status(statusCode);
@@ -82,6 +89,52 @@ function buildNaverDirectionsUrl(start, goal, waypoints) {
   return url;
 }
 
+function getNaverEnv() {
+  return {
+    keyId: String(
+      process.env.NAVER_MAPS_NCP_KEY_ID ||
+      process.env.VITE_NAVER_MAPS_NCP_KEY_ID ||
+      ''
+    ).trim(),
+    secret: String(process.env.NAVER_MAPS_NCP_SECRET || '').trim(),
+  };
+}
+
+function buildDiagnostics(directionsUrl, keyId, secret, waypoints) {
+  return {
+    endpointHost: directionsUrl.host,
+    keyIdPresent: Boolean(keyId),
+    keyIdLength: keyId.length,
+    keyIdPrefix: keyId.slice(0, 3),
+    secretPresent: Boolean(secret),
+    secretLength: secret.length,
+    requestHasWaypoints: waypoints.length > 0,
+  };
+}
+
+function pickSafeUpstreamError(payload) {
+  if (!payload || typeof payload !== 'object') {
+    return {};
+  }
+
+  const result = {};
+  SAFE_ERROR_FIELDS.forEach(field => {
+    if (payload[field] !== undefined) {
+      result[field] = payload[field];
+    }
+  });
+
+  if (payload.error && typeof payload.error === 'object') {
+    SAFE_ERROR_FIELDS.forEach(field => {
+      if (payload.error[field] !== undefined && result[field] === undefined) {
+        result[field] = payload.error[field];
+      }
+    });
+  }
+
+  return result;
+}
+
 function parseNaverDirectionsPayload(payload) {
   const route = payload && payload.route && payload.route.trafast && payload.route.trafast[0];
   if (!route) {
@@ -149,18 +202,21 @@ module.exports = async function handler(request, response) {
     return;
   }
 
-  const keyId = String(process.env.VITE_NAVER_MAPS_NCP_KEY_ID || '').trim();
-  const secret = String(process.env.NAVER_MAPS_NCP_SECRET || '').trim();
+  const { keyId, secret } = getNaverEnv();
+  const directionsUrl = buildNaverDirectionsUrl(start, goal, waypoints);
+  const diagnostics = buildDiagnostics(directionsUrl, keyId, secret, waypoints);
+
+  console.log(`Naver Directions upstream endpoint host: ${diagnostics.endpointHost}`);
+  console.log(`Naver Directions env present: keyId ${diagnostics.keyIdPresent}, secret ${diagnostics.secretPresent}`);
 
   if (!keyId || !secret) {
     sendJson(response, 500, {
       ok: false,
       error: 'Naver Directions environment variables are not configured',
+      diagnostics,
     });
     return;
   }
-
-  const directionsUrl = buildNaverDirectionsUrl(start, goal, waypoints);
 
   try {
     const naverResponse = await fetch(directionsUrl, {
@@ -171,12 +227,18 @@ module.exports = async function handler(request, response) {
       },
     });
     const payload = await naverResponse.json().catch(() => null);
+    console.log(`Naver Directions upstream status: ${naverResponse.status}`);
 
     if (!naverResponse.ok) {
+      const upstreamError = pickSafeUpstreamError(payload);
       sendJson(response, naverResponse.status, {
         ok: false,
         error: 'Naver Directions request failed',
         status: naverResponse.status,
+        upstreamErrorCode: upstreamError.code || upstreamError.errorCode || '',
+        upstreamMessage: upstreamError.message || upstreamError.errorMessage || '',
+        ...upstreamError,
+        diagnostics,
       });
       return;
     }

@@ -511,10 +511,10 @@ const naverMapState = {
 };
 
 const mapStage = document.getElementById('map-stage');
-let mapEl = document.getElementById('kakao-map');
 const mapStatus = document.getElementById('map-status');
 const kakaoMapLoggedErrors = new Set();
 const naverMapLoggedErrors = new Set();
+let mapSwitchToken = 0;
 
 function logKakaoMapError(message) {
   if (kakaoMapLoggedErrors.has(message)) return;
@@ -581,6 +581,7 @@ function setMapProvider(provider) {
   if (!MAP_PROVIDERS.has(provider)) return;
 
   if (mapProviderState.active !== provider) {
+    mapSwitchToken++;
     clearRenderedMaps();
     mapProviderState.active = provider;
     try {
@@ -611,17 +612,22 @@ function clearRenderedMaps() {
   resetMapContainer();
 }
 
+function getMapElement() {
+  return document.getElementById('kakao-map');
+}
+
 function resetMapContainer() {
+  const mapEl = getMapElement();
   if (!mapEl) return;
 
   const freshMapEl = mapEl.cloneNode(false);
   mapEl.replaceWith(freshMapEl);
-  mapEl = freshMapEl;
 }
 
 function ensureKakaoMap() {
   kakaoMapState.requested = true;
 
+  const mapEl = getMapElement();
   if (!mapEl) {
     logKakaoMapError('map container missing');
     return;
@@ -640,10 +646,18 @@ function ensureKakaoMap() {
     return;
   }
 
+  const renderToken = mapSwitchToken;
   setMapStatus('Loading Kakao Map…', 'loading');
   loadKakaoSdk(appKey)
     .then(() => {
+      if (renderToken !== mapSwitchToken) return;
       if (mapProviderState.active !== 'kakao') return;
+
+      const mapEl = getMapElement();
+      if (!mapEl) {
+        logKakaoMapError('map container missing');
+        return;
+      }
 
       const center = new window.kakao.maps.LatLng(currentRoute.center.lat, currentRoute.center.lng);
       kakaoMapState.map = new window.kakao.maps.Map(mapEl, {
@@ -660,6 +674,7 @@ function ensureKakaoMap() {
     })
     .catch(() => {
       kakaoMapState.sdkPromise = null;
+      if (renderToken !== mapSwitchToken || mapProviderState.active !== 'kakao') return;
       setMapStatus('Kakao Map could not load. Check the JavaScript key, allowed domains, and network access.', 'error');
     });
 }
@@ -726,6 +741,7 @@ function loadKakaoSdk(appKey = getKakaoAppKey()) {
 function ensureNaverMap() {
   naverMapState.requested = true;
 
+  const mapEl = getMapElement();
   if (!mapEl) {
     logNaverMapError('Naver map container missing');
     return;
@@ -744,10 +760,18 @@ function ensureNaverMap() {
     return;
   }
 
+  const renderToken = mapSwitchToken;
   setMapStatus('Loading Naver Map…', 'loading');
   loadNaverSdk(ncpKeyId)
     .then(() => {
+      if (renderToken !== mapSwitchToken) return;
       if (mapProviderState.active !== 'naver') return;
+
+      const mapEl = getMapElement();
+      if (!mapEl) {
+        logNaverMapError('Naver map container missing');
+        return;
+      }
 
       const center = new window.naver.maps.LatLng(currentRoute.center.lat, currentRoute.center.lng);
       naverMapState.map = new window.naver.maps.Map(mapEl, {
@@ -764,6 +788,7 @@ function ensureNaverMap() {
     })
     .catch(() => {
       naverMapState.sdkPromise = null;
+      if (renderToken !== mapSwitchToken || mapProviderState.active !== 'naver') return;
       setMapStatus('Naver Map could not load. Check the NCP Key ID, allowed domains, and network access.', 'error');
     });
 }

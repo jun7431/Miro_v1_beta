@@ -620,7 +620,14 @@ function resetMapContainer() {
   const mapEl = getMapElement();
   if (!mapEl) return;
 
-  const freshMapEl = mapEl.cloneNode(false);
+  const freshMapEl = document.createElement('div');
+  freshMapEl.id = 'kakao-map';
+  freshMapEl.className = 'kakao-map';
+  freshMapEl.setAttribute('role', mapEl.getAttribute('role') || 'application');
+  freshMapEl.setAttribute(
+    'aria-label',
+    mapEl.getAttribute('aria-label') || 'Kakao map showing the selected route'
+  );
   mapEl.replaceWith(freshMapEl);
 }
 
@@ -670,7 +677,11 @@ function ensureKakaoMap() {
       });
 
       hideMapStatus();
-      renderKakaoRoute({ fit: true });
+      window.requestAnimationFrame(() => {
+        if (renderToken !== mapSwitchToken || mapProviderState.active !== 'kakao') return;
+        relayoutKakaoMap();
+        renderKakaoRoute({ fit: true });
+      });
     })
     .catch(() => {
       kakaoMapState.sdkPromise = null;
@@ -784,7 +795,11 @@ function ensureNaverMap() {
       });
 
       hideMapStatus();
-      renderNaverRoute({ fit: true });
+      window.requestAnimationFrame(() => {
+        if (renderToken !== mapSwitchToken || mapProviderState.active !== 'naver') return;
+        relayoutNaverMap();
+        renderNaverRoute({ fit: true });
+      });
     })
     .catch(() => {
       naverMapState.sdkPromise = null;

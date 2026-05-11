@@ -799,7 +799,7 @@ function resolveRouteForCurrentSelection(routeKey) {
   console.warn('No matching real places found; not using mock fallback');
 
   if (curatedPlaceState.failed) {
-    return buildEmptyRealRoute(routeKey, 'Real place data could not be loaded. Check that the processed Miro places file is deployed.');
+    return buildEmptyRealRoute(routeKey, 'Real place data could not be loaded. Check that the processed places file is deployed.');
   }
 
   if (!curatedPlaceState.places.length) {
@@ -1010,18 +1010,54 @@ function renderStops() {
     const item = document.createElement('div');
     item.className = 'stop';
     item.dataset.idx = idx;
+
+    const place = s.place || {};
+    const roleLabel =
+      MIRO_CATEGORY_LABELS[place.miroCategory] ||
+      place.categoryName ||
+      'Stop';
+    const why = String(s.why || '').trim();
+
+    const naverUrl = typeof place.naverMapUrl === 'string' ? place.naverMapUrl.trim() : '';
+    const lat = Number(place.lat);
+    const lng = Number(place.lng);
+    const placeLabel = place.displayName || place.name || s.name || 'Place';
+    const kakaoUrl = Number.isFinite(lat) && Number.isFinite(lng)
+      ? `https://map.kakao.com/link/map/${encodeURIComponent(placeLabel)},${lat},${lng}`
+      : '';
+
+    const actions = [];
+    if (kakaoUrl) {
+      actions.push(
+        `<a class="ks-stop-link" data-source="kakao" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">` +
+          `<span class="ks-link-mark">K</span>Open in Kakao</a>`
+      );
+    }
+    if (naverUrl) {
+      actions.push(
+        `<a class="ks-stop-link" data-source="naver" href="${escapeHtml(naverUrl)}" target="_blank" rel="noopener noreferrer">` +
+          `<span class="ks-link-mark">N</span>Open in Naver</a>`
+      );
+    }
+    actions.push(
+      `<button class="ks-stop-link ks-stop-replace" type="button" disabled aria-disabled="true" title="Coming soon">↻ Replace</button>`
+    );
+
     item.innerHTML = `
       <div class="stop-num-col">
         <div class="stop-num">${s.num}</div>
         <div class="stop-line"></div>
       </div>
       <div class="stop-body">
+        <span class="ks-stop-role">${escapeHtml(roleLabel)}</span>
         <div class="stop-name">${escapeHtml(s.name)}</div>
         <div class="stop-type">${escapeHtml(s.type)}</div>
+        ${why ? `<div class="ks-stop-why">${escapeHtml(why)}</div>` : ''}
         <div class="stop-meta">
           <span class="stop-tag">⏱ ${s.stay} min</span>
           ${(s.tags || []).map(t => `<span class="stop-tag">${escapeHtml(t)}</span>`).join('')}
         </div>
+        <div class="ks-stop-actions">${actions.join('')}</div>
       </div>
     `;
     item.addEventListener('click', () => activateStop(idx));

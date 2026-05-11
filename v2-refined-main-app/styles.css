@@ -1371,3 +1371,393 @@ input { font-family: inherit; }
 @media (max-width: 380px) {
   .ob-options { grid-template-columns: 1fr; }
 }
+
+/* =================================================================
+   KANDID SPOT — first-screen hero (onboarding step 1 only)
+   Scoped via .ob-screen-intro / .ks-* classes so steps 2/3, the
+   loading screen, and the post-onboarding app are unaffected.
+   ================================================================= */
+.ob-screen-intro { text-align: center; }
+
+.ks-hero {
+  margin: 0 auto 20px;
+  max-width: 560px;
+  padding: 4px 8px 0;
+}
+
+.ks-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-soft);
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 6px 12px 6px 10px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-xs);
+}
+.ks-eyebrow-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 0 4px var(--mint-soft);
+}
+
+.ks-headline {
+  margin: 18px 0 0;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+.ks-headline-accent {
+  background: linear-gradient(120deg, var(--primary) 0%, var(--mint) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ks-lead {
+  margin: 14px auto 0;
+  max-width: 480px;
+  font-size: 15.5px;
+  color: var(--gray);
+  line-height: 1.55;
+}
+
+.ks-flow {
+  list-style: none;
+  margin: 22px auto 0;
+  padding: 10px 12px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-xs);
+}
+.ks-flow li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-soft);
+  padding: 2px 4px;
+}
+.ks-flow-num {
+  width: 20px; height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.ks-flow-arrow {
+  color: var(--gray-light);
+  font-size: 13px;
+}
+.ks-flow-result .ks-flow-label {
+  color: var(--mint);
+  font-weight: 700;
+}
+
+.ks-step-label {
+  margin: 28px auto 14px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+@media (max-width: 720px) {
+  .ks-hero { margin-bottom: 14px; }
+  .ks-headline { font-size: 30px; }
+  .ks-lead { font-size: 14.5px; }
+  .ks-flow { padding: 8px 10px; }
+  .ks-flow li { font-size: 12px; }
+  .ks-step-label { margin-top: 20px; margin-bottom: 10px; }
+}
+
+@media (max-width: 380px) {
+  .ks-flow {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+/* =================================================================
+   KANDID SPOT — result-screen UX additions
+   Scoped to .ks-* so existing rules (.stop, .why-card, .timeline-*,
+   .ask-*, .ob-*) are untouched.
+   ================================================================= */
+
+/* Route-summary strapline */
+.rs-strap {
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--gray);
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 500;
+}
+
+/* Why-card structured bullets */
+.ks-why-list {
+  list-style: none;
+  margin: 8px 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ks-why-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 12.5px;
+  color: #78350F;
+  line-height: 1.5;
+}
+.ks-why-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #92400E;
+  opacity: 0.65;
+}
+
+/* Confidence card */
+.ks-confidence {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px 12px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-xs);
+}
+.ks-conf-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.ks-conf-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.ks-conf-sub {
+  font-size: 11px;
+  color: var(--gray);
+}
+.ks-conf-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+.ks-conf-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-soft);
+}
+.ks-conf-check {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--mint-soft);
+  color: var(--mint);
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* Stop role pill + per-stop actions (rendered by app.js) */
+.ks-stop-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.ks-stop-why {
+  font-size: 12px;
+  color: var(--gray);
+  line-height: 1.45;
+  margin-top: 6px;
+}
+.ks-stop-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.ks-stop-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.ks-stop-link:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.ks-stop-link.is-disabled {
+  color: var(--gray-light);
+  background: var(--bg-alt);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.ks-stop-link .ks-link-mark {
+  width: 16px; height: 16px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: white;
+}
+.ks-stop-link[data-source="naver"] .ks-link-mark { background: #03C75A; }
+.ks-stop-link[data-source="kakao"] .ks-link-mark { background: #FAE100; color: #111; }
+
+/* Import teaser card */
+.ks-import {
+  background: linear-gradient(135deg, #F0FDFA 0%, #FFFFFF 100%);
+  border: 1px solid var(--mint-soft);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 22px;
+}
+.ks-import-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.ks-import-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mint-soft);
+  border-radius: 9px;
+  font-size: 16px;
+}
+.ks-import-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.005em;
+}
+.ks-import-sub {
+  font-size: 11.5px;
+  color: var(--gray);
+  margin-top: 1px;
+}
+.ks-import-soon {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mint);
+  background: var(--mint-soft);
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.ks-import-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.ks-import-opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-soft);
+  text-align: left;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.ks-import-opt-mark {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
+}
+.ks-import-opt-mark[data-source="naver"] { background: #03C75A; }
+.ks-import-opt-mark[data-source="kakao"] { background: #FAE100; color: #111; }
+.ks-import-opt-mark[data-source="instagram"] {
+  background: linear-gradient(135deg, #F58529, #DD2A7B 50%, #515BD4);
+}
+.ks-import-opt-mark[data-source="google"] {
+  background: linear-gradient(135deg, #4285F4, #34A853);
+}
+
+@media (max-width: 720px) {
+  .ks-conf-list { grid-template-columns: 1fr 1fr; }
+  .ks-import-options { grid-template-columns: 1fr; }
+}
+@media (max-width: 380px) {
+  .ks-conf-list { grid-template-columns: 1fr; }
+}

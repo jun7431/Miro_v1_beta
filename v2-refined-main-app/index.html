@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="miro-kakao-app-key" content="" />
-<title>Miro — Local route, ready to walk</title>
+<title>Kandid Spot — Local route, ready to walk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -19,7 +19,7 @@
   <header class="ob-header">
     <div class="ob-brand">
       <span class="ob-brand-mark"><span class="ob-brand-dot"></span></span>
-      <span class="ob-brand-name">Miro</span>
+      <span class="ob-brand-name">Kandid Spot</span>
     </div>
     <div class="ob-progress-wrap">
       <div class="ob-progress" aria-hidden="true">
@@ -34,9 +34,32 @@
   <main class="ob-stage">
 
     <!-- Step 1: Area -->
-    <section class="ob-screen active" data-step="1">
-      <h1 class="ob-q-h1">Where are you now?</h1>
-      <p class="ob-q-sub">Pick your starting area. Miro will build one local route from there.</p>
+    <section class="ob-screen ob-screen-intro active" data-step="1">
+      <div class="ks-hero">
+        <span class="ks-eyebrow">
+          <span class="ks-eyebrow-dot" aria-hidden="true"></span>
+          Seoul · curated by locals
+        </span>
+        <h1 class="ks-headline">
+          Find your <span class="ks-headline-accent">local spot</span>.
+        </h1>
+        <p class="ks-lead">
+          Pick an area, your time, your vibe. Kandid Spot gives you one route
+          worth doing — no top-10 lists, no decision fatigue.
+        </p>
+        <ol class="ks-flow" aria-label="How it works">
+          <li><span class="ks-flow-num">1</span><span class="ks-flow-label">Area</span></li>
+          <li class="ks-flow-arrow" aria-hidden="true">→</li>
+          <li><span class="ks-flow-num">2</span><span class="ks-flow-label">Time</span></li>
+          <li class="ks-flow-arrow" aria-hidden="true">→</li>
+          <li><span class="ks-flow-num">3</span><span class="ks-flow-label">Vibe</span></li>
+          <li class="ks-flow-arrow" aria-hidden="true">→</li>
+          <li class="ks-flow-result"><span class="ks-flow-label">Your spot</span></li>
+        </ol>
+      </div>
+
+      <div class="ks-step-label">Step 1 · Where are you now?</div>
+
       <div class="ob-options" data-group="area">
         <button class="ob-option" data-value="Hongdae">
           <span class="ob-emoji">🎨</span>
@@ -73,7 +96,7 @@
     <!-- Step 2: Time -->
     <section class="ob-screen" data-step="2">
       <h1 class="ob-q-h1">How much time do you have?</h1>
-      <p class="ob-q-sub">Miro keeps the route realistic for your available time.</p>
+      <p class="ob-q-sub">Kandid Spot keeps the route realistic for your available time.</p>
       <div class="ob-options ob-options-time" data-group="time">
         <button class="ob-option" data-value="1 hour">
           <span class="ob-emoji">⚡</span>
@@ -105,7 +128,7 @@
     <!-- Step 3: Mood -->
     <section class="ob-screen" data-step="3">
       <h1 class="ob-q-h1">What kind of route do you want?</h1>
-      <p class="ob-q-sub">Choose the mood. Miro will handle the route.</p>
+      <p class="ob-q-sub">Choose the mood. Kandid Spot will handle the route.</p>
       <div class="ob-options" data-group="mood">
         <button class="ob-option" data-value="Local food">
           <span class="ob-emoji">🍜</span>
@@ -135,7 +158,7 @@
       </div>
       <div class="ob-actions">
         <button class="ob-back">Back</button>
-        <button class="ob-next" disabled>Build my Miro route →</button>
+        <button class="ob-next" disabled>Build my Kandid Spot route →</button>
       </div>
     </section>
 
@@ -160,8 +183,8 @@
   <header class="top-bar">
     <div class="brand">
       <span class="brand-mark"><span class="brand-dot"></span></span>
-      <span class="brand-name">Miro</span>
-      <span class="brand-tag">Local route, ready to walk</span>
+      <span class="brand-name">Kandid Spot</span>
+      <span class="brand-tag">One local route you can start now</span>
     </div>
     <div class="top-right">
       <button class="ghost-btn ghost-btn-accent" id="new-btn" title="Start a new route">
@@ -185,8 +208,9 @@
       <!-- Route summary header -->
       <section class="route-summary-bar">
         <div class="rs-current">
-          <div class="rs-label">Your route</div>
+          <div class="rs-label">Your situation</div>
           <div class="rs-value" id="rs-summary">Hongdae · 2 hours · Local food</div>
+          <div class="rs-strap">Built around your time, area, and mood</div>
         </div>
         <button class="rs-toggle collapsed" id="builder-toggle" aria-expanded="false">
           <span class="rs-toggle-label" id="rs-toggle-label">Edit</span>
@@ -247,11 +271,17 @@
         <div class="why-card">
           <div class="why-head">
             <span class="why-icon">💡</span>
-            <span class="why-title">Why this route?</span>
+            <span class="why-title">Why Kandid Spot picked this</span>
           </div>
           <p class="why-body" id="why-body">
             홍대 메인 거리는 지금 붐빌 수 있어서, 연남 쪽으로 살짝 빼서 걷기 좋은 루트로 잡았어요. We skip the strip and route you through Yeonnam's lived-in lanes — backstreet BBQ, residential walk, ten-seat cafe, hidden record shop.
           </p>
+          <ul class="ks-why-list">
+            <li>Fits your time window</li>
+            <li>Keeps stops close enough to walk</li>
+            <li>Avoids tourist-heavy spots on the strip</li>
+            <li>Mixes a meal, a walk, and a flexible last stop</li>
+          </ul>
           <div class="route-meta">
             <span><strong>4</strong> stops</span>
             <span class="meta-sep"></span>
@@ -261,14 +291,58 @@
           </div>
         </div>
 
+        <!-- Kandid Spot confidence -->
+        <div class="ks-confidence" aria-label="Kandid Spot confidence">
+          <div class="ks-conf-head">
+            <span class="ks-conf-title">Kandid Spot confidence</span>
+            <span class="ks-conf-sub">How this route fits your situation</span>
+          </div>
+          <ul class="ks-conf-list">
+            <li class="ks-conf-item"><span class="ks-conf-check" aria-hidden="true">✓</span><span>Time fit</span></li>
+            <li class="ks-conf-item"><span class="ks-conf-check" aria-hidden="true">✓</span><span>Walkable</span></li>
+            <li class="ks-conf-item"><span class="ks-conf-check" aria-hidden="true">✓</span><span>Local feel</span></li>
+            <li class="ks-conf-item"><span class="ks-conf-check" aria-hidden="true">✓</span><span>Low tourist-trap risk</span></li>
+          </ul>
+        </div>
+
         <!-- Timeline -->
         <div class="timeline-section">
           <div class="section-head">
-            <h3>Your route</h3>
+            <h3>One local route</h3>
             <span class="section-sub">Tap a stop for details</span>
           </div>
           <div class="stops" id="stops"></div>
         </div>
+
+        <!-- Bring your saved places (UI-only teaser) -->
+        <aside class="ks-import" aria-label="Bring your saved places">
+          <div class="ks-import-head">
+            <span class="ks-import-icon" aria-hidden="true">📌</span>
+            <div>
+              <div class="ks-import-title">Bring your saved places</div>
+              <div class="ks-import-sub">Kandid Spot will turn them into one route.</div>
+            </div>
+            <span class="ks-import-soon">Coming soon</span>
+          </div>
+          <div class="ks-import-options">
+            <button class="ks-import-opt" type="button" disabled aria-disabled="true">
+              <span class="ks-import-opt-mark" data-source="naver">N</span>
+              <span class="ks-import-opt-label">Naver Map list</span>
+            </button>
+            <button class="ks-import-opt" type="button" disabled aria-disabled="true">
+              <span class="ks-import-opt-mark" data-source="kakao">K</span>
+              <span class="ks-import-opt-label">Kakao Map list</span>
+            </button>
+            <button class="ks-import-opt" type="button" disabled aria-disabled="true">
+              <span class="ks-import-opt-mark" data-source="instagram">IG</span>
+              <span class="ks-import-opt-label">Instagram link</span>
+            </button>
+            <button class="ks-import-opt" type="button" disabled aria-disabled="true">
+              <span class="ks-import-opt-mark" data-source="google">G</span>
+              <span class="ks-import-opt-label">Google Maps</span>
+            </button>
+          </div>
+        </aside>
 
         <!-- Refine -->
         <div class="refine-section">
@@ -351,24 +425,24 @@
           <div class="legend-item"><span class="legend-dot" style="background:#10B981"></span>Subway</div>
         </div>
 
-        <!-- Ask Miro FAB -->
+        <!-- Ask Kandid Spot FAB -->
         <button class="ask-fab" id="ask-fab">
-          <span class="ask-ava">M</span>
-          <span class="ask-text">Ask Miro</span>
+          <span class="ask-ava">K</span>
+          <span class="ask-text">Ask Kandid Spot</span>
         </button>
       </div>
     </section>
   </main>
 
-  <!-- ============== ASK MIRO DRAWER ============== -->
+  <!-- ============== ASK KANDID SPOT DRAWER ============== -->
   <aside class="ask-drawer" id="ask-drawer" aria-hidden="true">
     <div class="ask-overlay" id="ask-overlay"></div>
     <div class="ask-panel">
       <header class="ask-header">
         <div class="ask-id">
-          <div class="ask-ava-lg">M</div>
+          <div class="ask-ava-lg">K</div>
           <div>
-            <div class="ask-name">Ask Miro</div>
+            <div class="ask-name">Ask Kandid Spot</div>
             <div class="ask-bio">Your local in Seoul · usually replies fast</div>
           </div>
         </div>
@@ -379,7 +453,7 @@
 
       <div class="ask-thread" id="ask-thread">
         <div class="ask-msg from-miro">
-          <div class="ask-bubble">Hi 👋 I'm Miro. Ask me anything about your current route — I'll keep it short.</div>
+          <div class="ask-bubble">Hi 👋 Ask Kandid Spot anything about your current route — we'll keep it short.</div>
         </div>
         <div class="ask-suggest-head">Try one of these</div>
         <div class="ask-suggestions" id="ask-suggestions">

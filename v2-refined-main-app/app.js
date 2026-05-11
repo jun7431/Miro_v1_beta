@@ -986,6 +986,7 @@ function setNaverDirectionsMeta(directions) {
 function renderStops() {
   const list = document.getElementById('stops');
   list.innerHTML = '';
+  const activeProvider = getActiveMapProvider();
 
   if (!currentRoute.stops.length) {
     const item = document.createElement('div');
@@ -1018,27 +1019,9 @@ function renderStops() {
       'Stop';
     const why = String(s.why || '').trim();
 
-    const naverUrl = typeof place.naverMapUrl === 'string' ? place.naverMapUrl.trim() : '';
-    const lat = Number(place.lat);
-    const lng = Number(place.lng);
-    const placeLabel = place.displayName || place.name || s.name || 'Place';
-    const kakaoUrl = Number.isFinite(lat) && Number.isFinite(lng)
-      ? `https://map.kakao.com/link/map/${encodeURIComponent(placeLabel)},${lat},${lng}`
-      : '';
-
     const actions = [];
-    if (kakaoUrl) {
-      actions.push(
-        `<a class="ks-stop-link" data-source="kakao" href="${escapeHtml(kakaoUrl)}" target="_blank" rel="noopener noreferrer">` +
-          `<span class="ks-link-mark">K</span>Open in Kakao</a>`
-      );
-    }
-    if (naverUrl) {
-      actions.push(
-        `<a class="ks-stop-link" data-source="naver" href="${escapeHtml(naverUrl)}" target="_blank" rel="noopener noreferrer">` +
-          `<span class="ks-link-mark">N</span>Open in Naver</a>`
-      );
-    }
+    const providerOpenAction = renderProviderOpenButton(place, s.name, activeProvider);
+    if (providerOpenAction) actions.push(providerOpenAction);
     actions.push(
       `<button class="ks-stop-link ks-stop-replace" type="button" disabled aria-disabled="true" title="Coming soon">↻ Replace</button>`
     );
@@ -1082,6 +1065,39 @@ function getInitialMapProvider() {
 const mapProviderState = {
   active: getInitialMapProvider(),
 };
+
+function getActiveMapProvider() {
+  return MAP_PROVIDERS.has(mapProviderState.active) ? mapProviderState.active : 'kakao';
+}
+
+function getProviderOpenLink(place = {}, fallbackName, provider = getActiveMapProvider()) {
+  if (provider === 'naver') {
+    const naverUrl = typeof place.naverMapUrl === 'string' ? place.naverMapUrl.trim() : '';
+    return naverUrl ? { source: 'naver', mark: 'N', label: 'Open in Naver', url: naverUrl } : null;
+  }
+
+  const lat = Number(place.lat);
+  const lng = Number(place.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+  const placeLabel = place.displayName || place.name || fallbackName || 'Place';
+  return {
+    source: 'kakao',
+    mark: 'K',
+    label: 'Open in Kakao',
+    url: `https://map.kakao.com/link/map/${encodeURIComponent(placeLabel)},${lat},${lng}`,
+  };
+}
+
+function renderProviderOpenButton(place = {}, fallbackName, provider = getActiveMapProvider()) {
+  const link = getProviderOpenLink(place, fallbackName, provider);
+  if (!link) return '';
+
+  return (
+    `<a class="ks-stop-link" data-source="${link.source}" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">` +
+      `<span class="ks-link-mark">${link.mark}</span>${link.label}</a>`
+  );
+}
 
 const kakaoMapState = {
   map: null,
@@ -1218,6 +1234,7 @@ function setMapProvider(provider) {
   }
 
   syncMapProviderButtons();
+  renderStops();
   hideFloatCard();
   if (provider !== 'naver') {
     setRouteMetaDefault();
@@ -1567,24 +1584,21 @@ function renderKakaoRoute({ fit = false } = {}) {
   const stopsWithCoords = getStopsWithCoords();
   if (!stopsWithCoords.length) return;
 
-  const path = stopsWithCoords.map(({ stop }) => (
-    new window.kakao.maps.LatLng(stop.coords.lat, stop.coords.lng)
-  ));
+  const directRoutePoints = stopsWithCoords.map(({ stop }) => ({
+    lat: stop.coords.lat,
+    lng: stop.coords.lng,
+  }));
+  const directionsPoints = getNaverDirectionsPoints(stopsWithCoords);
+  const directionsKey = getNaverDirectionsKey(directionsPoints);
+  const renderToken = mapSwitchToken;
 
-  if (path.length > 1) {
-    kakaoMapState.polyline = new window.kakao.maps.Polyline({
-      path,
-      strokeWeight: 5,
-      strokeColor: '#2563EB',
-      strokeOpacity: 0.95,
-      strokeStyle: 'shortdash',
-    });
-    kakaoMapState.polyline.setMap(kakaoMapState.map);
+  if (directRoutePoints.length > 1) {
+    renderKakaoPolyline(directRoutePoints);
   }
 
   kakaoMapState.markers = currentRoute.stops.map(() => null);
   stopsWithCoords.forEach(({ stop, index }, markerIndex) => {
-    const position = path[markerIndex];
+    const position = new window.kakao.maps.LatLng(stop.coords.lat, stop.coords.lng);
     const content = createKakaoMarkerElement(stop, index);
     const overlay = new window.kakao.maps.CustomOverlay({
       position,
@@ -1600,6 +1614,14 @@ function renderKakaoRoute({ fit = false } = {}) {
 
   updateMarkerActive();
   if (fit) fitKakaoRouteBounds();
+
+  getNaverDirections(directionsPoints).then(directions => {
+    if (!directions || mapProviderState.active !== 'kakao' || !kakaoMapState.map) return;
+    if (renderToken !== mapSwitchToken || directionsKey !== naverMapState.directionsKey) return;
+
+    renderKakaoPolyline(directions.path, { realRoute: true });
+    if (fit) fitKakaoRouteBounds(directions.path);
+  });
 }
 
 function getNaverDirectionsPoints(stopsWithCoords) {
@@ -1682,6 +1704,32 @@ function getNaverDirections(points) {
 
 function toNaverLatLngPath(points) {
   return points.map(point => new window.naver.maps.LatLng(point.lat, point.lng));
+}
+
+function toKakaoLatLngPath(points) {
+  return points.map(point => new window.kakao.maps.LatLng(point.lat, point.lng));
+}
+
+function renderKakaoPolyline(points, { realRoute = false } = {}) {
+  if (!points.length || !kakaoMapState.map || !window.kakao || !window.kakao.maps) return;
+
+  if (kakaoMapState.polyline) {
+    kakaoMapState.polyline.setMap(null);
+    kakaoMapState.polyline = null;
+  }
+
+  kakaoMapState.polyline = new window.kakao.maps.Polyline({
+    path: toKakaoLatLngPath(points),
+    strokeWeight: 5,
+    strokeColor: '#2563EB',
+    strokeOpacity: 0.95,
+    strokeStyle: 'shortdash',
+  });
+  kakaoMapState.polyline.setMap(kakaoMapState.map);
+
+  if (realRoute) {
+    console.log('Kakao real route polyline rendered');
+  }
 }
 
 function renderNaverPolyline(points, { realRoute = false } = {}) {
@@ -1819,14 +1867,16 @@ function createNaverMarkerIcon(stop, idx, isActive = false) {
   };
 }
 
-function fitKakaoRouteBounds() {
+function fitKakaoRouteBounds(routePoints = null) {
   if (!kakaoMapState.map || !window.kakao || !window.kakao.maps) return;
 
   const bounds = new window.kakao.maps.LatLngBounds();
-  const stopsWithCoords = getStopsWithCoords();
-  if (!stopsWithCoords.length) return;
-  stopsWithCoords.forEach(({ stop }) => {
-    bounds.extend(new window.kakao.maps.LatLng(stop.coords.lat, stop.coords.lng));
+  const points = Array.isArray(routePoints) && routePoints.length
+    ? routePoints
+    : getStopsWithCoords().map(({ stop }) => stop.coords);
+  if (!points.length) return;
+  points.forEach(point => {
+    bounds.extend(new window.kakao.maps.LatLng(point.lat, point.lng));
   });
 
   try {

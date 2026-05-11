@@ -1,0 +1,6375 @@
+{
+  "generatedAt": "2026-05-11T08:46:56.115Z",
+  "rawDir": "imports\\naver\\raw",
+  "outputFiles": [
+    "data\\places\\processed\\miro_places.json",
+    "v2-refined-main-app\\data\\miro_places.json"
+  ],
+  "fileSummaries": [
+    {
+      "sourceFile": "any164.json",
+      "bookmarkListItems": 164,
+      "placeItems": 163,
+      "availableTrue": 152,
+      "availableFalse": 11,
+      "availableMissing": 1,
+      "matched": 153,
+      "unmatched": 11,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "diana95_bakery,brunch.json",
+      "bookmarkListItems": 98,
+      "placeItems": 98,
+      "availableTrue": 96,
+      "availableFalse": 2,
+      "availableMissing": 0,
+      "matched": 95,
+      "unmatched": 3,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "diana95_bar57.json",
+      "bookmarkListItems": 57,
+      "placeItems": 57,
+      "availableTrue": 56,
+      "availableFalse": 1,
+      "availableMissing": 0,
+      "matched": 56,
+      "unmatched": 1,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "diana95_cafe389.json",
+      "bookmarkListItems": 389,
+      "placeItems": 389,
+      "availableTrue": 383,
+      "availableFalse": 6,
+      "availableMissing": 0,
+      "matched": 383,
+      "unmatched": 6,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "jiseung-share.json",
+      "bookmarkListItems": 1000,
+      "placeItems": 1000,
+      "availableTrue": 998,
+      "availableFalse": 2,
+      "availableMissing": 0,
+      "matched": 998,
+      "unmatched": 2,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "Matjip2_145.json",
+      "bookmarkListItems": 145,
+      "placeItems": 145,
+      "availableTrue": 145,
+      "availableFalse": 0,
+      "availableMissing": 0,
+      "matched": 145,
+      "unmatched": 0,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "Matjip3_122.json",
+      "bookmarkListItems": 122,
+      "placeItems": 121,
+      "availableTrue": 121,
+      "availableFalse": 0,
+      "availableMissing": 1,
+      "matched": 122,
+      "unmatched": 0,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "par51.json",
+      "bookmarkListItems": 51,
+      "placeItems": 49,
+      "availableTrue": 47,
+      "availableFalse": 2,
+      "availableMissing": 2,
+      "matched": 48,
+      "unmatched": 3,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "Seoul_Cafe310.json",
+      "bookmarkListItems": 310,
+      "placeItems": 309,
+      "availableTrue": 292,
+      "availableFalse": 17,
+      "availableMissing": 1,
+      "matched": 282,
+      "unmatched": 28,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "tangmo157.json",
+      "bookmarkListItems": 157,
+      "placeItems": 157,
+      "availableTrue": 157,
+      "availableFalse": 0,
+      "availableMissing": 0,
+      "matched": 157,
+      "unmatched": 0,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "uk_cafes72.json",
+      "bookmarkListItems": 72,
+      "placeItems": 72,
+      "availableTrue": 65,
+      "availableFalse": 7,
+      "availableMissing": 0,
+      "matched": 65,
+      "unmatched": 7,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "uk45.json",
+      "bookmarkListItems": 45,
+      "placeItems": 45,
+      "availableTrue": 42,
+      "availableFalse": 3,
+      "availableMissing": 0,
+      "matched": 40,
+      "unmatched": 5,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "Wannago_cafe129.json",
+      "bookmarkListItems": 129,
+      "placeItems": 129,
+      "availableTrue": 129,
+      "availableFalse": 0,
+      "availableMissing": 0,
+      "matched": 129,
+      "unmatched": 0,
+      "matchInfoMissing": 0
+    },
+    {
+      "sourceFile": "Wannago859.json",
+      "bookmarkListItems": 859,
+      "placeItems": 858,
+      "availableTrue": 857,
+      "availableFalse": 1,
+      "availableMissing": 1,
+      "matched": 857,
+      "unmatched": 2,
+      "matchInfoMissing": 0
+    }
+  ],
+  "summary": {
+    "rawFilesRead": 14,
+    "totalRawBookmarkListCount": 3598,
+    "totalRawPlaceItems": 3592,
+    "processedPlaces": 3273,
+    "processedTypePlaceItems": 3267,
+    "withSid": 3267,
+    "withCoordinates": 3273,
+    "withName": 3273,
+    "rawPreserved": 3273,
+    "availableTrue": 3216,
+    "availableFalse": 51,
+    "availableMissing": 6,
+    "matched": 3206,
+    "unmatched": 67,
+    "matchInfoMissing": 0,
+    "duplicateMergedCount": 325,
+    "skippedCount": 0,
+    "skippedReasons": {},
+    "invariant": {
+      "expression": "rawBookmarkListCount = processedUniqueCount + duplicateMergedCount + skippedCount",
+      "rawBookmarkListCount": 3598,
+      "processedUniqueCount": 3273,
+      "duplicateMergedCount": 325,
+      "skippedCount": 0,
+      "reconciled": true
+    }
+  },
+  "duplicates": [
+    {
+      "dedupeKey": "sid:2072697519",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 38,
+        "bookmarkId": "3877354750",
+        "sid": "2072697519",
+        "name": "에삐 선릉본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "bookmarkId": "4415453771",
+        "sid": "2072697519",
+        "name": "에삐 선릉본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1206529518",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 138,
+        "bookmarkId": "2205178379",
+        "sid": "1206529518",
+        "name": "사담",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "bookmarkId": "984080371",
+        "sid": "1206529518",
+        "name": "사담"
+      }
+    },
+    {
+      "dedupeKey": "sid:2070304988",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 28,
+        "bookmarkId": "3735829330",
+        "sid": "2070304988",
+        "name": "쁠랑떼",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_bar57.json",
+        "bookmarkId": "3735829330",
+        "sid": "2070304988",
+        "name": "쁠랑떼"
+      }
+    },
+    {
+      "dedupeKey": "sid:1956805048",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 98,
+        "bookmarkId": "3569636514",
+        "sid": "1956805048",
+        "name": "하라고지페",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_bar57.json",
+        "bookmarkId": "1795268017",
+        "sid": "1956805048",
+        "name": "하라고지페"
+      }
+    },
+    {
+      "dedupeKey": "sid:1897858306",
+      "kept": {
+        "sourceFile": "diana95_bar57.json",
+        "pathName": "bookmarkList",
+        "index": 0,
+        "bookmarkId": "4429814439",
+        "sid": "1897858306",
+        "name": "스카프",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "4429814439",
+        "sid": "1897858306",
+        "name": "스카프"
+      }
+    },
+    {
+      "dedupeKey": "sid:2072697519",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 38,
+        "bookmarkId": "3877354750",
+        "sid": "2072697519",
+        "name": "에삐 선릉본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "4415453771",
+        "sid": "2072697519",
+        "name": "에삐 선릉본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1085239656",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 41,
+        "bookmarkId": "3877351609",
+        "sid": "1085239656",
+        "name": "텟어텟 선릉",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "4415442910",
+        "sid": "1085239656",
+        "name": "텟어텟 선릉"
+      }
+    },
+    {
+      "dedupeKey": "sid:1396814888",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 7,
+        "bookmarkId": "1461430851",
+        "sid": "1396814888",
+        "name": "카페 알프카",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "1461430851",
+        "sid": "1396814888",
+        "name": "카페 알프카"
+      }
+    },
+    {
+      "dedupeKey": "sid:1206529518",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 138,
+        "bookmarkId": "2205178379",
+        "sid": "1206529518",
+        "name": "사담",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "984080371",
+        "sid": "1206529518",
+        "name": "사담"
+      }
+    },
+    {
+      "dedupeKey": "sid:1596612606",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 130,
+        "bookmarkId": "2593568948",
+        "sid": "1596612606",
+        "name": "2층사무실",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "1772552799",
+        "sid": "1596612606",
+        "name": "2층사무실"
+      }
+    },
+    {
+      "dedupeKey": "sid:760335826",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 11,
+        "bookmarkId": "809652285",
+        "sid": "760335826",
+        "name": "fincafe",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "809652285",
+        "sid": "760335826",
+        "name": "fincafe"
+      }
+    },
+    {
+      "dedupeKey": "sid:1733442290",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 12,
+        "bookmarkId": "3670843246",
+        "sid": "1733442290",
+        "name": "카페플랫",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3670843246",
+        "sid": "1733442290",
+        "name": "카페플랫"
+      }
+    },
+    {
+      "dedupeKey": "sid:37197875",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 17,
+        "bookmarkId": "1475011732",
+        "sid": "37197875",
+        "name": "포비 광화문",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "1475011732",
+        "sid": "37197875",
+        "name": "포비 광화문"
+      }
+    },
+    {
+      "dedupeKey": "sid:2090258969",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 22,
+        "bookmarkId": "4352018669",
+        "sid": "2090258969",
+        "name": "우스블랑 성수",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "4352018669",
+        "sid": "2090258969",
+        "name": "우스블랑 성수"
+      }
+    },
+    {
+      "dedupeKey": "sid:1699309891",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 23,
+        "bookmarkId": "4352018237",
+        "sid": "1699309891",
+        "name": "우스블랑",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "4352018237",
+        "sid": "1699309891",
+        "name": "우스블랑"
+      }
+    },
+    {
+      "dedupeKey": "sid:1636001415",
+      "kept": {
+        "sourceFile": "diana95_bar57.json",
+        "pathName": "bookmarkList",
+        "index": 22,
+        "bookmarkId": "772079892",
+        "sid": "1636001415",
+        "name": "다다랩",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "772079892",
+        "sid": "1636001415",
+        "name": "다다랩"
+      }
+    },
+    {
+      "dedupeKey": "sid:1000521232",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 74,
+        "bookmarkId": "3693224250",
+        "sid": "1000521232",
+        "name": "할로우",
+        "available": false,
+        "isMatched": false
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "4292071729",
+        "sid": "1000521232",
+        "name": "할로우"
+      }
+    },
+    {
+      "dedupeKey": "sid:1438255363",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 31,
+        "bookmarkId": "1781407838",
+        "sid": "1438255363",
+        "name": "나인블럭 예술의전당점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "1781407838",
+        "sid": "1438255363",
+        "name": "나인블럭 예술의전당점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1500419851",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 37,
+        "bookmarkId": "809647714",
+        "sid": "1500419851",
+        "name": "엔트런스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "809647714",
+        "sid": "1500419851",
+        "name": "엔트런스"
+      }
+    },
+    {
+      "dedupeKey": "sid:2058630499",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 40,
+        "bookmarkId": "4280242451",
+        "sid": "2058630499",
+        "name": "데케드 파크",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "4280242451",
+        "sid": "2058630499",
+        "name": "데케드 파크"
+      }
+    },
+    {
+      "dedupeKey": "sid:38521578",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 41,
+        "bookmarkId": "1132177507",
+        "sid": "38521578",
+        "name": "효제눅",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "1132177507",
+        "sid": "38521578",
+        "name": "효제눅"
+      }
+    },
+    {
+      "dedupeKey": "sid:1318829354",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 42,
+        "bookmarkId": "3646115521",
+        "sid": "1318829354",
+        "name": "리프레쉬먼트",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3646115521",
+        "sid": "1318829354",
+        "name": "리프레쉬먼트"
+      }
+    },
+    {
+      "dedupeKey": "sid:1140996822",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 44,
+        "bookmarkId": "1161894809",
+        "sid": "1140996822",
+        "name": "뽐므",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "1161894809",
+        "sid": "1140996822",
+        "name": "뽐므"
+      }
+    },
+    {
+      "dedupeKey": "sid:1713672856",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 124,
+        "bookmarkId": "3017864428",
+        "sid": "1713672856",
+        "name": "제일공간",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "1589248364",
+        "sid": "1713672856",
+        "name": "제일공간"
+      }
+    },
+    {
+      "dedupeKey": "sid:1167531735",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 51,
+        "bookmarkId": "2899610037",
+        "sid": "1167531735",
+        "name": "시트롱",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "2899610037",
+        "sid": "1167531735",
+        "name": "시트롱"
+      }
+    },
+    {
+      "dedupeKey": "sid:1766099387",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 53,
+        "bookmarkId": "3743281781",
+        "sid": "1766099387",
+        "name": "그래스하퍼 베이크샵",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3743281781",
+        "sid": "1766099387",
+        "name": "그래스하퍼 베이크샵"
+      }
+    },
+    {
+      "dedupeKey": "sid:1743780788",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 55,
+        "bookmarkId": "3238346915",
+        "sid": "1743780788",
+        "name": "카페 와일드덕",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3238346915",
+        "sid": "1743780788",
+        "name": "카페 와일드덕"
+      }
+    },
+    {
+      "dedupeKey": "sid:1459317112",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 56,
+        "bookmarkId": "3238351035",
+        "sid": "1459317112",
+        "name": "스티키플로어",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3238351035",
+        "sid": "1459317112",
+        "name": "스티키플로어"
+      }
+    },
+    {
+      "dedupeKey": "sid:1727640388",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 58,
+        "bookmarkId": "3413876209",
+        "sid": "1727640388",
+        "name": "웨스턴챕터 잠실점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3413876209",
+        "sid": "1727640388",
+        "name": "웨스턴챕터 잠실점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1728515790",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 46,
+        "bookmarkId": "3865334769",
+        "sid": "1728515790",
+        "name": "크레뮤 클럽",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3413881689",
+        "sid": "1728515790",
+        "name": "크레뮤 클럽"
+      }
+    },
+    {
+      "dedupeKey": "sid:1473960954",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 62,
+        "bookmarkId": "3616106433",
+        "sid": "1473960954",
+        "name": "밤부 베이커리&브루잉 서래",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3616106433",
+        "sid": "1473960954",
+        "name": "밤부 베이커리&브루잉 서래"
+      }
+    },
+    {
+      "dedupeKey": "sid:1947850847",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 146,
+        "bookmarkId": "2108989241",
+        "sid": "1947850847",
+        "name": "더소가 카페 서촌",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3916945868",
+        "sid": "1947850847",
+        "name": "더소가 카페 서촌"
+      }
+    },
+    {
+      "dedupeKey": "sid:1151615202",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 85,
+        "bookmarkId": "3916992617",
+        "sid": "1151615202",
+        "name": "파티시안",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "diana95_cafe389.json",
+        "bookmarkId": "3916992617",
+        "sid": "1151615202",
+        "name": "파티시안"
+      }
+    },
+    {
+      "dedupeKey": "sid:1356284006",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 1,
+        "bookmarkId": "1421239410",
+        "sid": "1356284006",
+        "name": "일트",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "1421239410",
+        "sid": "1356284006",
+        "name": "일트"
+      }
+    },
+    {
+      "dedupeKey": "sid:1169145635",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 4,
+        "bookmarkId": "2366575816",
+        "sid": "1169145635",
+        "name": "필요의 방",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "2366575816",
+        "sid": "1169145635",
+        "name": "필요의 방"
+      }
+    },
+    {
+      "dedupeKey": "sid:1487159516",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 118,
+        "bookmarkId": "3320133793",
+        "sid": "1487159516",
+        "name": "꼬르동 파스타 룸",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "4402672566",
+        "sid": "1487159516",
+        "name": "꼬르동 파스타 룸"
+      }
+    },
+    {
+      "dedupeKey": "sid:1281886328",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 119,
+        "bookmarkId": "3313577348",
+        "sid": "1281886328",
+        "name": "오르노 신용산점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "4305236408",
+        "sid": "1281886328",
+        "name": "오르노 신용산점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1606949231",
+      "kept": {
+        "sourceFile": "diana95_bar57.json",
+        "pathName": "bookmarkList",
+        "index": 1,
+        "bookmarkId": "4271798762",
+        "sid": "1606949231",
+        "name": "야키토리쿠이신보 삼각지점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "4271798762",
+        "sid": "1606949231",
+        "name": "야키토리쿠이신보 삼각지점"
+      }
+    },
+    {
+      "dedupeKey": "sid:2088986918",
+      "kept": {
+        "sourceFile": "diana95_bar57.json",
+        "pathName": "bookmarkList",
+        "index": 2,
+        "bookmarkId": "4258453185",
+        "sid": "2088986918",
+        "name": "단쇼",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "4258453185",
+        "sid": "2088986918",
+        "name": "단쇼"
+      }
+    },
+    {
+      "dedupeKey": "sid:1670424289",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 26,
+        "bookmarkId": "3912210737",
+        "sid": "1670424289",
+        "name": "마토미",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "4249039546",
+        "sid": "1670424289",
+        "name": "마토미"
+      }
+    },
+    {
+      "dedupeKey": "sid:1564542826",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 15,
+        "bookmarkId": "3958335176",
+        "sid": "1564542826",
+        "name": "라보 스테이크하우스 청담점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "4009017153",
+        "sid": "1564542826",
+        "name": "라보 스테이크하우스 청담점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1826984139",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 105,
+        "bookmarkId": "3506867534",
+        "sid": "1826984139",
+        "name": "레 부르주아 가로수길점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "3400307064",
+        "sid": "1826984139",
+        "name": "레 부르주아 가로수길점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1477231086",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 160,
+        "bookmarkId": "2108927335",
+        "sid": "1477231086",
+        "name": "조디악",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "3025676145",
+        "sid": "1477231086",
+        "name": "조디악"
+      }
+    },
+    {
+      "dedupeKey": "sid:1253387841",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 28,
+        "bookmarkId": "3912197117",
+        "sid": "1253387841",
+        "name": "올디스타코 을지로 본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "2836188500",
+        "sid": "1253387841",
+        "name": "올디스타코 을지로 본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1808473263",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 90,
+        "bookmarkId": "3633989474",
+        "sid": "1808473263",
+        "name": "클럽케이서울 선릉찜질방사우나",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "2776393972",
+        "sid": "1808473263",
+        "name": "클럽케이서울 선릉찜질방사우나"
+      }
+    },
+    {
+      "dedupeKey": "sid:1741938125",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 18,
+        "bookmarkId": "3917779785",
+        "sid": "1741938125",
+        "name": "아티스트베이커리 안국",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "1848489807",
+        "sid": "1741938125",
+        "name": "아티스트베이커리 안국"
+      }
+    },
+    {
+      "dedupeKey": "sid:1791259060",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 53,
+        "bookmarkId": "3864200750",
+        "sid": "1791259060",
+        "name": "오이지 대학로",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "1750185588",
+        "sid": "1791259060",
+        "name": "오이지 대학로"
+      }
+    },
+    {
+      "dedupeKey": "sid:1149305255",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 69,
+        "bookmarkId": "3719286300",
+        "sid": "1149305255",
+        "name": "땡스오트 안국",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "1743483018",
+        "sid": "1149305255",
+        "name": "땡스오트 안국"
+      }
+    },
+    {
+      "dedupeKey": "sid:1133826226",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 22,
+        "bookmarkId": "3917766493",
+        "sid": "1133826226",
+        "name": "오레노라멘 인사점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "1686413656",
+        "sid": "1133826226",
+        "name": "오레노라멘 인사점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1553059011",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 147,
+        "bookmarkId": "2108981323",
+        "sid": "1553059011",
+        "name": "스쿠퍼젤라또 경복궁점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "1677018102",
+        "sid": "1553059011",
+        "name": "스쿠퍼젤라또 경복궁점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1167750133",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 5,
+        "bookmarkId": "4421595418",
+        "sid": "1167750133",
+        "name": "클리프 서울",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "1531335378",
+        "sid": "1167750133",
+        "name": "클리프 서울"
+      }
+    },
+    {
+      "dedupeKey": "sid:1305808406",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 114,
+        "bookmarkId": "3320156694",
+        "sid": "1305808406",
+        "name": "펄치",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "1519028163",
+        "sid": "1305808406",
+        "name": "펄치"
+      }
+    },
+    {
+      "dedupeKey": "sid:37542108",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 94,
+        "bookmarkId": "3630446530",
+        "sid": "37542108",
+        "name": "차차티클럽 창신한옥",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "1490317345",
+        "sid": "37542108",
+        "name": "차차티클럽 창신한옥"
+      }
+    },
+    {
+      "dedupeKey": "sid:1498934506",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 2,
+        "bookmarkId": "809653764",
+        "sid": "1498934506",
+        "name": "라브리크 서울",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "jiseung-share.json",
+        "bookmarkId": "809653764",
+        "sid": "1498934506",
+        "name": "라브리크 서울"
+      }
+    },
+    {
+      "dedupeKey": "sid:37778826",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 641,
+        "bookmarkId": "1610466719",
+        "sid": "37778826",
+        "name": "오월의김밥",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3835098514",
+        "sid": "37778826",
+        "name": "오월의김밥"
+      }
+    },
+    {
+      "dedupeKey": "sid:1794067214",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 317,
+        "bookmarkId": "3909702858",
+        "sid": "1794067214",
+        "name": "떼르드카페 양재점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "4329077541",
+        "sid": "1794067214",
+        "name": "떼르드카페 양재점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1003147022",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 108,
+        "bookmarkId": "3506838302",
+        "sid": "1003147022",
+        "name": "닭장맥주 서울대입구점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "4302025171",
+        "sid": "1003147022",
+        "name": "닭장맥주 서울대입구점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1992797586",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 682,
+        "bookmarkId": "1542706570",
+        "sid": "1992797586",
+        "name": "폰트 용산점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3436098428",
+        "sid": "1992797586",
+        "name": "폰트 용산점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1308629361",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 205,
+        "bookmarkId": "3584722233",
+        "sid": "1308629361",
+        "name": "작은피자집",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "4161431396",
+        "sid": "1308629361",
+        "name": "작은피자집"
+      }
+    },
+    {
+      "dedupeKey": "sid:1544487742",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 258,
+        "bookmarkId": "3179942136",
+        "sid": "1544487742",
+        "name": "돈카츠창현",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3307772921",
+        "sid": "1544487742",
+        "name": "돈카츠창현"
+      }
+    },
+    {
+      "dedupeKey": "sid:94550787",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 163,
+        "bookmarkId": "2108901861",
+        "sid": "94550787",
+        "name": "고기굽는사람들 샤로수길본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3756025313",
+        "sid": "94550787",
+        "name": "고기굽는사람들"
+      }
+    },
+    {
+      "dedupeKey": "sid:1672512567",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 54,
+        "bookmarkId": "4177976972",
+        "sid": "1672512567",
+        "name": "소금집델리 센터필드점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3720226309",
+        "sid": "1672512567",
+        "name": "소금집델리 센터필드점"
+      }
+    },
+    {
+      "dedupeKey": "sid:11679381",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 55,
+        "bookmarkId": "3819862060",
+        "sid": "11679381",
+        "name": "우래옥",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3624648144",
+        "sid": "11679381",
+        "name": "우래옥"
+      }
+    },
+    {
+      "dedupeKey": "sid:1244381474",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 380,
+        "bookmarkId": "2533969156",
+        "sid": "1244381474",
+        "name": "오리지널팬케이크하우스 도곡점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3606728802",
+        "sid": "1244381474",
+        "name": "오리지널팬케이크하우스 도곡점"
+      }
+    },
+    {
+      "dedupeKey": "sid:37221619",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 968,
+        "bookmarkId": "1161885262",
+        "sid": "37221619",
+        "name": "리에또",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3508598727",
+        "sid": "37221619",
+        "name": "리에또"
+      }
+    },
+    {
+      "dedupeKey": "sid:460950912",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 161,
+        "bookmarkId": "1135722024",
+        "sid": "460950912",
+        "name": "프릳츠 양재점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "2168933732",
+        "sid": "460950912",
+        "name": "프릳츠 양재점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1528536629",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 645,
+        "bookmarkId": "1609482390",
+        "sid": "1528536629",
+        "name": "마누테라스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3331355355",
+        "sid": "1528536629",
+        "name": "마누테라스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1498748474",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 149,
+        "bookmarkId": "4291031861",
+        "sid": "1498748474",
+        "name": "로스터리 아이딜 커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3030372765",
+        "sid": "1498748474",
+        "name": "아이딜"
+      }
+    },
+    {
+      "dedupeKey": "sid:1860551358",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 507,
+        "bookmarkId": "1947773037",
+        "sid": "1860551358",
+        "name": "베를리너 부어스트",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3250453997",
+        "sid": "1860551358",
+        "name": "베를리너 부어스트"
+      }
+    },
+    {
+      "dedupeKey": "sid:38300513",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 904,
+        "bookmarkId": "1290878240",
+        "sid": "38300513",
+        "name": "엘 따뻬오",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "3025610618",
+        "sid": "38300513",
+        "name": "엘 따뻬오"
+      }
+    },
+    {
+      "dedupeKey": "sid:1812494362",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 332,
+        "bookmarkId": "2881110843",
+        "sid": "1812494362",
+        "name": "남소관 우육도삭면",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "2747243623",
+        "sid": "1812494362",
+        "name": "남소관 우육도삭면"
+      }
+    },
+    {
+      "dedupeKey": "sid:1293906430",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 216,
+        "bookmarkId": "3487389554",
+        "sid": "1293906430",
+        "name": "라오상하이 찻집 논현점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "2165390127",
+        "sid": "1293906430",
+        "name": "라오상하이 찻집 논현점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1228130356",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 188,
+        "bookmarkId": "1983634257",
+        "sid": "1228130356",
+        "name": "안밀",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip2_145.json",
+        "bookmarkId": "1910019173",
+        "sid": "1228130356",
+        "name": "안밀"
+      }
+    },
+    {
+      "dedupeKey": "sid:37441902",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 690,
+        "bookmarkId": "1537832100",
+        "sid": "37441902",
+        "name": "오랑오랑",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "4309619142",
+        "sid": "37441902",
+        "name": "오랑오랑"
+      }
+    },
+    {
+      "dedupeKey": "sid:1437513434",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 973,
+        "bookmarkId": "1160716573",
+        "sid": "1437513434",
+        "name": "포스톤즈 삼성본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3938647611",
+        "sid": "1437513434",
+        "name": "포스톤즈 삼성본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1019362346",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 194,
+        "bookmarkId": "911938109",
+        "sid": "1019362346",
+        "name": "라우더커피바",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3030373534",
+        "sid": "1019362346",
+        "name": "라우더커피바"
+      }
+    },
+    {
+      "dedupeKey": "sid:2018754504",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 59,
+        "bookmarkId": "4382907546",
+        "sid": "2018754504",
+        "name": "현상 커피로스터스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3696761404",
+        "sid": "2018754504",
+        "name": "현상 커피로스터스"
+      }
+    },
+    {
+      "dedupeKey": "sid:13149768",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 642,
+        "bookmarkId": "1610462070",
+        "sid": "13149768",
+        "name": "농민백암순대 본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3358196101",
+        "sid": "13149768",
+        "name": "농민백암순대 본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:220166012",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 265,
+        "bookmarkId": "3691017037",
+        "sid": "220166012",
+        "name": "고로커피로스터스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3535498557",
+        "sid": "220166012",
+        "name": "고로커피로스터스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1811236741",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 61,
+        "bookmarkId": "4371919154",
+        "sid": "1811236741",
+        "name": "로스터리젠",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3779427447",
+        "sid": "1811236741",
+        "name": "로스터리젠"
+      }
+    },
+    {
+      "dedupeKey": "sid:37093035",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 370,
+        "bookmarkId": "2704381660",
+        "sid": "37093035",
+        "name": "보사노바 커피로스터스 강릉점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3676587140",
+        "sid": "37093035",
+        "name": "보사노바 커피로스터스 강릉점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1044102504",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 792,
+        "bookmarkId": "1453731219",
+        "sid": "1044102504",
+        "name": "리사르커피 청담점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3071449471",
+        "sid": "1044102504",
+        "name": "리사르커피 청담점"
+      }
+    },
+    {
+      "dedupeKey": "sid:11679241",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 466,
+        "bookmarkId": "2238998410",
+        "sid": "11679241",
+        "name": "늘푸른목장 잠실본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3516953666",
+        "sid": "11679241",
+        "name": "늘푸른목장 잠실본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1163576582",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 308,
+        "bookmarkId": "2960060757",
+        "sid": "1163576582",
+        "name": "까르니브라질그릴",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3554903925",
+        "sid": "1163576582",
+        "name": "까르니브라질그릴"
+      }
+    },
+    {
+      "dedupeKey": "sid:672327315",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 442,
+        "bookmarkId": "2326260678",
+        "sid": "672327315",
+        "name": "껠끄쇼즈",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3365649034",
+        "sid": "672327315",
+        "name": "껠끄쇼즈"
+      }
+    },
+    {
+      "dedupeKey": "sid:1660973395",
+      "kept": {
+        "sourceFile": "diana95_bar57.json",
+        "pathName": "bookmarkList",
+        "index": 45,
+        "bookmarkId": "2225657021",
+        "sid": "1660973395",
+        "name": "미라보",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3282265552",
+        "sid": "1660973395",
+        "name": "미라보"
+      }
+    },
+    {
+      "dedupeKey": "sid:1480987363",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 143,
+        "bookmarkId": "1151432411",
+        "sid": "1480987363",
+        "name": "씨크스페셜티커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "3030374097",
+        "sid": "1480987363",
+        "name": "씨크스페셜티커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1235133192",
+      "kept": {
+        "sourceFile": "diana95_bar57.json",
+        "pathName": "bookmarkList",
+        "index": 38,
+        "bookmarkId": "1840980950",
+        "sid": "1235133192",
+        "name": "셀레스트",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "2996157612",
+        "sid": "1235133192",
+        "name": "셀레스트"
+      }
+    },
+    {
+      "dedupeKey": "sid:1070317367",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 24,
+        "bookmarkId": "4383396324",
+        "sid": "1070317367",
+        "name": "후추스시",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "2996059452",
+        "sid": "1070317367",
+        "name": "후추스시"
+      }
+    },
+    {
+      "dedupeKey": "sid:1183428863",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 335,
+        "bookmarkId": "2876802825",
+        "sid": "1183428863",
+        "name": "정돈 강남점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "2968999812",
+        "sid": "1183428863",
+        "name": "정돈 강남점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1870522283",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 255,
+        "bookmarkId": "3684059149",
+        "sid": "1870522283",
+        "name": "피요르드",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "2791298402",
+        "sid": "1870522283",
+        "name": "피요르드"
+      }
+    },
+    {
+      "dedupeKey": "sid:1752983758",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 922,
+        "bookmarkId": "1201672874",
+        "sid": "1752983758",
+        "name": "BANJO",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "1910014946",
+        "sid": "1752983758",
+        "name": "BANJO"
+      }
+    },
+    {
+      "dedupeKey": "sid:1878939111",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 688,
+        "bookmarkId": "1537835706",
+        "sid": "1878939111",
+        "name": "마우시",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "2316481663",
+        "sid": "1878939111",
+        "name": "마우시"
+      }
+    },
+    {
+      "dedupeKey": "sid:1245126161",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 739,
+        "bookmarkId": "1513127946",
+        "sid": "1245126161",
+        "name": "한과와락",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "2155639900",
+        "sid": "1245126161",
+        "name": "한과와락"
+      }
+    },
+    {
+      "dedupeKey": "sid:1600016778",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 570,
+        "bookmarkId": "1706858522",
+        "sid": "1600016778",
+        "name": "밴건디 스테이크하우스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Matjip3_122.json",
+        "bookmarkId": "2098021741",
+        "sid": "1600016778",
+        "name": "밴건디 스테이크하우스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1152554768",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 35,
+        "bookmarkId": "1745775788",
+        "sid": "1152554768",
+        "name": "메종엠오 방배본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "par51.json",
+        "bookmarkId": "3939288333",
+        "sid": "1152554768",
+        "name": "메종엠오 방배본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1124361834",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 80,
+        "bookmarkId": "3690300663",
+        "sid": "1124361834",
+        "name": "진중 우육면관 본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "par51.json",
+        "bookmarkId": "3822856175",
+        "sid": "1124361834",
+        "name": "진중 우육면관 본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1264343790",
+      "kept": {
+        "sourceFile": "diana95_bar57.json",
+        "pathName": "bookmarkList",
+        "index": 55,
+        "bookmarkId": "4248983697",
+        "sid": "1264343790",
+        "name": "에다마메",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "par51.json",
+        "bookmarkId": "3601525172",
+        "sid": "1264343790",
+        "name": "에다마메"
+      }
+    },
+    {
+      "dedupeKey": "sid:1363401039",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 554,
+        "bookmarkId": "1732374615",
+        "sid": "1363401039",
+        "name": "프렌즈앤야드",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "par51.json",
+        "bookmarkId": "3309754248",
+        "sid": "1363401039",
+        "name": "프렌즈앤야드"
+      }
+    },
+    {
+      "dedupeKey": "sid:1859537881",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 252,
+        "bookmarkId": "3670115274",
+        "sid": "1859537881",
+        "name": "무브모브 성수",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "par51.json",
+        "bookmarkId": "3309736656",
+        "sid": "1859537881",
+        "name": "무브모브 성수"
+      }
+    },
+    {
+      "dedupeKey": "sid:1080140629",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 93,
+        "bookmarkId": "3631824521",
+        "sid": "1080140629",
+        "name": "피읻짜",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "par51.json",
+        "bookmarkId": "3042964560",
+        "sid": "1080140629",
+        "name": "피읻짜"
+      }
+    },
+    {
+      "dedupeKey": "sid:1312075789",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 285,
+        "bookmarkId": "3025757633",
+        "sid": "1312075789",
+        "name": "말방국밥 성수본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "par51.json",
+        "bookmarkId": "2254115077",
+        "sid": "1312075789",
+        "name": "말방국밥 성수본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1334861428",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 125,
+        "bookmarkId": "1485961716",
+        "sid": "1334861428",
+        "name": "평형",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3593375278",
+        "sid": "1334861428",
+        "name": "평형"
+      }
+    },
+    {
+      "dedupeKey": "sid:1336938852",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 812,
+        "bookmarkId": "1443479884",
+        "sid": "1336938852",
+        "name": "SING SANG SONG",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3544267672",
+        "sid": "1336938852",
+        "name": "SING SANG SONG"
+      }
+    },
+    {
+      "dedupeKey": "sid:1228528673",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 418,
+        "bookmarkId": "2385858554",
+        "sid": "1228528673",
+        "name": "개방 해방촌점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3544262028",
+        "sid": "1228528673",
+        "name": "개방 해방촌점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1840704037",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 84,
+        "bookmarkId": "4360185489",
+        "sid": "1840704037",
+        "name": "시타커피로스터스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3544255116",
+        "sid": "1840704037",
+        "name": "시타커피로스터스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1883924356",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 71,
+        "bookmarkId": "1072724420",
+        "sid": "1883924356",
+        "name": "이미커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3516342075",
+        "sid": "1883924356",
+        "name": "이미커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1355804064",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 541,
+        "bookmarkId": "1753900865",
+        "sid": "1355804064",
+        "name": "커피냅로스터스 성수",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3544238035",
+        "sid": "1355804064",
+        "name": "커피냅로스터스 성수"
+      }
+    },
+    {
+      "dedupeKey": "sid:1032580297",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 211,
+        "bookmarkId": "3238237466",
+        "sid": "1032580297",
+        "name": "프로토콜 연희점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3533598435",
+        "sid": "1032580297",
+        "name": "프로토콜 연희점"
+      }
+    },
+    {
+      "dedupeKey": "sid:13557627",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 223,
+        "bookmarkId": "3395306480",
+        "sid": "13557627",
+        "name": "부암동 제비꽃다방",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3522502181",
+        "sid": "13557627",
+        "name": "부암동 제비꽃다방"
+      }
+    },
+    {
+      "dedupeKey": "sid:1274280104",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 292,
+        "bookmarkId": "3738934278",
+        "sid": "1274280104",
+        "name": "코르츠",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3512983081",
+        "sid": "1274280104",
+        "name": "코르츠"
+      }
+    },
+    {
+      "dedupeKey": "sid:1074657894",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 6,
+        "bookmarkId": "1542704872",
+        "sid": "1074657894",
+        "name": "키헤이커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3486519532",
+        "sid": "1074657894",
+        "name": "키헤이커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1022423336",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 33,
+        "bookmarkId": "2234290218",
+        "sid": "1022423336",
+        "name": "커피스니퍼 역삼 센터필드점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3483234294",
+        "sid": "1022423336",
+        "name": "커피스니퍼 역삼 센터필드점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1352196746",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 257,
+        "bookmarkId": "3687138977",
+        "sid": "1352196746",
+        "name": "도화아파트먼트 한강로",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3479590195",
+        "sid": "1352196746",
+        "name": "도화아파트먼트 한강로"
+      }
+    },
+    {
+      "dedupeKey": "sid:1331394979",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 303,
+        "bookmarkId": "3787994703",
+        "sid": "1331394979",
+        "name": "애락",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3476272500",
+        "sid": "1331394979",
+        "name": "애락"
+      }
+    },
+    {
+      "dedupeKey": "sid:33431802",
+      "kept": {
+        "sourceFile": "Matjip2_145.json",
+        "pathName": "bookmarkList",
+        "index": 31,
+        "bookmarkId": "3598712955",
+        "sid": "33431802",
+        "name": "나무사이로 내자",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3469187959",
+        "sid": "33431802",
+        "name": "나무사이로 내자"
+      }
+    },
+    {
+      "dedupeKey": "sid:1660059821",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 407,
+        "bookmarkId": "2412997458",
+        "sid": "1660059821",
+        "name": "회화나무",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3461793434",
+        "sid": "1660059821",
+        "name": "회화나무"
+      }
+    },
+    {
+      "dedupeKey": "sid:1060398712",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 765,
+        "bookmarkId": "1479190465",
+        "sid": "1060398712",
+        "name": "카페상국",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3461784827",
+        "sid": "1060398712",
+        "name": "카페상국"
+      }
+    },
+    {
+      "dedupeKey": "sid:37792215",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 297,
+        "bookmarkId": "3738967806",
+        "sid": "37792215",
+        "name": "커피상점 이심",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3461764710",
+        "sid": "37792215",
+        "name": "커피상점 이심"
+      }
+    },
+    {
+      "dedupeKey": "sid:1741225396",
+      "kept": {
+        "sourceFile": "Matjip2_145.json",
+        "pathName": "bookmarkList",
+        "index": 26,
+        "bookmarkId": "3573359939",
+        "sid": "1741225396",
+        "name": "빈브라더스 커피하우스 서울",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3461705446",
+        "sid": "1741225396",
+        "name": "빈브라더스 커피하우스 서울"
+      }
+    },
+    {
+      "dedupeKey": "sid:1619195092",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 109,
+        "bookmarkId": "1118246348",
+        "sid": "1619195092",
+        "name": "TYPE 한강점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3460833198",
+        "sid": "1619195092",
+        "name": "TYPE 한강점"
+      }
+    },
+    {
+      "dedupeKey": "sid:19570596",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 707,
+        "bookmarkId": "1531333051",
+        "sid": "19570596",
+        "name": "엘카페 커피로스터스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3444889311",
+        "sid": "19570596",
+        "name": "엘카페 커피로스터스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1511447269",
+      "kept": {
+        "sourceFile": "Matjip2_145.json",
+        "pathName": "bookmarkList",
+        "index": 98,
+        "bookmarkId": "3501511463",
+        "sid": "1511447269",
+        "name": "오오디커피랩",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3443864355",
+        "sid": "1511447269",
+        "name": "오오디커피랩"
+      }
+    },
+    {
+      "dedupeKey": "sid:1764470627",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 342,
+        "bookmarkId": "3977900643",
+        "sid": "1764470627",
+        "name": "재즈피넛 커피 로스팅 룸",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3425620107",
+        "sid": "1764470627",
+        "name": "재즈피넛 커피 로스팅 룸"
+      }
+    },
+    {
+      "dedupeKey": "sid:1360411248",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 331,
+        "bookmarkId": "3925049016",
+        "sid": "1360411248",
+        "name": "카페모호",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3425609873",
+        "sid": "1360411248",
+        "name": "카페모호"
+      }
+    },
+    {
+      "dedupeKey": "sid:1972756547",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 339,
+        "bookmarkId": "2865087750",
+        "sid": "1972756547",
+        "name": "그라데이션커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3423081967",
+        "sid": "1972756547",
+        "name": "그라데이션커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1480987363",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 143,
+        "bookmarkId": "1151432411",
+        "sid": "1480987363",
+        "name": "씨크스페셜티커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3420187299",
+        "sid": "1480987363",
+        "name": "씨크스페셜티커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1228130356",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 188,
+        "bookmarkId": "1983634257",
+        "sid": "1228130356",
+        "name": "안밀",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3412066919",
+        "sid": "1228130356",
+        "name": "안밀"
+      }
+    },
+    {
+      "dedupeKey": "sid:220166012",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 265,
+        "bookmarkId": "3691017037",
+        "sid": "220166012",
+        "name": "고로커피로스터스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3412064206",
+        "sid": "220166012",
+        "name": "고로커피로스터스"
+      }
+    },
+    {
+      "dedupeKey": "sid:32227337",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 141,
+        "bookmarkId": "1139559638",
+        "sid": "32227337",
+        "name": "페니힐스 커피스테이션",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3411062323",
+        "sid": "32227337",
+        "name": "페니힐스 커피스테이션"
+      }
+    },
+    {
+      "dedupeKey": "sid:460950912",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 161,
+        "bookmarkId": "1135722024",
+        "sid": "460950912",
+        "name": "프릳츠 양재점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3411064052",
+        "sid": "460950912",
+        "name": "프릳츠 양재점"
+      }
+    },
+    {
+      "dedupeKey": "sid:30847072",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 118,
+        "bookmarkId": "1461639472",
+        "sid": "30847072",
+        "name": "파스텔커피웍스 본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3410707364",
+        "sid": "30847072",
+        "name": "파스텔커피웍스 본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1193127253",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 181,
+        "bookmarkId": "2458197481",
+        "sid": "1193127253",
+        "name": "스티머스 팩토리샵",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3411234871",
+        "sid": "1193127253",
+        "name": "스티머스 팩토리샵"
+      }
+    },
+    {
+      "dedupeKey": "sid:1306412205",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 893,
+        "bookmarkId": "1315258990",
+        "sid": "1306412205",
+        "name": "리프커피바",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3420489399",
+        "sid": "1306412205",
+        "name": "리프커피바"
+      }
+    },
+    {
+      "dedupeKey": "sid:1812600941",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 132,
+        "bookmarkId": "1443629219",
+        "sid": "1812600941",
+        "name": "트래버틴 용산",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3412340736",
+        "sid": "1812600941",
+        "name": "트래버틴 용산"
+      }
+    },
+    {
+      "dedupeKey": "sid:1259048821",
+      "kept": {
+        "sourceFile": "Matjip2_145.json",
+        "pathName": "bookmarkList",
+        "index": 59,
+        "bookmarkId": "3141510791",
+        "sid": "1259048821",
+        "name": "애크로매틱 커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3418240241",
+        "sid": "1259048821",
+        "name": "애크로매틱 커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1992797586",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 682,
+        "bookmarkId": "1542706570",
+        "sid": "1992797586",
+        "name": "폰트 용산점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3411181500",
+        "sid": "1992797586",
+        "name": "폰트 용산점"
+      }
+    },
+    {
+      "dedupeKey": "sid:37918824",
+      "kept": {
+        "sourceFile": "Matjip3_122.json",
+        "pathName": "bookmarkList",
+        "index": 58,
+        "bookmarkId": "3072027233",
+        "sid": "37918824",
+        "name": "비로소커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3240853345",
+        "sid": "37918824",
+        "name": "비로소커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1341086999",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 30,
+        "bookmarkId": "4408464749",
+        "sid": "1341086999",
+        "name": "son",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3298131897",
+        "sid": "1341086999",
+        "name": "son"
+      }
+    },
+    {
+      "dedupeKey": "sid:37064850",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 917,
+        "bookmarkId": "1219665826",
+        "sid": "37064850",
+        "name": "YM COFFEE PROJECT 연신내",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3418030905",
+        "sid": "37064850",
+        "name": "YM COFFEE PROJECT 연신내"
+      }
+    },
+    {
+      "dedupeKey": "sid:1016539900",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 603,
+        "bookmarkId": "1674615256",
+        "sid": "1016539900",
+        "name": "스탠다드시스템",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3298272818",
+        "sid": "1016539900",
+        "name": "스탠다드시스템"
+      }
+    },
+    {
+      "dedupeKey": "sid:1264015439",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 169,
+        "bookmarkId": "4267572121",
+        "sid": "1264015439",
+        "name": "Small Batch Seoul",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3314480294",
+        "sid": "1264015439",
+        "name": "Small Batch Seoul"
+      }
+    },
+    {
+      "dedupeKey": "sid:1956591980",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 794,
+        "bookmarkId": "1453729650",
+        "sid": "1956591980",
+        "name": "우디집 로스터리",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3418037501",
+        "sid": "1956591980",
+        "name": "우디집 로스터리"
+      }
+    },
+    {
+      "dedupeKey": "sid:1182557051",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 113,
+        "bookmarkId": "4348809789",
+        "sid": "1182557051",
+        "name": "카페비온디앤",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3378645451",
+        "sid": "1182557051",
+        "name": "카페비온디앤"
+      }
+    },
+    {
+      "dedupeKey": "sid:1218140401",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 166,
+        "bookmarkId": "4280779876",
+        "sid": "1218140401",
+        "name": "벌새",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3270670216",
+        "sid": "1218140401",
+        "name": "벌새"
+      }
+    },
+    {
+      "dedupeKey": "sid:1393890643",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 249,
+        "bookmarkId": "3646118313",
+        "sid": "1393890643",
+        "name": "로우키",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3399025004",
+        "sid": "1393890643",
+        "name": "로우키"
+      }
+    },
+    {
+      "dedupeKey": "sid:1298504256",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 770,
+        "bookmarkId": "1461639094",
+        "sid": "1298504256",
+        "name": "파스텔커피웍스 서촌점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3410707740",
+        "sid": "1298504256",
+        "name": "파스텔커피웍스 서촌점"
+      }
+    },
+    {
+      "dedupeKey": "sid:33704135",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 215,
+        "bookmarkId": "3270207898",
+        "sid": "33704135",
+        "name": "피어커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3420485150",
+        "sid": "33704135",
+        "name": "피어커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1591185456",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 943,
+        "bookmarkId": "1179044518",
+        "sid": "1591185456",
+        "name": "시노라 서촌점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3417151823",
+        "sid": "1591185456",
+        "name": "시노라 서촌점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1595252522",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 209,
+        "bookmarkId": "3149874235",
+        "sid": "1595252522",
+        "name": "네츠 커피하우스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3410817297",
+        "sid": "1595252522",
+        "name": "네츠 커피하우스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1161403596",
+      "kept": {
+        "sourceFile": "Matjip3_122.json",
+        "pathName": "bookmarkList",
+        "index": 7,
+        "bookmarkId": "4291018239",
+        "sid": "1161403596",
+        "name": "포스톤즈 삼청점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3378648308",
+        "sid": "1161403596",
+        "name": "포스톤즈 삼청점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1226668619",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 683,
+        "bookmarkId": "1542706014",
+        "sid": "1226668619",
+        "name": "그린마일커피 북촌점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3420117300",
+        "sid": "1226668619",
+        "name": "그린마일커피 북촌점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1601148863",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 280,
+        "bookmarkId": "3052646382",
+        "sid": "1601148863",
+        "name": "무에",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3417224649",
+        "sid": "1601148863",
+        "name": "무에"
+      }
+    },
+    {
+      "dedupeKey": "sid:37459661",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 97,
+        "bookmarkId": "1132174878",
+        "sid": "37459661",
+        "name": "커피가게 디터틀",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3419171440",
+        "sid": "37459661",
+        "name": "커피가게 디터틀"
+      }
+    },
+    {
+      "dedupeKey": "sid:1299095472",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 96,
+        "bookmarkId": "1171058678",
+        "sid": "1299095472",
+        "name": "마띠에르",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3410851671",
+        "sid": "1299095472",
+        "name": "마띠에르"
+      }
+    },
+    {
+      "dedupeKey": "sid:1314013990",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 976,
+        "bookmarkId": "1160332346",
+        "sid": "1314013990",
+        "name": "사만 커피 로스터스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3412932370",
+        "sid": "1314013990",
+        "name": "사만 커피 로스터스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1270411547",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 108,
+        "bookmarkId": "4348814241",
+        "sid": "1270411547",
+        "name": "카페 시와",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "bookmarkId": "3420095616",
+        "sid": "1270411547",
+        "name": "카페 시와"
+      }
+    },
+    {
+      "dedupeKey": "sid:38419261",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 17,
+        "bookmarkId": "3927766457",
+        "sid": "38419261",
+        "name": "멘야산다이메 홍대본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "tangmo157.json",
+        "bookmarkId": "4377692795",
+        "sid": "38419261",
+        "name": "멘야산다이메 홍대본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1055967783",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 727,
+        "bookmarkId": "1517649265",
+        "sid": "1055967783",
+        "name": "시즈널테이블",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "tangmo157.json",
+        "bookmarkId": "3858552539",
+        "sid": "1055967783",
+        "name": "시즈널테이블"
+      }
+    },
+    {
+      "dedupeKey": "sid:21693586",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 523,
+        "bookmarkId": "1827376086",
+        "sid": "21693586",
+        "name": "미미면가 가로수길점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "tangmo157.json",
+        "bookmarkId": "3335118715",
+        "sid": "21693586",
+        "name": "미미면가 가로수길점"
+      }
+    },
+    {
+      "dedupeKey": "sid:31427681",
+      "kept": {
+        "sourceFile": "par51.json",
+        "pathName": "bookmarkList",
+        "index": 0,
+        "bookmarkId": "4368179243",
+        "sid": "31427681",
+        "name": "한남동 감자탕 본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "tangmo157.json",
+        "bookmarkId": "3300820158",
+        "sid": "31427681",
+        "name": "한남동 감자탕 본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:859857359",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 294,
+        "bookmarkId": "3014737875",
+        "sid": "859857359",
+        "name": "옥동식",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "tangmo157.json",
+        "bookmarkId": "3283104794",
+        "sid": "859857359",
+        "name": "옥동식"
+      }
+    },
+    {
+      "dedupeKey": "sid:20083721",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 61,
+        "bookmarkId": "3733949062",
+        "sid": "20083721",
+        "name": "타마",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "tangmo157.json",
+        "bookmarkId": "2861953478",
+        "sid": "20083721",
+        "name": "타마"
+      }
+    },
+    {
+      "dedupeKey": "sid:19774046",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 652,
+        "bookmarkId": "1581490743",
+        "sid": "19774046",
+        "name": "남영돈",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "tangmo157.json",
+        "bookmarkId": "2132959242",
+        "sid": "19774046",
+        "name": "남영돈"
+      }
+    },
+    {
+      "dedupeKey": "sid:1438943339",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 20,
+        "bookmarkId": "3917771736",
+        "sid": "1438943339",
+        "name": "온6.5",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "tangmo157.json",
+        "bookmarkId": "2132916333",
+        "sid": "1438943339",
+        "name": "온6.5"
+      }
+    },
+    {
+      "dedupeKey": "sid:1127729650",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 10,
+        "bookmarkId": "4044189842",
+        "sid": "1127729650",
+        "name": "익선취향",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "tangmo157.json",
+        "bookmarkId": "2132647117",
+        "sid": "1127729650",
+        "name": "익선취향"
+      }
+    },
+    {
+      "dedupeKey": "sid:1553249208",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 394,
+        "bookmarkId": "2491290148",
+        "sid": "1553249208",
+        "name": "에어드랍 커피 성수",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "4328805871",
+        "sid": "1553249208",
+        "name": "에어드랍 커피 성수"
+      }
+    },
+    {
+      "dedupeKey": "sid:1317049468",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 284,
+        "bookmarkId": "3030457044",
+        "sid": "1317049468",
+        "name": "나이스워크투데이",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "4328719816",
+        "sid": "1317049468",
+        "name": "나이스워크투데이"
+      }
+    },
+    {
+      "dedupeKey": "sid:1284217737",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 64,
+        "bookmarkId": "1430433127",
+        "sid": "1284217737",
+        "name": "가배도 시청점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "4328541527",
+        "sid": "1284217737",
+        "name": "가배도 시청점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1583637751",
+      "kept": {
+        "sourceFile": "Matjip2_145.json",
+        "pathName": "bookmarkList",
+        "index": 8,
+        "bookmarkId": "3881300798",
+        "sid": "1583637751",
+        "name": "잠시",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "4231315176",
+        "sid": "1583637751",
+        "name": "잠시"
+      }
+    },
+    {
+      "dedupeKey": "sid:1056542006",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 168,
+        "bookmarkId": "3698281803",
+        "sid": "1056542006",
+        "name": "담솥 성수점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "2913749870",
+        "sid": "1056542006",
+        "name": "담솥 성수점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1422409433",
+      "kept": {
+        "sourceFile": "Matjip2_145.json",
+        "pathName": "bookmarkList",
+        "index": 29,
+        "bookmarkId": "4252300173",
+        "sid": "1422409433",
+        "name": "용산토리",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "2771838837",
+        "sid": "1422409433",
+        "name": "용산토리"
+      }
+    },
+    {
+      "dedupeKey": "sid:1335290092",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 414,
+        "bookmarkId": "2390678670",
+        "sid": "1335290092",
+        "name": "이도림 세종대왕 생가터 서촌 경복궁 본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "2688418927",
+        "sid": "1335290092",
+        "name": "이도림 세종대왕 생가터 서촌 경복궁 본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1463420376",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 821,
+        "bookmarkId": "1434450682",
+        "sid": "1463420376",
+        "name": "여기인가",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "2688414717",
+        "sid": "1463420376",
+        "name": "여기인가"
+      }
+    },
+    {
+      "dedupeKey": "sid:944106926",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 881,
+        "bookmarkId": "1374603497",
+        "sid": "944106926",
+        "name": "스펙터",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "2688305420",
+        "sid": "944106926",
+        "name": "스펙터"
+      }
+    },
+    {
+      "dedupeKey": "sid:1617315736",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 156,
+        "bookmarkId": "2108952590",
+        "sid": "1617315736",
+        "name": "내자상회",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "2688308976",
+        "sid": "1617315736",
+        "name": "내자상회"
+      }
+    },
+    {
+      "dedupeKey": "sid:1949418442",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 74,
+        "bookmarkId": "1122273125",
+        "sid": "1949418442",
+        "name": "베란다",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "2688352802",
+        "sid": "1949418442",
+        "name": "베란다"
+      }
+    },
+    {
+      "dedupeKey": "sid:1472283292",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 947,
+        "bookmarkId": "1169573352",
+        "sid": "1472283292",
+        "name": "카페폭포",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "2108193857",
+        "sid": "1472283292",
+        "name": "카페폭포"
+      }
+    },
+    {
+      "dedupeKey": "sid:1032580297",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 211,
+        "bookmarkId": "3238237466",
+        "sid": "1032580297",
+        "name": "프로토콜 연희점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "1584367291",
+        "sid": "1032580297",
+        "name": "프로토콜 연희점"
+      }
+    },
+    {
+      "dedupeKey": "sid:31238106",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 818,
+        "bookmarkId": "1434737156",
+        "sid": "31238106",
+        "name": "1984",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "1584331270",
+        "sid": "31238106",
+        "name": "1984"
+      }
+    },
+    {
+      "dedupeKey": "sid:1175794841",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 849,
+        "bookmarkId": "1412390771",
+        "sid": "1175794841",
+        "name": "투아투아",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk_cafes72.json",
+        "bookmarkId": "1410412526",
+        "sid": "1175794841",
+        "name": "투아투아"
+      }
+    },
+    {
+      "dedupeKey": "sid:13299765",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 52,
+        "bookmarkId": "3864203172",
+        "sid": "13299765",
+        "name": "낙산공원",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk45.json",
+        "bookmarkId": "2230524753",
+        "sid": "13299765",
+        "name": "낙산공원"
+      }
+    },
+    {
+      "dedupeKey": "sid:1867194239",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 803,
+        "bookmarkId": "1452822451",
+        "sid": "1867194239",
+        "name": "그래픽",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk45.json",
+        "bookmarkId": "1456079913",
+        "sid": "1867194239",
+        "name": "그래픽"
+      }
+    },
+    {
+      "dedupeKey": "sid:18654445",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 804,
+        "bookmarkId": "1452609543",
+        "sid": "18654445",
+        "name": "서울시립 북서울미술관",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "uk45.json",
+        "bookmarkId": "1393930090",
+        "sid": "18654445",
+        "name": "서울시립 북서울미술관"
+      }
+    },
+    {
+      "dedupeKey": "sid:13557627",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 223,
+        "bookmarkId": "3395306480",
+        "sid": "13557627",
+        "name": "부암동 제비꽃다방",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4421535484",
+        "sid": "13557627",
+        "name": "부암동 제비꽃다방"
+      }
+    },
+    {
+      "dedupeKey": "sid:1570876164",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 169,
+        "bookmarkId": "3412097102",
+        "sid": "1570876164",
+        "name": "브루잉 룸 무제",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4307398306",
+        "sid": "1570876164",
+        "name": "브루잉 룸 무제"
+      }
+    },
+    {
+      "dedupeKey": "sid:11669737",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 154,
+        "bookmarkId": "3418025506",
+        "sid": "11669737",
+        "name": "주빈커피 여의도본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4301607868",
+        "sid": "11669737",
+        "name": "주빈커피 여의도본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1562125904",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 270,
+        "bookmarkId": "3697665154",
+        "sid": "1562125904",
+        "name": "모센트 용산점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4301605926",
+        "sid": "1562125904",
+        "name": "모센트 용산점"
+      }
+    },
+    {
+      "dedupeKey": "sid:32227337",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 141,
+        "bookmarkId": "1139559638",
+        "sid": "32227337",
+        "name": "페니힐스 커피스테이션",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4301303248",
+        "sid": "32227337",
+        "name": "페니힐스 커피스테이션"
+      }
+    },
+    {
+      "dedupeKey": "sid:1227150335",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 98,
+        "bookmarkId": "3425621088",
+        "sid": "1227150335",
+        "name": "라플루마앤보헤미안",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4301012254",
+        "sid": "1227150335",
+        "name": "라플루마앤보헤미안"
+      }
+    },
+    {
+      "dedupeKey": "sid:11600790",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 19,
+        "bookmarkId": "3917776299",
+        "sid": "11600790",
+        "name": "비원떡집",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4291398147",
+        "sid": "11600790",
+        "name": "비원떡집"
+      }
+    },
+    {
+      "dedupeKey": "sid:1497570402",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 686,
+        "bookmarkId": "1537842054",
+        "sid": "1497570402",
+        "name": "오잇",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4282081862",
+        "sid": "1497570402",
+        "name": "오잇"
+      }
+    },
+    {
+      "dedupeKey": "sid:1423840878",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 206,
+        "bookmarkId": "4223757315",
+        "sid": "1423840878",
+        "name": "루리커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4278866412",
+        "sid": "1423840878",
+        "name": "루리커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1614953667",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 217,
+        "bookmarkId": "3327634529",
+        "sid": "1614953667",
+        "name": "빠니드 엠 무니",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4275016522",
+        "sid": "1614953667",
+        "name": "빠니드 엠 무니"
+      }
+    },
+    {
+      "dedupeKey": "sid:1756441572",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 7,
+        "bookmarkId": "1127096735",
+        "sid": "1756441572",
+        "name": "북앤레스트",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4253227925",
+        "sid": "1756441572",
+        "name": "북앤레스트"
+      }
+    },
+    {
+      "dedupeKey": "sid:1445845015",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 441,
+        "bookmarkId": "2331750256",
+        "sid": "1445845015",
+        "name": "카페 오쁘띠베르",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4212889032",
+        "sid": "1445845015",
+        "name": "카페 오쁘띠베르"
+      }
+    },
+    {
+      "dedupeKey": "sid:944106926",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 881,
+        "bookmarkId": "1374603497",
+        "sid": "944106926",
+        "name": "스펙터",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4209877151",
+        "sid": "944106926",
+        "name": "스펙터"
+      }
+    },
+    {
+      "dedupeKey": "sid:1217018468",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 445,
+        "bookmarkId": "2322814873",
+        "sid": "1217018468",
+        "name": "카키문 누하",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4209869421",
+        "sid": "1217018468",
+        "name": "카키문 누하"
+      }
+    },
+    {
+      "dedupeKey": "sid:1403529244",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 103,
+        "bookmarkId": "4354126661",
+        "sid": "1403529244",
+        "name": "알렉산더 커피 스튜디오",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4164714616",
+        "sid": "1403529244",
+        "name": "알렉산더 커피 스튜디오"
+      }
+    },
+    {
+      "dedupeKey": "sid:2051980514",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 200,
+        "bookmarkId": "4248356509",
+        "sid": "2051980514",
+        "name": "올웨이즈어거스트로스터리",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4143535053",
+        "sid": "2051980514",
+        "name": "올웨이즈어거스트로스터리"
+      }
+    },
+    {
+      "dedupeKey": "sid:1114089423",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 185,
+        "bookmarkId": "1003241224",
+        "sid": "1114089423",
+        "name": "헬무트커피로스터스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4134747872",
+        "sid": "1114089423",
+        "name": "헬무트커피로스터스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1340948037",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 144,
+        "bookmarkId": "3412341232",
+        "sid": "1340948037",
+        "name": "리프레셔스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4134746891",
+        "sid": "1340948037",
+        "name": "리프레셔스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1227938732",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 107,
+        "bookmarkId": "3506839848",
+        "sid": "1227938732",
+        "name": "커피볶는여자 샤로수길본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4125991988",
+        "sid": "1227938732",
+        "name": "커피볶는여자 샤로수길본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:13509098",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 168,
+        "bookmarkId": "3414285654",
+        "sid": "13509098",
+        "name": "피피커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4123205626",
+        "sid": "13509098",
+        "name": "피피커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1563389963",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 121,
+        "bookmarkId": "3025067645",
+        "sid": "1563389963",
+        "name": "미엘케이커리",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4091949811",
+        "sid": "1563389963",
+        "name": "미엘케이커리"
+      }
+    },
+    {
+      "dedupeKey": "sid:1871678930",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 295,
+        "bookmarkId": "3270668412",
+        "sid": "1871678930",
+        "name": "래디컬브루잉클럽",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4080201592",
+        "sid": "1871678930",
+        "name": "래디컬브루잉클럽"
+      }
+    },
+    {
+      "dedupeKey": "sid:1856863622",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 196,
+        "bookmarkId": "1570942066",
+        "sid": "1856863622",
+        "name": "오우아",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3922642559",
+        "sid": "1856863622",
+        "name": "오우아"
+      }
+    },
+    {
+      "dedupeKey": "sid:1138558264",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 12,
+        "bookmarkId": "3298151360",
+        "sid": "1138558264",
+        "name": "라운드서클",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3908157279",
+        "sid": "1138558264",
+        "name": "라운드서클"
+      }
+    },
+    {
+      "dedupeKey": "sid:1111096673",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 695,
+        "bookmarkId": "1532480910",
+        "sid": "1111096673",
+        "name": "카페2.7",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3908154229",
+        "sid": "1111096673",
+        "name": "카페2.7"
+      }
+    },
+    {
+      "dedupeKey": "sid:1306412205",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 893,
+        "bookmarkId": "1315258990",
+        "sid": "1306412205",
+        "name": "리프커피바",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3908124876",
+        "sid": "1306412205",
+        "name": "리프커피바"
+      }
+    },
+    {
+      "dedupeKey": "sid:1398158372",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 26,
+        "bookmarkId": "3529019049",
+        "sid": "1398158372",
+        "name": "푸가 커피 로스터스 장미상가점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3908124295",
+        "sid": "1398158372",
+        "name": "푸가 커피 로스터스 장미상가점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1001964327",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 88,
+        "bookmarkId": "3439857621",
+        "sid": "1001964327",
+        "name": "콘티뉴이티 을지로",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3886897018",
+        "sid": "1001964327",
+        "name": "콘티뉴이티"
+      }
+    },
+    {
+      "dedupeKey": "sid:1136858722",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 3,
+        "bookmarkId": "4426690188",
+        "sid": "1136858722",
+        "name": "고양이 카페 모카 강남점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3881299558",
+        "sid": "1136858722",
+        "name": "고양이 카페 모카 강남점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1222673011",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 768,
+        "bookmarkId": "1468378195",
+        "sid": "1222673011",
+        "name": "트윈브릿지",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3876937847",
+        "sid": "1222673011",
+        "name": "트윈브릿지"
+      }
+    },
+    {
+      "dedupeKey": "sid:1567557109",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 165,
+        "bookmarkId": "3412052778",
+        "sid": "1567557109",
+        "name": "루베르로스터리",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3876624320",
+        "sid": "1567557109",
+        "name": "루베르로스터리"
+      }
+    },
+    {
+      "dedupeKey": "sid:1331394979",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 303,
+        "bookmarkId": "3787994703",
+        "sid": "1331394979",
+        "name": "애락",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "3838391174",
+        "sid": "1331394979",
+        "name": "애락"
+      }
+    },
+    {
+      "dedupeKey": "sid:1591374273",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 160,
+        "bookmarkId": "4287599964",
+        "sid": "1591374273",
+        "name": "리플렉트커피 로스팅 랩",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4377992862",
+        "sid": "1591374273",
+        "name": "리플렉트커피 로스팅 랩"
+      }
+    },
+    {
+      "dedupeKey": "sid:1956497986",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 710,
+        "bookmarkId": "1531330250",
+        "sid": "1956497986",
+        "name": "카페타자기",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4309620665",
+        "sid": "1956497986",
+        "name": "카페타자기"
+      }
+    },
+    {
+      "dedupeKey": "sid:1256201853",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 203,
+        "bookmarkId": "2413647447",
+        "sid": "1256201853",
+        "name": "앨리스프로젝트",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4329078050",
+        "sid": "1256201853",
+        "name": "앨리스프로젝트"
+      }
+    },
+    {
+      "dedupeKey": "sid:1769814833",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 202,
+        "bookmarkId": "4236280833",
+        "sid": "1769814833",
+        "name": "크레미엘",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4329078234",
+        "sid": "1769814833",
+        "name": "크레미엘"
+      }
+    },
+    {
+      "dedupeKey": "sid:1250194088",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 626,
+        "bookmarkId": "1640058648",
+        "sid": "1250194088",
+        "name": "밀스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago_cafe129.json",
+        "bookmarkId": "4359109912",
+        "sid": "1250194088",
+        "name": "밀스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1959742624",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 111,
+        "bookmarkId": "3506818064",
+        "sid": "1959742624",
+        "name": "정숙성 샤로수길점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4426914065",
+        "sid": "1959742624",
+        "name": "정숙성 샤로수길점"
+      }
+    },
+    {
+      "dedupeKey": "sid:21259234",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 663,
+        "bookmarkId": "1571866639",
+        "sid": "21259234",
+        "name": "미우야",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4329077892",
+        "sid": "21259234",
+        "name": "미우야"
+      }
+    },
+    {
+      "dedupeKey": "sid:21407004",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 106,
+        "bookmarkId": "3910691420",
+        "sid": "21407004",
+        "name": "cuisson82",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4329077366",
+        "sid": "21407004",
+        "name": "cuisson82"
+      }
+    },
+    {
+      "dedupeKey": "sid:1512958353",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 729,
+        "bookmarkId": "1517644132",
+        "sid": "1512958353",
+        "name": "데칼코마니",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4309616724",
+        "sid": "1512958353",
+        "name": "데칼코마니"
+      }
+    },
+    {
+      "dedupeKey": "sid:11569605",
+      "kept": {
+        "sourceFile": "tangmo157.json",
+        "pathName": "bookmarkList",
+        "index": 133,
+        "bookmarkId": "2132575634",
+        "sid": "11569605",
+        "name": "삼청동수제비",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4291007649",
+        "sid": "11569605",
+        "name": "삼청동수제비"
+      }
+    },
+    {
+      "dedupeKey": "sid:1530398271",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 597,
+        "bookmarkId": "1683315943",
+        "sid": "1530398271",
+        "name": "어글라스오브",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4282079857",
+        "sid": "1530398271",
+        "name": "어글라스오브"
+      }
+    },
+    {
+      "dedupeKey": "sid:1565282758",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 741,
+        "bookmarkId": "1504971469",
+        "sid": "1565282758",
+        "name": "미미옥 신용산점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4251524037",
+        "sid": "1565282758",
+        "name": "미미옥 신용산점"
+      }
+    },
+    {
+      "dedupeKey": "sid:954741961",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 826,
+        "bookmarkId": "1428806451",
+        "sid": "954741961",
+        "name": "오무사",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4209991259",
+        "sid": "954741961",
+        "name": "오무사"
+      }
+    },
+    {
+      "dedupeKey": "sid:1677615804",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 132,
+        "bookmarkId": "2583994168",
+        "sid": "1677615804",
+        "name": "도토리브라더스 광화문본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4209946954",
+        "sid": "1677615804",
+        "name": "도토리브라더스 광화문본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1540304888",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 802,
+        "bookmarkId": "1453169342",
+        "sid": "1540304888",
+        "name": "소금집델리 안국",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4209921547",
+        "sid": "1540304888",
+        "name": "소금집델리 안국"
+      }
+    },
+    {
+      "dedupeKey": "sid:1245369400",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 572,
+        "bookmarkId": "1706726935",
+        "sid": "1245369400",
+        "name": "BAR CHAM",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4207570926",
+        "sid": "1245369400",
+        "name": "BAR CHAM"
+      }
+    },
+    {
+      "dedupeKey": "sid:13017157",
+      "kept": {
+        "sourceFile": "tangmo157.json",
+        "pathName": "bookmarkList",
+        "index": 70,
+        "bookmarkId": "2862036298",
+        "sid": "13017157",
+        "name": "또순이네집",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4168001371",
+        "sid": "13017157",
+        "name": "또순이네집"
+      }
+    },
+    {
+      "dedupeKey": "sid:1526151711",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 34,
+        "bookmarkId": "1571931886",
+        "sid": "1526151711",
+        "name": "북쌔즈",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4164715565",
+        "sid": "1526151711",
+        "name": "북쌔즈"
+      }
+    },
+    {
+      "dedupeKey": "sid:1085239656",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 41,
+        "bookmarkId": "3877351609",
+        "sid": "1085239656",
+        "name": "텟어텟 선릉",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4164713903",
+        "sid": "1085239656",
+        "name": "텟어텟 선릉"
+      }
+    },
+    {
+      "dedupeKey": "sid:1157778696",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 151,
+        "bookmarkId": "3728482536",
+        "sid": "1157778696",
+        "name": "네모집 청담점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4144596104",
+        "sid": "1157778696",
+        "name": "네모집 청담점"
+      }
+    },
+    {
+      "dedupeKey": "sid:859857359",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 294,
+        "bookmarkId": "3014737875",
+        "sid": "859857359",
+        "name": "옥동식",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "4030580828",
+        "sid": "859857359",
+        "name": "옥동식"
+      }
+    },
+    {
+      "dedupeKey": "sid:1648407120",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 74,
+        "bookmarkId": "3996222553",
+        "sid": "1648407120",
+        "name": "시오",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3909031816",
+        "sid": "1648407120",
+        "name": "시오"
+      }
+    },
+    {
+      "dedupeKey": "sid:1312075789",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 285,
+        "bookmarkId": "3025757633",
+        "sid": "1312075789",
+        "name": "말방국밥 성수본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3882596420",
+        "sid": "1312075789",
+        "name": "말방국밥 성수본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1353954221",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 578,
+        "bookmarkId": "1695001641",
+        "sid": "1353954221",
+        "name": "한정선",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3827573533",
+        "sid": "1353954221",
+        "name": "한정선"
+      }
+    },
+    {
+      "dedupeKey": "sid:2056418833",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 273,
+        "bookmarkId": "3698283189",
+        "sid": "2056418833",
+        "name": "할리아사이",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3818270971",
+        "sid": "2056418833",
+        "name": "할리아사이"
+      }
+    },
+    {
+      "dedupeKey": "sid:1393890643",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 249,
+        "bookmarkId": "3646118313",
+        "sid": "1393890643",
+        "name": "로우키",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3818270451",
+        "sid": "1393890643",
+        "name": "로우키"
+      }
+    },
+    {
+      "dedupeKey": "sid:1363401039",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 554,
+        "bookmarkId": "1732374615",
+        "sid": "1363401039",
+        "name": "프렌즈앤야드",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3818269447",
+        "sid": "1363401039",
+        "name": "프렌즈앤야드"
+      }
+    },
+    {
+      "dedupeKey": "sid:1965277191",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 8,
+        "bookmarkId": "808990406",
+        "sid": "1965277191",
+        "name": "테니",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3818268027",
+        "sid": "1965277191",
+        "name": "테니"
+      }
+    },
+    {
+      "dedupeKey": "sid:742676592",
+      "kept": {
+        "sourceFile": "par51.json",
+        "pathName": "bookmarkList",
+        "index": 27,
+        "bookmarkId": "3044172846",
+        "sid": "742676592",
+        "name": "마를리",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3801535493",
+        "sid": "742676592",
+        "name": "마를리"
+      }
+    },
+    {
+      "dedupeKey": "sid:1520825852",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 47,
+        "bookmarkId": "3865333587",
+        "sid": "1520825852",
+        "name": "시스스시 송리단길점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3801526440",
+        "sid": "1520825852",
+        "name": "시스스시 송리단길점"
+      }
+    },
+    {
+      "dedupeKey": "sid:19872942",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 907,
+        "bookmarkId": "1258755681",
+        "sid": "19872942",
+        "name": "크로스비",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3794256038",
+        "sid": "19872942",
+        "name": "크로스비"
+      }
+    },
+    {
+      "dedupeKey": "sid:193024519",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 164,
+        "bookmarkId": "3708936639",
+        "sid": "193024519",
+        "name": "해목 해운대점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3792507611",
+        "sid": "193024519",
+        "name": "해목 해운대점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1178236604",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 153,
+        "bookmarkId": "2235205788",
+        "sid": "1178236604",
+        "name": "크레마노 교대직영점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3784570696",
+        "sid": "1178236604",
+        "name": "크레마노 교대직영점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1616346596",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 861,
+        "bookmarkId": "1383073431",
+        "sid": "1616346596",
+        "name": "진저베어",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3755877135",
+        "sid": "1616346596",
+        "name": "진저베어"
+      }
+    },
+    {
+      "dedupeKey": "sid:1185485198",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 9,
+        "bookmarkId": "3416897155",
+        "sid": "1185485198",
+        "name": "로스터리카페 큐큐큐큐",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3721432823",
+        "sid": "1185485198",
+        "name": "큐큐큐큐"
+      }
+    },
+    {
+      "dedupeKey": "sid:1731558840",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 91,
+        "bookmarkId": "3433034539",
+        "sid": "1731558840",
+        "name": "마주이",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3721430765",
+        "sid": "1731558840",
+        "name": "마주이"
+      }
+    },
+    {
+      "dedupeKey": "sid:1057225152",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 174,
+        "bookmarkId": "3697390968",
+        "sid": "1057225152",
+        "name": "세스크멘슬",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3691835989",
+        "sid": "1057225152",
+        "name": "세스크멘슬"
+      }
+    },
+    {
+      "dedupeKey": "sid:1229610281",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 498,
+        "bookmarkId": "2021250577",
+        "sid": "1229610281",
+        "name": "오스테리아 오르조",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3658124854",
+        "sid": "1229610281",
+        "name": "오스테리아 오르조"
+      }
+    },
+    {
+      "dedupeKey": "sid:1890747832",
+      "kept": {
+        "sourceFile": "tangmo157.json",
+        "pathName": "bookmarkList",
+        "index": 62,
+        "bookmarkId": "3283053139",
+        "sid": "1890747832",
+        "name": "제주옥탑 블랙BBQ",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3658119807",
+        "sid": "1890747832",
+        "name": "제주옥탑 블랙BBQ"
+      }
+    },
+    {
+      "dedupeKey": "sid:1569479203",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 124,
+        "bookmarkId": "3788002214",
+        "sid": "1569479203",
+        "name": "하오카오스탠 신당점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3638119156",
+        "sid": "1569479203",
+        "name": "하오카오스탠"
+      }
+    },
+    {
+      "dedupeKey": "sid:1154437933",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 237,
+        "bookmarkId": "3263668818",
+        "sid": "1154437933",
+        "name": "오밀 성수",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3638100242",
+        "sid": "1154437933",
+        "name": "오밀 성수"
+      }
+    },
+    {
+      "dedupeKey": "sid:1559452716",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 693,
+        "bookmarkId": "1534878666",
+        "sid": "1559452716",
+        "name": "녘",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3634185685",
+        "sid": "1559452716",
+        "name": "녘"
+      }
+    },
+    {
+      "dedupeKey": "sid:1497299219",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 566,
+        "bookmarkId": "1721861901",
+        "sid": "1497299219",
+        "name": "빌라드블루 해방촌",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3632442828",
+        "sid": "1497299219",
+        "name": "빌라드블루"
+      }
+    },
+    {
+      "dedupeKey": "sid:1785279179",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 421,
+        "bookmarkId": "2384688395",
+        "sid": "1785279179",
+        "name": "고토커피바",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3631146963",
+        "sid": "1785279179",
+        "name": "고토커피바"
+      }
+    },
+    {
+      "dedupeKey": "sid:2022683389",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 233,
+        "bookmarkId": "3554125875",
+        "sid": "2022683389",
+        "name": "리와인드 서울",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3621662267",
+        "sid": "2022683389",
+        "name": "리와인드 서울"
+      }
+    },
+    {
+      "dedupeKey": "sid:1039751210",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 222,
+        "bookmarkId": "3395300104",
+        "sid": "1039751210",
+        "name": "뤼도 발루즈",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3621661600",
+        "sid": "1039751210",
+        "name": "빠말"
+      }
+    },
+    {
+      "dedupeKey": "sid:31427681",
+      "kept": {
+        "sourceFile": "par51.json",
+        "pathName": "bookmarkList",
+        "index": 0,
+        "bookmarkId": "4368179243",
+        "sid": "31427681",
+        "name": "한남동 감자탕 본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3598862745",
+        "sid": "31427681",
+        "name": "한남동 감자탕 본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1084312804",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 42,
+        "bookmarkId": "4401498961",
+        "sid": "1084312804",
+        "name": "결",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3598710663",
+        "sid": "1084312804",
+        "name": "결"
+      }
+    },
+    {
+      "dedupeKey": "sid:1452804697",
+      "kept": {
+        "sourceFile": "uk_cafes72.json",
+        "pathName": "bookmarkList",
+        "index": 7,
+        "bookmarkId": "4328506566",
+        "sid": "1452804697",
+        "name": "프로토콜 상수점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3573360371",
+        "sid": "1452804697",
+        "name": "프로토콜 상수점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1946521861",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 50,
+        "bookmarkId": "3479251472",
+        "sid": "1946521861",
+        "name": "도덕과 규범",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3573359374",
+        "sid": "1946521861",
+        "name": "도덕과 규범"
+      }
+    },
+    {
+      "dedupeKey": "sid:1491796992",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 338,
+        "bookmarkId": "3971635752",
+        "sid": "1491796992",
+        "name": "재해석 석촌점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3562572163",
+        "sid": "1491796992",
+        "name": "재해석 석촌점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1036043935",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 166,
+        "bookmarkId": "3699888057",
+        "sid": "1036043935",
+        "name": "능동미나리 신용산점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3544352017",
+        "sid": "1036043935",
+        "name": "능동미나리신용산점"
+      }
+    },
+    {
+      "dedupeKey": "sid:30847072",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 118,
+        "bookmarkId": "1461639472",
+        "sid": "30847072",
+        "name": "파스텔커피웍스 본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3535717306",
+        "sid": "30847072",
+        "name": "파스텔커피웍스 본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:715782489",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 270,
+        "bookmarkId": "3240835464",
+        "sid": "715782489",
+        "name": "프릳츠 원서점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3528907465",
+        "sid": "715782489",
+        "name": "프릳츠 원서점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1466975947",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 73,
+        "bookmarkId": "3693231448",
+        "sid": "1466975947",
+        "name": "런던베이글뮤지엄 안국",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3527422813",
+        "sid": "1466975947",
+        "name": "런던베이글뮤지엄 안국점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1106088306",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 509,
+        "bookmarkId": "1867160820",
+        "sid": "1106088306",
+        "name": "스모어 마켓",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3524991014",
+        "sid": "1106088306",
+        "name": "스모어 마켓"
+      }
+    },
+    {
+      "dedupeKey": "sid:1063364661",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 949,
+        "bookmarkId": "1168091679",
+        "sid": "1063364661",
+        "name": "뮤직컴플렉스서울 안녕인사동점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3524989787",
+        "sid": "1063364661",
+        "name": "뮤직컴플렉스서울 안녕인사동점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1522011807",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 543,
+        "bookmarkId": "1750878478",
+        "sid": "1522011807",
+        "name": "아모르나폴리 안국점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3524901408",
+        "sid": "1522011807",
+        "name": "아모르나폴리 안국점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1548919079",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 753,
+        "bookmarkId": "1488501880",
+        "sid": "1548919079",
+        "name": "토터스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3455385195",
+        "sid": "1548919079",
+        "name": "토터스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1812600941",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 132,
+        "bookmarkId": "1443629219",
+        "sid": "1812600941",
+        "name": "트래버틴 용산",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3436097902",
+        "sid": "1812600941",
+        "name": "트래버틴"
+      }
+    },
+    {
+      "dedupeKey": "sid:20083721",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 61,
+        "bookmarkId": "3733949062",
+        "sid": "20083721",
+        "name": "타마",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3432050037",
+        "sid": "20083721",
+        "name": "타마"
+      }
+    },
+    {
+      "dedupeKey": "sid:1555006224",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 564,
+        "bookmarkId": "1722058670",
+        "sid": "1555006224",
+        "name": "노이이탈리안하우스",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3409222239",
+        "sid": "1555006224",
+        "name": "노이이탈리안하우스"
+      }
+    },
+    {
+      "dedupeKey": "sid:1691071399",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 201,
+        "bookmarkId": "3593207529",
+        "sid": "1691071399",
+        "name": "소바하우스멘야준 연남점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3409221174",
+        "sid": "1691071399",
+        "name": "소바하우스멘야준 연남점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1405820627",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 151,
+        "bookmarkId": "3410971925",
+        "sid": "1405820627",
+        "name": "룰커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3406010846",
+        "sid": "1405820627",
+        "name": "룰커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1407848569",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 126,
+        "bookmarkId": "1490316855",
+        "sid": "1407848569",
+        "name": "티노마드",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3404732163",
+        "sid": "1407848569",
+        "name": "티노마드"
+      }
+    },
+    {
+      "dedupeKey": "sid:1940745568",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 274,
+        "bookmarkId": "3270669150",
+        "sid": "1940745568",
+        "name": "TXT Coffee",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3398124580",
+        "sid": "1940745568",
+        "name": "TXT Coffee"
+      }
+    },
+    {
+      "dedupeKey": "sid:1601148863",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 280,
+        "bookmarkId": "3052646382",
+        "sid": "1601148863",
+        "name": "무에",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3398112220",
+        "sid": "1601148863",
+        "name": "무에"
+      }
+    },
+    {
+      "dedupeKey": "sid:1583665464",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 267,
+        "bookmarkId": "3378649039",
+        "sid": "1583665464",
+        "name": "톤티커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3398110292",
+        "sid": "1583665464",
+        "name": "톤티커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:34250671",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 493,
+        "bookmarkId": "2051588351",
+        "sid": "34250671",
+        "name": "메종 루블랑",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3374326792",
+        "sid": "34250671",
+        "name": "메종 루블랑 용산본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1114983459",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 404,
+        "bookmarkId": "2413666640",
+        "sid": "1114983459",
+        "name": "먼치",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3374326282",
+        "sid": "1114983459",
+        "name": "먼치"
+      }
+    },
+    {
+      "dedupeKey": "sid:1257242237",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 33,
+        "bookmarkId": "3907613189",
+        "sid": "1257242237",
+        "name": "스테이564",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3339755819",
+        "sid": "1257242237",
+        "name": "스테이564"
+      }
+    },
+    {
+      "dedupeKey": "sid:1235366386",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 756,
+        "bookmarkId": "1484938608",
+        "sid": "1235366386",
+        "name": "스시야스다",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3327763071",
+        "sid": "1235366386",
+        "name": "스시야스다"
+      }
+    },
+    {
+      "dedupeKey": "sid:1042246083",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 115,
+        "bookmarkId": "3320143063",
+        "sid": "1042246083",
+        "name": "안지",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3323763395",
+        "sid": "1042246083",
+        "name": "안지"
+      }
+    },
+    {
+      "dedupeKey": "sid:1343817491",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 719,
+        "bookmarkId": "1529222788",
+        "sid": "1343817491",
+        "name": "머큐리에스프레소바",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3323762759",
+        "sid": "1343817491",
+        "name": "머큐리에스프레소바"
+      }
+    },
+    {
+      "dedupeKey": "sid:1187699977",
+      "kept": {
+        "sourceFile": "diana95_bakery,brunch.json",
+        "pathName": "bookmarkList",
+        "index": 21,
+        "bookmarkId": "2265195220",
+        "sid": "1187699977",
+        "name": "베이비펌킨",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3323754742",
+        "sid": "1187699977",
+        "name": "베이비펌킨"
+      }
+    },
+    {
+      "dedupeKey": "sid:1293104902",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 16,
+        "bookmarkId": "4398788432",
+        "sid": "1293104902",
+        "name": "금야면옥",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3308943093",
+        "sid": "1293104902",
+        "name": "금야면옥"
+      }
+    },
+    {
+      "dedupeKey": "sid:1257710414",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 283,
+        "bookmarkId": "3038602138",
+        "sid": "1257710414",
+        "name": "페코리노",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3289132807",
+        "sid": "1257710414",
+        "name": "페코리노"
+      }
+    },
+    {
+      "dedupeKey": "sid:31905764",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 103,
+        "bookmarkId": "3423083872",
+        "sid": "31905764",
+        "name": "커피몽타주",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3141518346",
+        "sid": "31905764",
+        "name": "커피몽타주"
+      }
+    },
+    {
+      "dedupeKey": "sid:1440720607",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 273,
+        "bookmarkId": "3086263705",
+        "sid": "1440720607",
+        "name": "VIEW376",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3114265191",
+        "sid": "1440720607",
+        "name": "VIEW376"
+      }
+    },
+    {
+      "dedupeKey": "sid:1556061581",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 175,
+        "bookmarkId": "1426697634",
+        "sid": "1556061581",
+        "name": "피즈소셜클럽 을지로",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3114264962",
+        "sid": "1556061581",
+        "name": "피즈소셜클럽"
+      }
+    },
+    {
+      "dedupeKey": "sid:1317049468",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 284,
+        "bookmarkId": "3030457044",
+        "sid": "1317049468",
+        "name": "나이스워크투데이",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3072021587",
+        "sid": "1317049468",
+        "name": "나이스워크투데이"
+      }
+    },
+    {
+      "dedupeKey": "sid:1074657894",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 6,
+        "bookmarkId": "1542704872",
+        "sid": "1074657894",
+        "name": "키헤이커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3071444030",
+        "sid": "1074657894",
+        "name": "키헤이커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1410050359",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 175,
+        "bookmarkId": "3396377694",
+        "sid": "1410050359",
+        "name": "선호커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3071432616",
+        "sid": "1410050359",
+        "name": "선호커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1056803592",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 112,
+        "bookmarkId": "3856426647",
+        "sid": "1056803592",
+        "name": "심야식당테이",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3068156155",
+        "sid": "1056803592",
+        "name": "심야식당테이"
+      }
+    },
+    {
+      "dedupeKey": "sid:1299095472",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 96,
+        "bookmarkId": "1171058678",
+        "sid": "1299095472",
+        "name": "마띠에르",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3038333179",
+        "sid": "1299095472",
+        "name": "마띠에르 bakery & roastery"
+      }
+    },
+    {
+      "dedupeKey": "sid:1158294547",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 18,
+        "bookmarkId": "3533595558",
+        "sid": "1158294547",
+        "name": "아이덴티티커피랩",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3038147241",
+        "sid": "1158294547",
+        "name": "아이덴티티커피랩"
+      }
+    },
+    {
+      "dedupeKey": "sid:1839696543",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 776,
+        "bookmarkId": "1461419510",
+        "sid": "1839696543",
+        "name": "일월일일",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3037991435",
+        "sid": "1839696543",
+        "name": "일월일일"
+      }
+    },
+    {
+      "dedupeKey": "sid:1653733782",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 90,
+        "bookmarkId": "3068447255",
+        "sid": "1653733782",
+        "name": "파티오33",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3037990626",
+        "sid": "1653733782",
+        "name": "파티오33"
+      }
+    },
+    {
+      "dedupeKey": "sid:1241138461",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 99,
+        "bookmarkId": "1533735722",
+        "sid": "1241138461",
+        "name": "카페랑솜",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3037990042",
+        "sid": "1241138461",
+        "name": "카페랑솜"
+      }
+    },
+    {
+      "dedupeKey": "sid:1202431112",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 232,
+        "bookmarkId": "3554129653",
+        "sid": "1202431112",
+        "name": "에이라운드",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3037989284",
+        "sid": "1202431112",
+        "name": "에이라운드"
+      }
+    },
+    {
+      "dedupeKey": "sid:1377831784",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 95,
+        "bookmarkId": "986079695",
+        "sid": "1377831784",
+        "name": "서화커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3037986166",
+        "sid": "1377831784",
+        "name": "서화커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1418256339",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 75,
+        "bookmarkId": "4361445137",
+        "sid": "1418256339",
+        "name": "나지트",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3037984853",
+        "sid": "1418256339",
+        "name": "나지트"
+      }
+    },
+    {
+      "dedupeKey": "sid:37459661",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 97,
+        "bookmarkId": "1132174878",
+        "sid": "37459661",
+        "name": "커피가게 디터틀",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3037983477",
+        "sid": "37459661",
+        "name": "커피가게 디터틀"
+      }
+    },
+    {
+      "dedupeKey": "sid:17976968",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 88,
+        "bookmarkId": "986079156",
+        "sid": "17976968",
+        "name": "삼원샏",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3037893435",
+        "sid": "17976968",
+        "name": "삼원샏"
+      }
+    },
+    {
+      "dedupeKey": "sid:1196293778",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 190,
+        "bookmarkId": "1465448151",
+        "sid": "1196293778",
+        "name": "네이티브서울",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3030374726",
+        "sid": "1196293778",
+        "name": "네이티브서울"
+      }
+    },
+    {
+      "dedupeKey": "sid:1420076529",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 144,
+        "bookmarkId": "1638400406",
+        "sid": "1420076529",
+        "name": "루바토",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3030357504",
+        "sid": "1420076529",
+        "name": "루바토"
+      }
+    },
+    {
+      "dedupeKey": "sid:1951305091",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 137,
+        "bookmarkId": "2205526415",
+        "sid": "1951305091",
+        "name": "온고지신",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "3025664084",
+        "sid": "1951305091",
+        "name": "온고지신"
+      }
+    },
+    {
+      "dedupeKey": "sid:1057884253",
+      "kept": {
+        "sourceFile": "par51.json",
+        "pathName": "bookmarkList",
+        "index": 17,
+        "bookmarkId": "3583350898",
+        "sid": "1057884253",
+        "name": "마망젤라또 성수점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2848720746",
+        "sid": "1057884253",
+        "name": "마망젤라또 성수점"
+      }
+    },
+    {
+      "dedupeKey": "sid:1297609166",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 341,
+        "bookmarkId": "2865076218",
+        "sid": "1297609166",
+        "name": "삼미미이자카야",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2804063337",
+        "sid": "1297609166",
+        "name": "삼미미이자카야"
+      }
+    },
+    {
+      "dedupeKey": "sid:1072787710",
+      "kept": {
+        "sourceFile": "uk_cafes72.json",
+        "pathName": "bookmarkList",
+        "index": 12,
+        "bookmarkId": "4231329721",
+        "sid": "1072787710",
+        "name": "도토리 용산점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2791112664",
+        "sid": "1072787710",
+        "name": "도토리 용산점"
+      }
+    },
+    {
+      "dedupeKey": "sid:20840013",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 358,
+        "bookmarkId": "2751110073",
+        "sid": "20840013",
+        "name": "먹거리양곱창",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2737044025",
+        "sid": "20840013",
+        "name": "먹거리양곱창"
+      }
+    },
+    {
+      "dedupeKey": "sid:1438943339",
+      "kept": {
+        "sourceFile": "any164.json",
+        "pathName": "bookmarkList",
+        "index": 20,
+        "bookmarkId": "3917771736",
+        "sid": "1438943339",
+        "name": "온6.5",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2737038355",
+        "sid": "1438943339",
+        "name": "온6.5"
+      }
+    },
+    {
+      "dedupeKey": "sid:33972716",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 853,
+        "bookmarkId": "1400014181",
+        "sid": "33972716",
+        "name": "마일스톤 커피",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2113311189",
+        "sid": "33972716",
+        "name": "마일스톤 커피"
+      }
+    },
+    {
+      "dedupeKey": "sid:1168698330",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 115,
+        "bookmarkId": "1579291725",
+        "sid": "1168698330",
+        "name": "로우커피스탠드",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2113310005",
+        "sid": "1168698330",
+        "name": "로우커피스탠드"
+      }
+    },
+    {
+      "dedupeKey": "sid:1386833963",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 23,
+        "bookmarkId": "1475011248",
+        "sid": "1386833963",
+        "name": "호랑이",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2113307851",
+        "sid": "1386833963",
+        "name": "호랑이"
+      }
+    },
+    {
+      "dedupeKey": "sid:1022423336",
+      "kept": {
+        "sourceFile": "diana95_cafe389.json",
+        "pathName": "bookmarkList",
+        "index": 33,
+        "bookmarkId": "2234290218",
+        "sid": "1022423336",
+        "name": "커피스니퍼 역삼 센터필드점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2113303079",
+        "sid": "1022423336",
+        "name": "커피스니퍼 역삼 센터필드점"
+      }
+    },
+    {
+      "dedupeKey": "sid:32982001",
+      "kept": {
+        "sourceFile": "Seoul_Cafe310.json",
+        "pathName": "bookmarkList",
+        "index": 220,
+        "bookmarkId": "3416989245",
+        "sid": "32982001",
+        "name": "매뉴팩트커피 연희 본점",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2113301489",
+        "sid": "32982001",
+        "name": "매뉴팩트커피 연희 본점"
+      }
+    },
+    {
+      "dedupeKey": "sid:11723756",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 396,
+        "bookmarkId": "2484645817",
+        "sid": "11723756",
+        "name": "대우부대찌개",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2104078086",
+        "sid": "11723756",
+        "name": "대우부대찌개"
+      }
+    },
+    {
+      "dedupeKey": "sid:1061973396",
+      "kept": {
+        "sourceFile": "jiseung-share.json",
+        "pathName": "bookmarkList",
+        "index": 737,
+        "bookmarkId": "1514631357",
+        "sid": "1061973396",
+        "name": "테이블1629",
+        "available": true,
+        "isMatched": true
+      },
+      "merged": {
+        "sourceFile": "Wannago859.json",
+        "bookmarkId": "2067657086",
+        "sid": "1061973396",
+        "name": "테이블1629"
+      }
+    }
+  ],
+  "skipped": [],
+  "notes": [
+    "Original raw bookmark objects are preserved under raw.",
+    "Duplicate raw objects merged into an existing place are preserved under rawDuplicates.",
+    "Rating and review fields are not fabricated; they appear only if present in raw data."
+  ]
+}

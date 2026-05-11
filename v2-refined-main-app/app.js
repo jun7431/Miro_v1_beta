@@ -579,16 +579,6 @@ function classifyLegMobility(fromPlace, toPlace, maxWalkMinutes = DEFAULT_MAX_WA
     };
   }
 
-  if (estimatedWalkMinutes <= 30) {
-    return {
-      distanceMeters: Math.round(distanceMeters),
-      estimatedWalkMinutes,
-      isWalkable: false,
-      suggestedMode: 'transit_or_taxi',
-      label: `Use transit/taxi · walking would be ~${estimatedWalkMinutes} min`,
-    };
-  }
-
   return {
     distanceMeters: Math.round(distanceMeters),
     estimatedWalkMinutes,

@@ -1,4 +1,4 @@
-const DIRECTIONS_ENDPOINT = 'https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving';
+const DIRECTIONS_ENDPOINT = 'https://maps.apigw.ntruss.com/map-direction/v1/driving';
 const MAX_DIRECTIONS_5_WAYPOINTS = 5;
 const SAFE_ERROR_FIELDS = [
   'code',

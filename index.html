@@ -3,724 +3,246 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Miro — App Design Exploration</title>
+<title>Kandid Spot — One local route, ready to walk</title>
+<meta name="description" content="Pick your area, time, and vibe. Kandid Spot gives you one route from curated local spots in Seoul." />
+<meta name="theme-color" content="#FBF7EF" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --bg: #FFFDF8;
-    --bg-warm: #FBF7EF;
-    --bg-alt: #F8FAFC;
+    --bg: #FBF7EF;
+    --card: #FFFFFF;
     --primary: #2563EB;
-    --soft-blue: #DBEAFE;
+    --primary-dark: #1D4ED8;
+    --primary-soft: #EFF6FF;
     --mint: #14B8A6;
-    --amber: #F59E0B;
+    --mint-soft: #CCFBF1;
     --text: #111827;
+    --text-soft: #1F2937;
     --gray: #6B7280;
     --gray-light: #9CA3AF;
     --border: #E5E7EB;
-    --card: #FFFFFF;
+    --shadow-pop: 0 16px 36px -10px rgba(37, 99, 235, 0.35);
+    --shadow-xs: 0 1px 2px rgba(17, 24, 39, 0.04);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-warm);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+      "Malgun Gothic", "Noto Sans KR", sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 88% 10%, rgba(20, 184, 166, 0.10), transparent 55%),
+      radial-gradient(circle at 8% 92%, rgba(37, 99, 235, 0.08), transparent 55%);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
     line-height: 1.5;
-  }
-  .nav {
-    padding: 18px 32px;
+    letter-spacing: -0.005em;
+    min-height: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    background: rgba(251, 247, 239, 0.85);
-    backdrop-filter: blur(10px);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    flex-direction: column;
   }
-  .logo {
-    font-weight: 800;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .logo-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--primary);
-  }
-  .nav-tag {
-    font-size: 12px;
-    background: var(--soft-blue);
-    color: var(--primary);
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-  }
+  a { color: inherit; text-decoration: none; }
 
-  /* ===== HERO ===== */
-  .hero {
-    max-width: 1080px;
+  .start {
+    flex: 1;
+    width: 100%;
+    max-width: 520px;
     margin: 0 auto;
-    padding: 64px 32px 36px;
+    padding: 56px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
   }
-  .pill {
-    display: inline-block;
-    background: var(--soft-blue);
-    color: var(--primary);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 999px;
-    margin-bottom: 22px;
-  }
-  h1 {
-    font-size: 50px;
-    line-height: 1.1;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 18px;
-  }
-  h1 .accent { color: var(--primary); }
-  .lead {
-    font-size: 18px;
-    color: var(--gray);
-    max-width: 640px;
-    margin: 0 auto 24px;
-  }
-  .core-loop {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 36px;
   }
-  .loop-chip {
-    background: var(--card);
-    border: 1px solid var(--border);
-    padding: 9px 14px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .loop-chip .num {
-    background: var(--primary);
-    color: white;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--primary-soft);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
-    font-weight: 700;
+    box-shadow: var(--shadow-xs);
   }
-
-  /* ===== RECOMMENDED ===== */
-  .recommended-section {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 40px 32px 24px;
-  }
-  .section-label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 18px;
-  }
-  .section-label-pill {
-    background: var(--text);
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 999px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .section-label-pill.archive {
-    background: white;
-    color: var(--gray);
-    border: 1px solid var(--border);
-  }
-  .section-label-text {
-    font-size: 13px;
-    color: var(--gray);
-  }
-
-  .recommended-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 30px 60px -20px rgba(17, 24, 39, 0.15);
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.2s, box-shadow 0.2s;
-    position: relative;
-  }
-  .recommended-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 40px 70px -20px rgba(17, 24, 39, 0.2);
-  }
-  .recommended-badge {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    background: var(--mint);
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 999px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    z-index: 2;
-    box-shadow: 0 6px 14px -4px rgba(20, 184, 166, 0.5);
-  }
-  .recommended-preview {
-    background: linear-gradient(135deg, #F1F5F9 0%, #E0E7EF 100%);
-    padding: 60px 36px 36px;
-    position: relative;
-    min-height: 360px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .rec-mock {
-    background: white;
-    border-radius: 14px;
-    overflow: hidden;
-    width: 100%;
-    max-width: 460px;
-    box-shadow: 0 20px 40px -12px rgba(17, 24, 39, 0.18);
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    height: 240px;
-  }
-  .rec-mock-left {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    overflow: hidden;
-    background: white;
-  }
-  .rec-mock-summary {
-    font-size: 9px;
-    color: var(--primary);
-    font-weight: 700;
-    background: var(--soft-blue);
-    padding: 4px 8px;
-    border-radius: 5px;
-    margin-bottom: 2px;
-  }
-  .rec-mock-chips {
-    display: flex; gap: 3px; flex-wrap: wrap;
-  }
-  .rec-mock-chip {
-    background: #F8FAFC;
-    border: 1px solid var(--border);
-    padding: 2px 6px;
-    border-radius: 5px;
-    font-size: 8px;
-    font-weight: 500;
-  }
-  .rec-mock-chip.sel { background: var(--primary); color: white; border-color: var(--primary); }
-  .rec-mock-stop {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    padding: 4px 4px;
-    border-radius: 4px;
-  }
-  .rec-mock-stop.act { background: #EFF6FF; }
-  .rec-mock-stop-num {
-    width: 12px; height: 12px;
+  .brand-mark::after {
+    content: "";
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: var(--primary);
-    color: white;
-    font-size: 7px;
-    font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
   }
-  .rec-mock-stop-name {
-    font-size: 8px;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .rec-mock-right {
-    background: linear-gradient(135deg, #F1F5F9 0%, #E0E7EF 100%);
-    position: relative;
-  }
-  .rec-mock-right::before {
-    content: '';
-    position: absolute;
-    inset: 12px;
-    background:
-      linear-gradient(white, white) 35% 60% / 70% 3px no-repeat,
-      linear-gradient(white, white) 50% 35% / 3px 60% no-repeat,
-      radial-gradient(ellipse at 25% 35%, #D1FAE5 0 22%, transparent 24%);
-  }
-  .rec-mock-right::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 22% 55%, #2563EB 0 4px, transparent 5px),
-      radial-gradient(circle at 42% 38%, #2563EB 0 4px, transparent 5px),
-      radial-gradient(circle at 62% 45%, #14B8A6 0 4px, transparent 5px),
-      radial-gradient(circle at 78% 70%, #2563EB 0 4px, transparent 5px);
-  }
-  .rec-body {
-    padding: 36px 36px 32px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .rec-tag {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--primary);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .rec-title {
-    font-size: 28px;
+  .brand-name {
+    font-size: 19px;
     font-weight: 800;
     letter-spacing: -0.02em;
-    line-height: 1.15;
-    margin-bottom: 14px;
   }
-  .rec-desc {
-    font-size: 15px;
-    color: var(--gray);
-    line-height: 1.6;
-    margin-bottom: 20px;
-  }
-  .rec-bullets {
-    list-style: none;
-    margin-bottom: 22px;
-  }
-  .rec-bullets li {
-    font-size: 13.5px;
-    color: var(--text);
-    padding: 4px 0;
-    padding-left: 24px;
-    position: relative;
-  }
-  .rec-bullets li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    top: 4px;
-    color: var(--mint);
-    font-weight: 700;
-  }
-  .rec-cta {
+
+  .eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--text);
-    color: white;
-    padding: 13px 22px;
-    border-radius: 12px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
-    align-self: flex-start;
-  }
-
-  /* ===== ARCHIVE ===== */
-  .archive-section {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 40px 32px 80px;
-  }
-  .versions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 18px;
-  }
-  .v-card {
+    letter-spacing: 0.02em;
+    color: var(--text-soft);
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 18px;
-    overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    opacity: 0.9;
+    padding: 6px 12px 6px 10px;
+    border-radius: 999px;
+    box-shadow: var(--shadow-xs);
+    margin-bottom: 22px;
   }
-  .v-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 30px -10px rgba(17, 24, 39, 0.12);
-    border-color: var(--gray-light);
-    opacity: 1;
+  .eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--mint);
+    box-shadow: 0 0 0 4px var(--mint-soft);
   }
-  .v-preview {
-    height: 160px;
-    display: flex;
+
+  h1.headline {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--text);
+    max-width: 14ch;
+  }
+  h1.headline .accent {
+    background: linear-gradient(120deg, var(--primary) 0%, var(--mint) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .lead {
+    margin-top: 16px;
+    font-size: 15.5px;
+    color: var(--gray);
+    line-height: 1.55;
+    max-width: 38ch;
+  }
+
+  .cta {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .v1-bg { background: linear-gradient(135deg, #DBEAFE 0%, #FFFDF8 100%); }
-  .v2-bg { background: linear-gradient(135deg, #F8FAFC 0%, #DBEAFE 100%); }
-  .v3-bg { background: linear-gradient(135deg, #FEF3C7 0%, #FFFDF8 100%); }
-  .v1-mock {
-    width: 70%;
-    max-width: 180px;
-    background: white;
-    border-radius: 12px;
-    padding: 10px;
-    box-shadow: 0 8px 20px -6px rgba(17, 24, 39, 0.12);
-  }
-  .v1-mock .chip-row { display: flex; gap: 3px; margin-bottom: 6px; }
-  .v1-mock .chip-mini {
-    background: var(--soft-blue);
-    color: var(--primary);
-    padding: 2px 6px;
-    border-radius: 999px;
-    font-size: 7px;
-    font-weight: 600;
-  }
-  .v1-mock .timeline { display: flex; flex-direction: column; gap: 5px; }
-  .v1-mock .stop { display: flex; gap: 6px; align-items: center; }
-  .v1-mock .stop-num {
-    width: 13px; height: 13px;
-    border-radius: 50%;
+    gap: 8px;
+    margin-top: 32px;
+    padding: 16px 32px;
+    min-width: 220px;
     background: var(--primary);
     color: white;
-    font-size: 7px;
+    font-size: 16px;
     font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .v1-mock .stop-label {
-    background: #F8FAFC;
-    height: 13px;
-    border-radius: 4px;
-    flex: 1;
-  }
-  .v2-mock {
-    display: flex;
-    width: 80%;
-    height: 130px;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px -6px rgba(17, 24, 39, 0.12);
-  }
-  .v2-mock-left {
-    width: 40%;
-    padding: 8px;
-    border-right: 1px solid var(--border);
-  }
-  .v2-mock-right {
-    flex: 1;
-    background: linear-gradient(135deg, #DBEAFE, #E0F2FE);
-    position: relative;
-  }
-  .v2-mock-right::after {
-    content: '';
-    position: absolute;
-    inset: 14px;
-    background:
-      radial-gradient(circle at 30% 40%, var(--primary) 0 3px, transparent 4px),
-      radial-gradient(circle at 70% 30%, var(--primary) 0 3px, transparent 4px),
-      radial-gradient(circle at 60% 70%, var(--primary) 0 3px, transparent 4px),
-      radial-gradient(circle at 35% 75%, var(--primary) 0 3px, transparent 4px);
-  }
-  .v2-mock .stop-row {
-    display: flex; gap: 4px; align-items: center;
-    margin-bottom: 6px;
-  }
-  .mini-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
-  .mini-line { height: 5px; background: #F3F4F6; border-radius: 3px; flex: 1; }
-  .v3-mock {
-    width: 70%;
-    max-width: 200px;
-    background: white;
     border-radius: 14px;
-    padding: 10px;
-    box-shadow: 0 8px 20px -6px rgba(17, 24, 39, 0.12);
+    border: none;
+    box-shadow: var(--shadow-pop);
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   }
-  .v3-mock .bubble {
-    background: var(--soft-blue);
-    color: var(--text);
-    padding: 5px 9px;
-    border-radius: 10px 10px 10px 3px;
-    font-size: 8px;
-    margin-bottom: 5px;
-    max-width: 80%;
+  .cta:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.45);
   }
-  .v3-mock .bubble.user {
-    background: var(--primary);
-    color: white;
-    border-radius: 10px 10px 3px 10px;
-    margin-left: auto;
+  .cta:active { transform: translateY(0); }
+  .cta:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.35);
+    outline-offset: 2px;
   }
-  .v3-mock .miro-ava {
-    width: 14px; height: 14px;
+  .cta-arrow { font-size: 17px; line-height: 1; }
+
+  .trust {
+    margin-top: 22px;
+    font-size: 12.5px;
+    color: var(--gray);
+    letter-spacing: 0.01em;
+  }
+  .trust .sep {
+    display: inline-block;
+    width: 3px;
+    height: 3px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--mint), var(--primary));
-    color: white;
-    font-size: 7px;
-    font-weight: 700;
-    display: inline-flex; align-items: center; justify-content: center;
-    margin-right: 4px;
+    background: var(--gray-light);
+    vertical-align: middle;
+    margin: 0 8px 2px;
   }
-  .v-body {
-    padding: 18px 18px 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  .v-tag {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--gray);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .v-title {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-  }
-  .v-desc {
-    font-size: 12.5px;
-    color: var(--gray);
-    margin-bottom: 12px;
-    flex: 1;
-    line-height: 1.5;
-  }
-  .v-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 14px;
-  }
-  .v-chip {
-    font-size: 10px;
+
+  .prototype-note {
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--gray-light);
     font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 999px;
-    background: var(--bg-alt);
-    color: var(--gray);
-  }
-  .v-cta {
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--primary);
   }
 
-  /* ===== Footer ===== */
-  .footer-note {
-    max-width: 920px;
-    margin: 0 auto 80px;
-    padding: 28px 32px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
+  .foot {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 20px 24px 28px;
+    font-size: 11px;
+    color: var(--gray-light);
+    letter-spacing: 0.04em;
   }
-  .footer-note h3 {
-    font-size: 15px;
-    margin-bottom: 10px;
-    font-weight: 700;
-  }
-  .footer-note p {
-    font-size: 13.5px;
-    color: var(--gray);
-    margin-bottom: 8px;
-    line-height: 1.6;
-  }
-  .footer-note p:last-child { margin-bottom: 0; }
 
-  @media (max-width: 880px) {
-    h1 { font-size: 36px; }
-    .lead { font-size: 16px; }
-    .hero { padding: 40px 20px 24px; }
-    .recommended-section, .archive-section { padding-left: 20px; padding-right: 20px; }
-    .recommended-card { grid-template-columns: 1fr; }
-    .recommended-preview { padding: 50px 24px 24px; min-height: 280px; }
-    .rec-body { padding: 28px 24px 28px; }
-    .rec-title { font-size: 22px; }
+  @media (max-width: 480px) {
+    .start { padding: 40px 20px 28px; }
+    .brand { margin-bottom: 28px; }
+    h1.headline { font-size: 32px; }
+    .lead { font-size: 14.5px; margin-top: 12px; }
+    .cta { width: 100%; min-width: 0; padding: 15px 24px; }
+    .trust { font-size: 12px; }
   }
 </style>
 </head>
 <body>
-<nav class="nav">
-  <div class="logo"><span class="logo-dot"></span> Miro</div>
-  <span class="nav-tag">App Design Exploration</span>
-</nav>
 
-<section class="hero">
-  <span class="pill">Direction chosen · ready to build</span>
-  <h1>One area. One time. One mood.<br/><span class="accent">One local route.</span></h1>
-  <p class="lead">Miro turns your area, available time, and mood into one local route you can start now. The recommended direction below is the one we're moving forward with.</p>
-  <div class="core-loop">
-    <div class="loop-chip"><span class="num">1</span>Area</div>
-    <div class="loop-chip"><span class="num">2</span>Time</div>
-    <div class="loop-chip"><span class="num">3</span>Mood</div>
-    <div class="loop-chip"><span class="num">4</span>One route</div>
-    <div class="loop-chip"><span class="num">5</span>Refine · Save · Walk</div>
-  </div>
-</section>
-
-<!-- ============== RECOMMENDED ============== -->
-<section class="recommended-section">
-  <div class="section-label">
-    <span class="section-label-pill">Recommended direction</span>
-    <span class="section-label-text">V2 backbone with V1's compact builder · V3 reduced to an optional Ask Miro drawer</span>
-  </div>
-
-  <a class="recommended-card" href="v2-refined-main-app/index.html">
-    <span class="recommended-badge">Build this</span>
-    <div class="recommended-preview">
-      <div class="rec-mock">
-        <div class="rec-mock-left">
-          <div class="rec-mock-summary">Hongdae · 2 hrs · Local food</div>
-          <div class="rec-mock-chips">
-            <span class="rec-mock-chip sel">Hongdae</span>
-            <span class="rec-mock-chip">Seongsu</span>
-            <span class="rec-mock-chip">Itaewon</span>
-          </div>
-          <div class="rec-mock-chips">
-            <span class="rec-mock-chip">1h</span>
-            <span class="rec-mock-chip sel">2h</span>
-            <span class="rec-mock-chip">3h</span>
-          </div>
-          <div style="margin-top:4px;display:flex;flex-direction:column;gap:2px;">
-            <div class="rec-mock-stop act"><span class="rec-mock-stop-num">1</span><span class="rec-mock-stop-name">Yeonnam Galmaegisal</span></div>
-            <div class="rec-mock-stop"><span class="rec-mock-stop-num">2</span><span class="rec-mock-stop-name">Backstreet walk</span></div>
-            <div class="rec-mock-stop"><span class="rec-mock-stop-num">3</span><span class="rec-mock-stop-name">Cafe Slow Steps</span></div>
-            <div class="rec-mock-stop"><span class="rec-mock-stop-num">4</span><span class="rec-mock-stop-name">Gimbap Records</span></div>
-          </div>
-        </div>
-        <div class="rec-mock-right"></div>
-      </div>
-    </div>
-    <div class="rec-body">
-      <div class="rec-tag">Refined main app</div>
-      <h2 class="rec-title">Map + itinerary, with V1's chip builder built in</h2>
-      <p class="rec-desc">A real travel-planning app. Polished SVG map of Hongdae · Yeonnam on the right, route summary + compact V1-style builder + itinerary + refines on the left, sticky save/share/open-in-map. Conversation is reduced to a small Ask Miro drawer — opt-in, never required.</p>
-      <ul class="rec-bullets">
-        <li>Compact V1 builder lives inside the panel — collapsible, always one click away</li>
-        <li>Map + list stay in sync · clicking a pin highlights the stop and shows a place card</li>
-        <li>Refine chips and Ask Miro both adjust the same route — neither is mandatory</li>
-        <li>Mobile responsive: map on top, panel below, sticky actions</li>
-      </ul>
-      <span class="rec-cta">Open the recommended direction →</span>
-    </div>
+<main class="start">
+  <a class="brand" href="./v2-refined-main-app/index.html" aria-label="Kandid Spot home">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-name">Kandid Spot</span>
   </a>
-</section>
 
-<!-- ============== ARCHIVE ============== -->
-<section class="archive-section">
-  <div class="section-label">
-    <span class="section-label-pill archive">Earlier exploration</span>
-    <span class="section-label-text">Three first-pass directions · kept for reference</span>
-  </div>
+  <span class="eyebrow">
+    <span class="eyebrow-dot" aria-hidden="true"></span>
+    Seoul · curated by locals
+  </span>
 
-  <div class="versions">
-    <a class="v-card" href="v1-route-card-first/index.html">
-      <div class="v-preview v1-bg">
-        <div class="v1-mock">
-          <div class="chip-row">
-            <span class="chip-mini">Hongdae</span>
-            <span class="chip-mini">2h</span>
-            <span class="chip-mini">Local</span>
-          </div>
-          <div class="timeline">
-            <div class="stop"><span class="stop-num">1</span><span class="stop-label"></span></div>
-            <div class="stop"><span class="stop-num">2</span><span class="stop-label"></span></div>
-            <div class="stop"><span class="stop-num">3</span><span class="stop-label"></span></div>
-            <div class="stop"><span class="stop-num">4</span><span class="stop-label"></span></div>
-          </div>
-        </div>
-      </div>
-      <div class="v-body">
-        <div class="v-tag">V1 · feeds into the main app</div>
-        <div class="v-title">Route Card First</div>
-        <div class="v-desc">Mobile MVP with chip inputs and a vertical route card. Its compact chip builder is what powers the main app's left panel.</div>
-        <div class="v-meta">
-          <span class="v-chip">Mobile-first</span>
-          <span class="v-chip">Timeline card</span>
-        </div>
-        <div class="v-cta">Open V1 →</div>
-      </div>
-    </a>
+  <h1 class="headline">
+    One <span class="accent">local route</span>,<br />
+    ready to walk.
+  </h1>
 
-    <a class="v-card" href="v2-map-itinerary-split/index.html">
-      <div class="v-preview v2-bg">
-        <div class="v2-mock">
-          <div class="v2-mock-left">
-            <div class="stop-row"><div class="mini-dot"></div><div class="mini-line"></div></div>
-            <div class="stop-row"><div class="mini-dot" style="background:var(--mint)"></div><div class="mini-line"></div></div>
-            <div class="stop-row"><div class="mini-dot" style="background:var(--amber)"></div><div class="mini-line"></div></div>
-            <div class="stop-row"><div class="mini-dot"></div><div class="mini-line"></div></div>
-          </div>
-          <div class="v2-mock-right"></div>
-        </div>
-      </div>
-      <div class="v-body">
-        <div class="v-tag">V2 · the main app's backbone</div>
-        <div class="v-title">Map + Itinerary Split</div>
-        <div class="v-desc">The split layout that became the production direction. The recommended app is V2 cleaned up.</div>
-        <div class="v-meta">
-          <span class="v-chip">Split layout</span>
-          <span class="v-chip">Map-synced</span>
-        </div>
-        <div class="v-cta">Open V2 →</div>
-      </div>
-    </a>
+  <p class="lead">
+    Pick your area, time, and vibe. Get one route from curated local spots —
+    no top-10 lists, no decision fatigue.
+  </p>
 
-    <a class="v-card" href="v3-local-concierge/index.html">
-      <div class="v-preview v3-bg">
-        <div class="v3-mock">
-          <div class="bubble user">Hongdae · 2h · quiet local food</div>
-          <div class="bubble"><span class="miro-ava">M</span>Got you. Here's a route locals walk.</div>
-        </div>
-      </div>
-      <div class="v-body">
-        <div class="v-tag">V3 · reduced to Ask Miro drawer</div>
-        <div class="v-title">Local Concierge Assistant</div>
-        <div class="v-desc">Conversational thread. Too chatbot-heavy as a main app, but its voice and assistant role survive as the optional Ask Miro drawer.</div>
-        <div class="v-meta">
-          <span class="v-chip">Conversational</span>
-          <span class="v-chip">Warm tone</span>
-        </div>
-        <div class="v-cta">Open V3 →</div>
-      </div>
-    </a>
-  </div>
-</section>
+  <a class="cta" href="./v2-refined-main-app/index.html" data-cta="start">
+    Start <span class="cta-arrow" aria-hidden="true">→</span>
+  </a>
 
-<section class="footer-note">
-  <h3>How the directions relate</h3>
-  <p><strong>V2 (split layout)</strong> became the backbone of the main app. <strong>V1's chip builder</strong> lives inside V2's left panel as the compact builder. <strong>V3</strong> is reduced to an opt-in Ask Miro drawer — the warmth and assistant role survive without forcing chat as the primary UI.</p>
-  <p>Open the <strong>refined main app</strong> at the top to see the production direction. The three earlier prototypes are kept for reference and to show how each contribution survives in the final product.</p>
-</section>
+  <p class="trust">
+    Seoul
+    <span class="sep" aria-hidden="true"></span>
+    curated spots
+    <span class="sep" aria-hidden="true"></span>
+    no endless lists
+  </p>
+
+  <p class="prototype-note">No account needed for the prototype</p>
+</main>
+
+<footer class="foot">Made in Seoul · early access</footer>
+
 </body>
 </html>

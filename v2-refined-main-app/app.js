@@ -572,6 +572,92 @@ function sourceListMatchesMode(sourceList, mode) {
   return false;
 }
 
+function getRouteTemplate(mode, refinementKey = null) {
+  return REFINEMENT_TEMPLATES[refinementKey] || ROUTE_TEMPLATES[mode] || ROUTE_TEMPLATES.balanced;
+}
+
+function getPlaceSearchText(place) {
+  return [
+    place.name,
+    place.displayName,
+    place.categoryName,
+    place.categoryCode,
+    place.address,
+    place.sourceList,
+    place.sourceFile,
+    place.sourceType,
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+function textHasAnyTerm(text, terms) {
+  return terms.some(term => text.includes(term));
+}
+
+function getOpenNowValue(place) {
+  for (const path of OPEN_NOW_FIELD_PATHS) {
+    let value = place;
+    for (const key of path) {
+      value = value && value[key];
+    }
+    if (typeof value === 'boolean') return value;
+  }
+  return null;
+}
+
+function hasOpenNowDataForCandidates(candidates) {
+  return candidates.some(place => getOpenNowValue(place) !== null);
+}
+
+function filterCandidatesForRefinement(candidates, refinementKey) {
+  if (refinementKey === 'open') {
+    return candidates.filter(place => getOpenNowValue(place) === true);
+  }
+  return candidates;
+}
+
+function getRefinementScore(place, context) {
+  const refinementKey = context.refinementKey;
+  if (!refinementKey) return 0;
+
+  const category = place.miroCategory || 'unknown';
+  const text = getPlaceSearchText(place);
+  let score = 0;
+
+  if (refinementKey === 'walk') {
+    const previousDistance = context.previousPlace ? distanceKm(place, context.previousPlace) : null;
+    const centerDistance = distanceKm(place, context.areaConfig.center);
+    if (Number.isFinite(previousDistance)) score -= Math.min(previousDistance * 35, 45);
+    if (Number.isFinite(centerDistance)) score -= Math.min(centerDistance * 7, 28);
+    if (['walk', 'cafe', 'eat'].includes(category)) score += 8;
+  }
+
+  if (refinementKey === 'local') {
+    if (textHasAnyTerm(text, LOCAL_TERMS)) score += 24;
+    if (place.sourcePriority > 0) score += Math.min(Number(place.sourcePriority), 12);
+    if (place.isMatched === true) score += 8;
+    if (category !== 'night') score += 5;
+  }
+
+  if (refinementKey === 'cheap') {
+    if (['walk', 'cafe', 'see', 'shop', 'practical'].includes(category)) score += 18;
+    if (textHasAnyTerm(text, BUDGET_CATEGORY_NAMES)) score += 20;
+    if (['night', 'activity'].includes(category) || textHasAnyTerm(text, PREMIUM_CATEGORY_NAMES)) score -= 24;
+  }
+
+  if (refinementKey === 'cafe') {
+    if (category === 'cafe') score += 36;
+    if (text.includes('카페') || text.includes('coffee') || text.includes('cafe')) score += 16;
+  }
+
+  if (refinementKey === 'quiet') {
+    if (['walk', 'cafe', 'see', 'shop'].includes(category)) score += 14;
+    if (textHasAnyTerm(text, QUIET_TERMS)) score += 20;
+    if (category === 'night' || textHasAnyTerm(text, TOURIST_HEAVY_TERMS)) score -= 28;
+  }
+
+  return score;
+}
+
 function scorePlace(place, context) {
   let score = 0;
   const category = place.miroCategory || 'unknown';
@@ -597,6 +683,8 @@ function scorePlace(place, context) {
     score -= Math.min(distanceFromArea * 2, 18);
   }
 
+  score += getRefinementScore(place, context);
+
   return score;
 }
 
@@ -617,21 +705,22 @@ function selectBestPlace(candidates, context, selectedKeys) {
   return best;
 }
 
-function buildCuratedRoute(routeKey, mood) {
+function buildCuratedRoute(routeKey, mood, refinementKey = null) {
   const places = curatedPlaceState.places;
   if (!places.length) return null;
 
   const areaConfig = getAreaConfig(routeKey);
   const mode = getRouteMode(mood);
-  const template = ROUTE_TEMPLATES[mode] || ROUTE_TEMPLATES.balanced;
-  const candidates = getAreaCandidates(places, areaConfig);
+  const template = getRouteTemplate(mode, refinementKey);
+  const candidates = filterCandidatesForRefinement(getAreaCandidates(places, areaConfig), refinementKey);
   if (!candidates.length) return null;
 
   const selected = [];
   const selectedKeys = new Set();
   const categoryCounts = {};
+  const maxStops = Math.min(refinementKey === 'walk' ? 3 : 4, candidates.length);
 
-  template.forEach(targetCategory => {
+  template.slice(0, maxStops).forEach(targetCategory => {
     const exactMatches = candidates.filter(place => place.miroCategory === targetCategory);
     const pool = exactMatches.length ? exactMatches : candidates;
     const place = selectBestPlace(pool, {
@@ -639,6 +728,8 @@ function buildCuratedRoute(routeKey, mood) {
       mode,
       targetCategory,
       categoryCounts,
+      refinementKey,
+      previousPlace: selected[selected.length - 1] || null,
     }, selectedKeys);
 
     if (!place) return;
@@ -647,12 +738,14 @@ function buildCuratedRoute(routeKey, mood) {
     categoryCounts[place.miroCategory] = (categoryCounts[place.miroCategory] || 0) + 1;
   });
 
-  while (selected.length < Math.min(4, candidates.length)) {
+  while (selected.length < maxStops) {
     const place = selectBestPlace(candidates, {
       areaConfig,
       mode,
       targetCategory: null,
       categoryCounts,
+      refinementKey,
+      previousPlace: selected[selected.length - 1] || null,
     }, selectedKeys);
     if (!place) break;
     selected.push(place);
@@ -662,7 +755,7 @@ function buildCuratedRoute(routeKey, mood) {
 
   if (!selected.length) return null;
 
-  const stops = selected.map((place, index) => placeToRouteStop(place, index, selected[index - 1]));
+  const stops = selected.map((place, index) => placeToRouteStop(place, index, selected[index - 1], selected.length));
   const walkingMinutes = stops.reduce((sum, stop) => sum + Number(stop.walk || 0), 0);
   const stayMinutes = stops.reduce((sum, stop) => sum + Number(stop.stay || 0), 0);
 
@@ -675,7 +768,7 @@ function buildCuratedRoute(routeKey, mood) {
       total: formatMinutes(stayMinutes + walkingMinutes),
       walking: `${walkingMinutes} min`,
     },
-    why: `Built from the processed Naver place dataset for ${areaConfig.label}. Stops are ranked by category fit, area match, availability, and saved-list priority.`,
+    why: buildRouteWhy(areaConfig.label, refinementKey),
     ask: {
       why: `This route uses processed Naver place data first, then ranks places for ${areaConfig.label} and your selected mood.`,
       crowd: 'I can prefer quieter categories and nearby side-street matches, but this static version does not check live crowd levels.',
@@ -684,11 +777,26 @@ function buildCuratedRoute(routeKey, mood) {
     sourceKind: 'processed',
     sourceLabel: 'Real Naver places',
     mode,
+    refinementKey,
     stops,
   };
 }
 
-function placeToRouteStop(place, index, previousPlace) {
+function buildRouteWhy(areaLabel, refinementKey = null) {
+  const base = `Built from the processed Naver place dataset for ${areaLabel}. Stops are ranked by category fit, area match, availability, and saved-list priority.`;
+  if (!refinementKey) return base;
+  const refinements = {
+    walk: ' This version adds a compactness preference using stop coordinates.',
+    local: ' This version gives extra weight to local, hidden, and saved-list signals.',
+    cheap: ' This version leans toward budget-friendly categories without estimating prices.',
+    cafe: ' This version gives extra weight to cafe-category places.',
+    quiet: ' This version de-prioritizes tourist-heavy and nightlife-heavy signals where identifiable.',
+    open: ' This version only uses places with an explicit open-now field marked true.',
+  };
+  return `${base}${refinements[refinementKey] || ''}`;
+}
+
+function placeToRouteStop(place, index, previousPlace, totalStops = 4) {
   const category = place.miroCategory || 'unknown';
   const categoryLabel = place.categoryName || MIRO_CATEGORY_LABELS[category] || 'Saved place';
   const walk = index === 0 ? 0 : estimateWalkMinutes(previousPlace, place);
@@ -705,7 +813,7 @@ function placeToRouteStop(place, index, previousPlace) {
     walk,
     coords: { lat: Number(place.lat), lng: Number(place.lng) },
     why: buildPlaceWhy(place, sourceTag),
-    next: index === 3 ? 'Route complete' : 'Continue to the next saved place',
+    next: index === totalStops - 1 ? 'Route complete' : 'Continue to the next saved place',
     tags: [sourceTag, categoryLabel, addressTag].filter(Boolean),
     place,
   };
@@ -785,8 +893,8 @@ function buildEmptyRealRoute(routeKey, message) {
   };
 }
 
-function resolveRouteForCurrentSelection(routeKey) {
-  const realRoute = buildCuratedRoute(routeKey, state.mood);
+function resolveRouteForCurrentSelection(routeKey, refinementKey = state.activeRefinement) {
+  const realRoute = buildCuratedRoute(routeKey, state.mood, refinementKey);
   if (realRoute) {
     console.log('Miro route source: real');
     return realRoute;
@@ -823,13 +931,43 @@ const LOADING_STEPS = [
 ];
 
 const REFINE_TEXTS = {
-  walk: { applied: 'Loop tightened — walking now ~12 min total.', undo: 'Restored original walking distance.' },
-  local: { applied: 'Swapped photo cafe for a backstreet local-only spot.', undo: 'Reverted local-mix change.' },
-  cheap: { applied: 'Replaced stop 1 with a ₩9k handmade noodle counter.', undo: 'Restored original stop 1.' },
-  cafe: { applied: 'Added a second tiny cafe before the record shop.', undo: 'Removed the extra cafe.' },
-  quiet: { applied: 'Routing around Saturday-busy streets — side lanes only.', undo: 'Allowing busier streets again.' },
-  open: { applied: 'Hiding 1 stop that\'s closed right now. Replaced with a late-night ramen counter.', undo: 'Showing all stops regardless of hours.' },
+  walk: { applied: 'Refined for a more compact route.', undo: 'Removed the compact-route refinement.' },
+  local: { applied: 'Refined toward local and saved-list signals.', undo: 'Removed the local-first refinement.' },
+  cheap: { applied: 'Refined toward budget-friendly categories.', undo: 'Removed the budget-friendly refinement.' },
+  cafe: { applied: 'Refined toward more cafe stops.', undo: 'Removed the cafe-forward refinement.' },
+  quiet: { applied: 'Refined toward quieter and less tourist-heavy stops.', undo: 'Removed the quiet-route refinement.' },
+  open: {
+    applied: 'Refined to places marked open now.',
+    undo: 'Removed the open-now refinement.',
+    unavailable: 'Open-now data is not available for these saved places yet.',
+  },
 };
+
+const SAVED_ROUTES_STORAGE_KEY = 'kandid_spot_saved_routes';
+
+const REFINEMENT_TEMPLATES = {
+  walk: ['cafe', 'walk', 'eat'],
+  cheap: ['walk', 'cafe', 'eat', 'see'],
+  cafe: ['cafe', 'cafe', 'walk', 'cafe'],
+  quiet: ['walk', 'cafe', 'see', 'shop'],
+  local: ['eat', 'cafe', 'walk', 'shop'],
+};
+
+const BUDGET_CATEGORY_NAMES = ['분식', '김밥', '국수', '라면', '라멘', '만두', '백반', '시장', '카페', 'coffee', 'cafe'];
+const PREMIUM_CATEGORY_NAMES = ['오마카세', '파인다이닝', '스테이크', '와인', '칵테일', 'bar', 'pub'];
+const LOCAL_TERMS = ['골목', '동네', '로컬', 'local', 'hidden', '숨은', '찐', '노포', '시장', 'backstreet'];
+const QUIET_TERMS = ['조용', 'quiet', 'calm', '한적', '골목', '산책', '공원', 'walk', 'garden'];
+const TOURIST_HEAVY_TERMS = ['핫플', '명소', '랜드마크', '관광', 'tour', 'tourist', 'famous', 'club', '클럽', '대형', '몰', '백화점'];
+const OPEN_NOW_FIELD_PATHS = [
+  ['openNow'],
+  ['isOpenNow'],
+  ['currentlyOpen'],
+  ['isOpen'],
+  ['openingHours', 'openNow'],
+  ['openingHours', 'isOpen'],
+  ['hours', 'openNow'],
+  ['hours', 'isOpen'],
+];
 
 const ASK_RESPONSES = {
   why: route => route.ask.why,
@@ -846,6 +984,7 @@ const state = {
   time: '2 hours',
   mood: 'Local food',
   applied: new Set(),
+  activeRefinement: null,
   activeStop: null,
   routeKey: 'hongdae',
 };
@@ -932,7 +1071,11 @@ function getRouteKey(area) {
 
 function applyRouteForCurrentSelection() {
   state.routeKey = getRouteKey(state.area);
-  currentRoute = resolveRouteForCurrentSelection(state.routeKey);
+  applyResolvedRoute(resolveRouteForCurrentSelection(state.routeKey));
+}
+
+function applyResolvedRoute(route) {
+  currentRoute = route;
   state.area = currentRoute.label;
   state.activeStop = null;
 
@@ -2092,19 +2235,58 @@ mapStage.addEventListener('click', e => {
 // ========== Refine ==========
 document.querySelectorAll('.refine-chip').forEach(chip => {
   chip.addEventListener('click', () => {
-    const key = chip.dataset.refine;
-    if (state.applied.has(key)) {
-      state.applied.delete(key);
-      chip.classList.remove('applied');
-      showToast(REFINE_TEXTS[key].undo);
-    } else {
-      state.applied.add(key);
-      chip.classList.add('applied');
-      showToast(REFINE_TEXTS[key].applied);
-      flashWhy();
-    }
+    applyRefinement(chip.dataset.refine);
   });
 });
+
+function syncRefineChips() {
+  document.querySelectorAll('.refine-chip').forEach(chip => {
+    chip.classList.toggle('applied', chip.dataset.refine === state.activeRefinement);
+  });
+}
+
+function setActiveRefinement(key) {
+  state.activeRefinement = key || null;
+  state.applied.clear();
+  if (state.activeRefinement) state.applied.add(state.activeRefinement);
+  syncRefineChips();
+}
+
+function getCurrentAreaCandidates() {
+  return getAreaCandidates(curatedPlaceState.places, getAreaConfig(getRouteKey(state.area)));
+}
+
+function applyRefinement(key) {
+  if (!REFINE_TEXTS[key]) return;
+
+  ensureRealPlacesLoaded().then(() => {
+    if (state.activeRefinement === key) {
+      setActiveRefinement(null);
+      applyRouteForCurrentSelection();
+      showToast(REFINE_TEXTS[key].undo);
+      return;
+    }
+
+    const routeKey = getRouteKey(state.area);
+    const candidates = getCurrentAreaCandidates();
+    if (key === 'open' && !hasOpenNowDataForCandidates(candidates)) {
+      showToast(REFINE_TEXTS.open.unavailable);
+      return;
+    }
+
+    const refinedRoute = buildCuratedRoute(routeKey, state.mood, key);
+    if (!refinedRoute || !refinedRoute.stops.length) {
+      showToast('Not enough matching saved places for that refinement yet.');
+      return;
+    }
+
+    state.routeKey = routeKey;
+    setActiveRefinement(key);
+    applyResolvedRoute(refinedRoute);
+    showToast(REFINE_TEXTS[key].applied);
+    flashWhy();
+  });
+}
 
 function flashWhy() {
   const why = document.getElementById('why-body');
@@ -2114,17 +2296,195 @@ function flashWhy() {
 }
 
 // ========== Action bar ==========
+function getSavedRoutes() {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(SAVED_ROUTES_STORAGE_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function getRouteSnapshot() {
+  const stops = (currentRoute?.stops || []).map(stop => ({
+    id: stop.place?.placeId || stop.place?.id || '',
+    name: stop.name,
+    type: stop.type,
+    coords: stop.coords,
+    naverMapUrl: stop.place?.naverMapUrl || '',
+  }));
+
+  return {
+    timestamp: new Date().toISOString(),
+    area: state.area,
+    time: state.time,
+    vibe: state.mood,
+    activeRefinement: state.activeRefinement,
+    activeMapProvider: getActiveMapProvider(),
+    summary: {
+      label: currentRoute?.label || '',
+      mapLabel: currentRoute?.mapLabel || '',
+      total: currentRoute?.meta?.total || '',
+      walking: currentRoute?.meta?.walking || '',
+      source: currentRoute?.sourceLabel || '',
+    },
+    stops,
+  };
+}
+
+function getRouteSnapshotKey(snapshot) {
+  return [
+    snapshot.area,
+    snapshot.time,
+    snapshot.vibe,
+    snapshot.activeRefinement || '',
+    snapshot.stops.map(stop => stop.id || stop.name).join('>'),
+  ].join('|');
+}
+
+function setActionButtonTemporaryLabel(button, label, restoreLabel) {
+  if (!button) return;
+  const textNode = Array.from(button.childNodes).find(node => node.nodeType === 3 && node.nodeValue.trim());
+  if (!textNode) return;
+
+  textNode.nodeValue = ` ${label} `;
+  window.setTimeout(() => {
+    textNode.nodeValue = ` ${restoreLabel} `;
+  }, 1800);
+}
+
+function saveCurrentRoute(button) {
+  if (!currentRoute || !currentRoute.stops.length) {
+    showToast('There is no route to save yet.');
+    return;
+  }
+
+  const snapshot = getRouteSnapshot();
+  const snapshotKey = getRouteSnapshotKey(snapshot);
+  const savedRoutes = getSavedRoutes();
+  const existingIndex = savedRoutes.findIndex(route => getRouteSnapshotKey(route) === snapshotKey);
+
+  if (existingIndex >= 0) {
+    savedRoutes[existingIndex] = { ...savedRoutes[existingIndex], ...snapshot };
+  } else {
+    savedRoutes.unshift(snapshot);
+  }
+
+  try {
+    window.localStorage.setItem(SAVED_ROUTES_STORAGE_KEY, JSON.stringify(savedRoutes.slice(0, 25)));
+    setActionButtonTemporaryLabel(button, 'Saved', 'Save');
+    showToast(existingIndex >= 0 ? '✓ Saved route updated' : '✓ Route saved to this browser');
+  } catch (error) {
+    showToast('Could not save this route in localStorage.');
+  }
+}
+
+function buildShareText() {
+  const stopLines = (currentRoute?.stops || [])
+    .map((stop, index) => `${index + 1}. ${stop.name}`)
+    .join('\n');
+  const pageUrl = window.location.href.split('#')[0];
+
+  return [
+    'Kandid Spot',
+    `${state.area} · ${state.time} · ${state.mood}`,
+    currentRoute?.mapLabel || currentRoute?.label || 'Route',
+    state.activeRefinement ? `Refinement: ${state.activeRefinement}` : '',
+    stopLines,
+    pageUrl,
+  ].filter(Boolean).join('\n');
+}
+
+async function shareCurrentRoute() {
+  if (!currentRoute || !currentRoute.stops.length) {
+    showToast('There is no route to share yet.');
+    return;
+  }
+
+  const text = buildShareText();
+
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: 'Kandid Spot route', text });
+      showToast('✓ Route shared');
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      showToast('✓ Route copied to clipboard');
+      return;
+    }
+
+    window.prompt('Copy this route:', text);
+    showToast('Copy the route from the prompt.');
+  } catch (error) {
+    if (error && error.name === 'AbortError') {
+      showToast('Share cancelled.');
+      return;
+    }
+    showToast('Could not share this route.');
+  }
+}
+
+function getPrimaryRouteStop() {
+  if (!currentRoute || !currentRoute.stops.length) return null;
+  if (Number.isInteger(state.activeStop) && currentRoute.stops[state.activeStop]) {
+    return currentRoute.stops[state.activeStop];
+  }
+  return currentRoute.stops[0];
+}
+
+function getKakaoStopUrl(stop) {
+  if (!stop || !hasValidCoords(stop.coords)) return '';
+  return `https://map.kakao.com/link/map/${encodeURIComponent(stop.name)},${stop.coords.lat},${stop.coords.lng}`;
+}
+
+function getNaverStopUrl(stop) {
+  if (!stop) return '';
+  const naverUrl = typeof stop.place?.naverMapUrl === 'string' ? stop.place.naverMapUrl.trim() : '';
+  if (naverUrl) return naverUrl;
+
+  const query = [stop.name, stop.place?.address || ''].filter(Boolean).join(' ');
+  return query ? `https://map.naver.com/p/search/${encodeURIComponent(query)}` : '';
+}
+
+function openCurrentRouteInMap() {
+  const stop = getPrimaryRouteStop();
+  if (!stop) {
+    showToast('There is no route stop to open yet.');
+    return;
+  }
+
+  const provider = getActiveMapProvider();
+  const url = provider === 'naver' ? getNaverStopUrl(stop) : getKakaoStopUrl(stop);
+  if (!url) {
+    showToast(`No ${provider === 'naver' ? 'Naver' : 'Kakao'} map link is available for this stop.`);
+    return;
+  }
+
+  const opened = window.open(url, '_blank');
+  if (!opened) {
+    showToast('Allow popups to open this map link.');
+    return;
+  }
+  opened.opener = null;
+
+  showToast(`Opening ${provider === 'naver' ? 'Naver' : 'Kakao'} Map for ${stop.name}…`);
+}
+
 document.querySelectorAll('.act-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const a = btn.dataset.action;
-    if (a === 'save') showToast('✓ Route saved to your guide');
-    if (a === 'share') showToast('✓ Link copied to clipboard');
-    if (a === 'map') showToast(`Opening ${currentRoute.label} route in your map app…`);
+    if (a === 'save') saveCurrentRoute(btn);
+    if (a === 'share') shareCurrentRoute();
+    if (a === 'map') openCurrentRouteInMap();
   });
 });
 
 document.getElementById('saved-btn').addEventListener('click', () => {
-  showToast('No saved routes yet — save this one to start your guide.');
+  const savedRoutes = getSavedRoutes();
+  showToast(savedRoutes.length ? `${savedRoutes.length} saved route${savedRoutes.length === 1 ? '' : 's'} in this browser.` : 'No saved routes yet — save this one to start your guide.');
 });
 
 // ========== Ask Miro drawer ==========

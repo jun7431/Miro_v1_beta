@@ -615,6 +615,62 @@ function filterCandidatesForRefinement(candidates, refinementKey) {
   return candidates;
 }
 
+function getValueAtPath(object, path) {
+  return path.reduce((value, key) => (value && value[key] !== undefined ? value[key] : undefined), object);
+}
+
+function parseScoreNumber(value) {
+  if (value === undefined || value === null || String(value).trim() === '') return null;
+  const parsed = Number(String(value).replace(/,/g, '').trim());
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function readFirstNumericField(place, paths) {
+  for (const path of paths) {
+    const value = parseScoreNumber(getValueAtPath(place, path));
+    if (value !== null) return value;
+  }
+  return null;
+}
+
+function readRatingSource(place, ratingPaths, reviewCountPaths) {
+  const rating = readFirstNumericField(place, ratingPaths);
+  const reviewCount = readFirstNumericField(place, reviewCountPaths);
+
+  if (rating === null || rating < 0 || rating > 5) return null;
+  if (reviewCount === null || reviewCount <= 0) return null;
+
+  return { rating, reviewCount };
+}
+
+function computeFoodCafeCombinedRating(place) {
+  if (!['eat', 'cafe'].includes(place.miroCategory)) return null;
+
+  const kakao = readRatingSource(place, KAKAO_RATING_PATHS, KAKAO_REVIEW_COUNT_PATHS);
+  const naver = readRatingSource(place, NAVER_RATING_PATHS, NAVER_REVIEW_COUNT_PATHS);
+
+  if (kakao && naver) {
+    const weightedKakaoCount = KAKAO_TRUST_WEIGHT * kakao.reviewCount;
+    const denominator = weightedKakaoCount + naver.reviewCount;
+    if (denominator <= 0) return null;
+
+    return (
+      weightedKakaoCount * kakao.rating +
+      naver.reviewCount * naver.rating
+    ) / denominator;
+  }
+
+  if (kakao) return kakao.rating;
+  if (naver) return naver.rating;
+  return null;
+}
+
+function getFoodCafeQualityScore(place) {
+  const combinedRating = computeFoodCafeCombinedRating(place);
+  if (combinedRating === null) return 0;
+  return (combinedRating - 3) * 8;
+}
+
 function getRefinementScore(place, context) {
   const refinementKey = context.refinementKey;
   if (!refinementKey) return 0;
@@ -684,6 +740,7 @@ function scorePlace(place, context) {
   }
 
   score += getRefinementScore(place, context);
+  score += getFoodCafeQualityScore(place);
 
   return score;
 }
@@ -967,6 +1024,51 @@ const OPEN_NOW_FIELD_PATHS = [
   ['openingHours', 'isOpen'],
   ['hours', 'openNow'],
   ['hours', 'isOpen'],
+];
+const KAKAO_TRUST_WEIGHT = 20;
+const KAKAO_RATING_PATHS = [
+  ['kakaoRating'],
+  ['kakaoPlaceRating'],
+  ['kakao', 'rating'],
+  ['kakao', 'score'],
+  ['ratings', 'kakao'],
+  ['raw', 'kakaoRating'],
+  ['raw', 'kakao', 'rating'],
+];
+const KAKAO_REVIEW_COUNT_PATHS = [
+  ['kakaoReviewCount'],
+  ['kakaoReviews'],
+  ['kakaoReviewCnt'],
+  ['kakao', 'reviewCount'],
+  ['kakao', 'reviews'],
+  ['reviewCounts', 'kakao'],
+  ['raw', 'kakaoReviewCount'],
+  ['raw', 'kakao', 'reviewCount'],
+];
+const NAVER_RATING_PATHS = [
+  ['naverRating'],
+  ['naverPlaceRating'],
+  ['naver', 'rating'],
+  ['naver', 'score'],
+  ['ratings', 'naver'],
+  ['raw', 'naverRating'],
+  ['raw', 'naver', 'rating'],
+  ['raw', 'placeInfo', 'rating'],
+];
+const NAVER_REVIEW_COUNT_PATHS = [
+  ['naverReviewCount'],
+  ['naverReviews'],
+  ['naverReviewCnt'],
+  ['naverVisitorReviewCount'],
+  ['visitorReviewCount'],
+  ['naver', 'reviewCount'],
+  ['naver', 'reviews'],
+  ['naver', 'visitorReviewCount'],
+  ['reviewCounts', 'naver'],
+  ['raw', 'naverReviewCount'],
+  ['raw', 'visitorReviewCount'],
+  ['raw', 'placeInfo', 'reviewCount'],
+  ['raw', 'placeInfo', 'visitorReviewCount'],
 ];
 
 const ASK_RESPONSES = {

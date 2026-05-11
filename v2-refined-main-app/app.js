@@ -349,6 +349,10 @@ const ROUTE_TEMPLATES = {
   'night-energy': ['eat', 'night', 'walk', 'eat'],
 };
 
+const DEFAULT_MAX_WALK_MINUTES = 15;
+const LESS_WALKING_MAX_WALK_MINUTES = 8;
+const WALKING_SPEED_M_PER_MIN = 80;
+
 const MOOD_TO_ROUTE_MODE = {
   'local food': 'food-focused',
   'quiet walk': 'cafe-slow-walk',
@@ -534,6 +538,99 @@ function distanceKm(a, b) {
 
 function toRadians(value) {
   return value * Math.PI / 180;
+}
+
+function haversineMeters(a, b) {
+  const km = distanceKm(a, b);
+  return Number.isFinite(km) ? km * 1000 : null;
+}
+
+function estimateWalkMinutesFromDistanceMeters(distanceMeters) {
+  if (!Number.isFinite(distanceMeters)) return null;
+  return Math.max(1, Math.round(distanceMeters / WALKING_SPEED_M_PER_MIN));
+}
+
+function getMaxWalkMinutesForRefinement(refinementKey) {
+  return refinementKey === 'walk' ? LESS_WALKING_MAX_WALK_MINUTES : DEFAULT_MAX_WALK_MINUTES;
+}
+
+function classifyLegMobility(fromPlace, toPlace, maxWalkMinutes = DEFAULT_MAX_WALK_MINUTES) {
+  const distanceMeters = haversineMeters(fromPlace, toPlace);
+  const estimatedWalkMinutes = estimateWalkMinutesFromDistanceMeters(distanceMeters);
+
+  if (estimatedWalkMinutes === null) {
+    const fallbackMinutes = estimateWalkMinutes(fromPlace, toPlace);
+    return {
+      distanceMeters: null,
+      estimatedWalkMinutes: fallbackMinutes,
+      isWalkable: true,
+      suggestedMode: 'walk',
+      label: `Walk ~${fallbackMinutes} min`,
+    };
+  }
+
+  if (estimatedWalkMinutes <= maxWalkMinutes) {
+    return {
+      distanceMeters: Math.round(distanceMeters),
+      estimatedWalkMinutes,
+      isWalkable: true,
+      suggestedMode: 'walk',
+      label: `Walk ~${estimatedWalkMinutes} min`,
+    };
+  }
+
+  if (estimatedWalkMinutes <= 30) {
+    return {
+      distanceMeters: Math.round(distanceMeters),
+      estimatedWalkMinutes,
+      isWalkable: false,
+      suggestedMode: 'transit_or_taxi',
+      label: `Use transit/taxi · walking would be ~${estimatedWalkMinutes} min`,
+    };
+  }
+
+  return {
+    distanceMeters: Math.round(distanceMeters),
+    estimatedWalkMinutes,
+    isWalkable: false,
+    suggestedMode: 'transit_taxi_or_rental_car',
+    label: `Use transit/taxi/rental car · walking would be ~${estimatedWalkMinutes} min`,
+  };
+}
+
+function getMobilityScore(place, context) {
+  if (!context.previousPlace) return 0;
+
+  const maxWalkMinutes = context.maxWalkMinutes || DEFAULT_MAX_WALK_MINUTES;
+  const mobility = classifyLegMobility(context.previousPlace, place, maxWalkMinutes);
+  const walkMinutes = mobility.estimatedWalkMinutes;
+  if (!Number.isFinite(walkMinutes)) return -2;
+
+  if (mobility.isWalkable) {
+    return Math.min(Math.max(maxWalkMinutes - walkMinutes, 0) * 0.7, 6);
+  }
+
+  const overageMinutes = walkMinutes - maxWalkMinutes;
+  const penaltyMultiplier = context.refinementKey === 'walk' ? 9 : 4.5;
+  const longModePenalty = mobility.suggestedMode === 'transit_taxi_or_rental_car' ? 20 : 0;
+  const maxPenalty = context.refinementKey === 'walk' ? 180 : 120;
+  return -Math.min(overageMinutes * penaltyMultiplier + longModePenalty, maxPenalty);
+}
+
+function getMobilityAwareCandidatePool(candidates, exactMatches, context) {
+  if (!context.previousPlace) return exactMatches.length ? exactMatches : candidates;
+
+  const maxWalkMinutes = context.maxWalkMinutes || DEFAULT_MAX_WALK_MINUTES;
+  const isWalkableCandidate = place => (
+    classifyLegMobility(context.previousPlace, place, maxWalkMinutes).isWalkable
+  );
+  const walkableExactMatches = exactMatches.filter(isWalkableCandidate);
+  if (walkableExactMatches.length) return walkableExactMatches;
+
+  const walkableCandidates = candidates.filter(isWalkableCandidate);
+  if (walkableCandidates.length) return walkableCandidates;
+
+  return exactMatches.length ? exactMatches : candidates;
 }
 
 function getAreaCandidates(places, areaConfig) {
@@ -741,6 +838,7 @@ function scorePlace(place, context) {
 
   score += getRefinementScore(place, context);
   score += getFoodCafeQualityScore(place);
+  score += getMobilityScore(place, context);
 
   return score;
 }
@@ -776,18 +874,21 @@ function buildCuratedRoute(routeKey, mood, refinementKey = null) {
   const selectedKeys = new Set();
   const categoryCounts = {};
   const maxStops = Math.min(refinementKey === 'walk' ? 3 : 4, candidates.length);
+  const maxWalkMinutes = getMaxWalkMinutesForRefinement(refinementKey);
 
   template.slice(0, maxStops).forEach(targetCategory => {
     const exactMatches = candidates.filter(place => place.miroCategory === targetCategory);
-    const pool = exactMatches.length ? exactMatches : candidates;
-    const place = selectBestPlace(pool, {
+    const context = {
       areaConfig,
       mode,
       targetCategory,
       categoryCounts,
       refinementKey,
+      maxWalkMinutes,
       previousPlace: selected[selected.length - 1] || null,
-    }, selectedKeys);
+    };
+    const pool = getMobilityAwareCandidatePool(candidates, exactMatches, context);
+    const place = selectBestPlace(pool, context, selectedKeys);
 
     if (!place) return;
     selected.push(place);
@@ -802,6 +903,7 @@ function buildCuratedRoute(routeKey, mood, refinementKey = null) {
       targetCategory: null,
       categoryCounts,
       refinementKey,
+      maxWalkMinutes,
       previousPlace: selected[selected.length - 1] || null,
     }, selectedKeys);
     if (!place) break;
@@ -812,8 +914,13 @@ function buildCuratedRoute(routeKey, mood, refinementKey = null) {
 
   if (!selected.length) return null;
 
-  const stops = selected.map((place, index) => placeToRouteStop(place, index, selected[index - 1], selected.length));
-  const walkingMinutes = stops.reduce((sum, stop) => sum + Number(stop.walk || 0), 0);
+  const stops = selected.map((place, index) => (
+    placeToRouteStop(place, index, selected[index - 1], selected.length, maxWalkMinutes)
+  ));
+  const estimatedTravelMinutes = stops.reduce((sum, stop) => sum + Number(stop.walk || 0), 0);
+  const walkingMinutes = stops.reduce((sum, stop) => (
+    stop.legSuggestedMode === 'walk' ? sum + Number(stop.walk || 0) : sum
+  ), 0);
   const stayMinutes = stops.reduce((sum, stop) => sum + Number(stop.stay || 0), 0);
 
   return {
@@ -822,7 +929,7 @@ function buildCuratedRoute(routeKey, mood, refinementKey = null) {
     center: getRouteCenter(stops) || areaConfig.center,
     defaultMood: state.mood,
     meta: {
-      total: formatMinutes(stayMinutes + walkingMinutes),
+      total: formatMinutes(stayMinutes + estimatedTravelMinutes),
       walking: `${walkingMinutes} min`,
     },
     why: buildRouteWhy(areaConfig.label, refinementKey),
@@ -853,10 +960,13 @@ function buildRouteWhy(areaLabel, refinementKey = null) {
   return `${base}${refinements[refinementKey] || ''}`;
 }
 
-function placeToRouteStop(place, index, previousPlace, totalStops = 4) {
+function placeToRouteStop(place, index, previousPlace, totalStops = 4, maxWalkMinutes = DEFAULT_MAX_WALK_MINUTES) {
   const category = place.miroCategory || 'unknown';
   const categoryLabel = place.categoryName || MIRO_CATEGORY_LABELS[category] || 'Saved place';
-  const walk = index === 0 ? 0 : estimateWalkMinutes(previousPlace, place);
+  const mobility = index === 0
+    ? null
+    : classifyLegMobility(previousPlace, place, maxWalkMinutes);
+  const walk = mobility ? mobility.estimatedWalkMinutes : 0;
   const addressTag = getShortAddress(place.address);
   const sourceTag = place.sourceFile
     ? place.sourceFile.replace(/\.json$/i, '')
@@ -868,6 +978,10 @@ function placeToRouteStop(place, index, previousPlace, totalStops = 4) {
     type: place.address ? `${categoryLabel} · ${place.address}` : categoryLabel,
     stay: CATEGORY_STAY_MINUTES[category] || CATEGORY_STAY_MINUTES.unknown,
     walk,
+    legDistanceMeters: mobility ? mobility.distanceMeters : 0,
+    legWalkMinutes: mobility ? mobility.estimatedWalkMinutes : 0,
+    legSuggestedMode: mobility ? mobility.suggestedMode : null,
+    legMobilityLabel: mobility ? mobility.label : '',
     coords: { lat: Number(place.lat), lng: Number(place.lng) },
     why: buildPlaceWhy(place, sourceTag),
     next: index === totalStops - 1 ? 'Route complete' : 'Continue to the next saved place',
@@ -888,9 +1002,9 @@ function getShortAddress(address) {
 }
 
 function estimateWalkMinutes(previousPlace, place) {
-  const km = distanceKm(previousPlace, place);
-  if (!Number.isFinite(km)) return 6;
-  return Math.max(3, Math.min(18, Math.round(km * 13)));
+  const distanceMeters = haversineMeters(previousPlace, place);
+  const walkMinutes = estimateWalkMinutesFromDistanceMeters(distanceMeters);
+  return walkMinutes === null ? 6 : walkMinutes;
 }
 
 function getRouteCenter(stops) {
@@ -1250,7 +1364,8 @@ function renderStops() {
     if (s.walk > 0) {
       const w = document.createElement('div');
       w.className = 'stop-walk';
-      w.innerHTML = `<span>${s.walk} min walk</span>`;
+      const mobilityLabel = s.legMobilityLabel || `${s.walk} min walk`;
+      w.innerHTML = `<span>${escapeHtml(mobilityLabel)}</span>`;
       list.appendChild(w);
     }
     const item = document.createElement('div');
@@ -2269,7 +2384,9 @@ function activateStop(idx, options = {}) {
   document.getElementById('fc-name').textContent = s.name;
   document.getElementById('fc-type').textContent = s.type;
   document.getElementById('fc-stay').textContent = `⏱ ${s.stay} min stay`;
-  document.getElementById('fc-walk').textContent = s.walk > 0 ? `🚶 ${s.walk} min walk` : '📍 Start here';
+  document.getElementById('fc-walk').textContent = s.walk > 0
+    ? (s.legMobilityLabel || `🚶 ${s.walk} min walk`)
+    : '📍 Start here';
   document.getElementById('fc-why').textContent = s.why;
   card.classList.add('show');
 

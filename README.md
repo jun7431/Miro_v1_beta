@@ -21,9 +21,11 @@ The refined app reads map keys from Vercel runtime config via:
 ```text
 VITE_KAKAO_JAVASCRIPT_KEY=your_kakao_javascript_key_here
 VITE_NAVER_MAPS_NCP_KEY_ID=your_naver_maps_ncp_key_id_here
+TMAP_APP_KEY=your_tmap_app_key_here
 ```
 
 Add these as Vercel Environment Variables for production. Do not commit real keys or any Naver Client Secret.
+`TMAP_APP_KEY` is server-only for `/api/tmap-pedestrian`; do not prefix it with `VITE_`. It is used only for walkable pedestrian legs.
 
 In Kakao Developers → App settings → Platform → Web, also register every origin that will load the map, for example:
 

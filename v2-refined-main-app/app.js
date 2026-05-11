@@ -569,7 +569,7 @@ function classifyLegMobility(fromPlace, toPlace, maxWalkMinutes = DEFAULT_MAX_WA
     };
   }
 
-  if (estimatedWalkMinutes <= maxWalkMinutes) {
+  if (estimatedWalkMinutes < maxWalkMinutes) {
     return {
       distanceMeters: Math.round(distanceMeters),
       estimatedWalkMinutes,
@@ -1284,6 +1284,7 @@ function applyResolvedRoute(route) {
   currentRoute = route;
   state.area = currentRoute.label;
   state.activeStop = null;
+  resetRouteGeometryCache();
 
   updateRouteCopy();
   renderStops();
@@ -1466,6 +1467,14 @@ const naverMapState = {
   directionsKey: '',
   directions: null,
   directionsPromise: null,
+};
+
+const routeGeometryState = {
+  key: '',
+  geometry: null,
+  promise: null,
+  tmapCache: new Map(),
+  tmapWarnedKeys: new Set(),
 };
 
 const mapStage = document.getElementById('map-stage');
@@ -1938,8 +1947,7 @@ function renderKakaoRoute({ fit = false } = {}) {
     lat: stop.coords.lat,
     lng: stop.coords.lng,
   }));
-  const directionsPoints = getNaverDirectionsPoints(stopsWithCoords);
-  const directionsKey = getNaverDirectionsKey(directionsPoints);
+  const geometryKey = getCurrentRouteGeometryKey();
   const renderToken = mapSwitchToken;
 
   if (directRoutePoints.length > 1) {
@@ -1965,12 +1973,15 @@ function renderKakaoRoute({ fit = false } = {}) {
   updateMarkerActive();
   if (fit) fitKakaoRouteBounds();
 
-  getNaverDirections(directionsPoints).then(directions => {
-    if (!directions || mapProviderState.active !== 'kakao' || !kakaoMapState.map) return;
-    if (renderToken !== mapSwitchToken || directionsKey !== naverMapState.directionsKey) return;
+  resolveCurrentRouteGeometry().then(geometry => {
+    if (!geometry || mapProviderState.active !== 'kakao' || !kakaoMapState.map) return;
+    if (renderToken !== mapSwitchToken || geometryKey !== getCurrentRouteGeometryKey()) return;
 
-    renderKakaoPolyline(directions.path, { realRoute: true });
-    if (fit) fitKakaoRouteBounds(directions.path);
+    syncRouteGeometryLabelUpdates(geometry);
+    if (geometry.path.length > 1) {
+      renderKakaoPolyline(geometry.path, { realRoute: true });
+      if (fit) fitKakaoRouteBounds(geometry.path);
+    }
   });
 }
 
@@ -2052,6 +2063,310 @@ function getNaverDirections(points) {
   return naverMapState.directionsPromise;
 }
 
+function resetRouteGeometryCache() {
+  routeGeometryState.key = '';
+  routeGeometryState.geometry = null;
+  routeGeometryState.promise = null;
+  routeGeometryState.tmapCache.clear();
+  routeGeometryState.tmapWarnedKeys.clear();
+}
+
+function routeCoordKey(value) {
+  return Number(value).toFixed(6);
+}
+
+function getCurrentRouteGeometryKey() {
+  if (!currentRoute || !Array.isArray(currentRoute.stops)) return '';
+  const threshold = getMaxWalkMinutesForRefinement(currentRoute.refinementKey);
+  const pointsKey = currentRoute.stops
+    .map(stop => {
+      if (!hasValidCoords(stop.coords)) return 'missing';
+      return `${routeCoordKey(stop.coords.lng)},${routeCoordKey(stop.coords.lat)}`;
+    })
+    .join('|');
+  return `${currentRoute.refinementKey || 'default'}:${threshold}:${pointsKey}`;
+}
+
+function getRouteLegsWithCoords() {
+  if (!currentRoute || !Array.isArray(currentRoute.stops)) return [];
+
+  const legs = [];
+  for (let index = 1; index < currentRoute.stops.length; index += 1) {
+    const fromStop = currentRoute.stops[index - 1];
+    const toStop = currentRoute.stops[index];
+    if (!hasValidCoords(fromStop.coords) || !hasValidCoords(toStop.coords)) continue;
+
+    legs.push({
+      index,
+      fromStop,
+      toStop,
+      start: {
+        lat: fromStop.coords.lat,
+        lng: fromStop.coords.lng,
+        name: fromStop.name || `Stop ${index}`,
+      },
+      end: {
+        lat: toStop.coords.lat,
+        lng: toStop.coords.lng,
+        name: toStop.name || `Stop ${index + 1}`,
+      },
+    });
+  }
+  return legs;
+}
+
+function getTmapPedestrianKey(start, end) {
+  return [
+    routeCoordKey(start.lng),
+    routeCoordKey(start.lat),
+    routeCoordKey(end.lng),
+    routeCoordKey(end.lat),
+  ].join(',');
+}
+
+function normalizeRoutePoint(point) {
+  if (Array.isArray(point)) {
+    const lng = Number(point[0]);
+    const lat = Number(point[1]);
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
+    return { lng, lat };
+  }
+
+  if (point && typeof point === 'object') {
+    const lng = Number(point.lng);
+    const lat = Number(point.lat);
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
+    return { lng, lat };
+  }
+
+  return null;
+}
+
+function appendRouteSegment(routePath, segmentPath) {
+  const points = Array.isArray(segmentPath)
+    ? segmentPath.map(normalizeRoutePoint).filter(Boolean)
+    : [];
+
+  points.forEach(point => {
+    const previous = routePath[routePath.length - 1];
+    if (
+      previous &&
+      previous.lng === point.lng &&
+      previous.lat === point.lat
+    ) {
+      return;
+    }
+    routePath.push(point);
+  });
+}
+
+function getDirectLegPath(leg) {
+  return [leg.start, leg.end];
+}
+
+function getTmapPedestrianRoute(start, end) {
+  const cacheKey = getTmapPedestrianKey(start, end);
+  if (routeGeometryState.tmapCache.has(cacheKey)) {
+    return routeGeometryState.tmapCache.get(cacheKey);
+  }
+
+  const request = fetch('/api/tmap-pedestrian', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      start,
+      end,
+    }),
+  })
+    .then(response => response.json().catch(() => null).then(payload => {
+      if (!response.ok) {
+        throw new Error(payload?.error || `TMAP pedestrian returned ${response.status}`);
+      }
+      return payload;
+    }))
+    .then(payload => {
+      if (!payload || !payload.ok || !Array.isArray(payload.path) || payload.path.length < 2) {
+        throw new Error('TMAP pedestrian response did not include a usable path');
+      }
+
+      return {
+        ...payload,
+        path: payload.path.map(normalizeRoutePoint).filter(Boolean),
+      };
+    })
+    .catch(() => {
+      if (!routeGeometryState.tmapWarnedKeys.has(cacheKey)) {
+        console.warn('TMAP pedestrian route unavailable; using fallback geometry');
+        routeGeometryState.tmapWarnedKeys.add(cacheKey);
+      }
+      return null;
+    });
+
+  routeGeometryState.tmapCache.set(cacheKey, request);
+  return request;
+}
+
+function isReasonableTmapDuration(durationSeconds) {
+  return Number.isFinite(durationSeconds) && durationSeconds > 0 && durationSeconds < 6 * 60 * 60;
+}
+
+function getMobilityLabelForMode(mode, minutes) {
+  if (mode === 'walk') return `Walk ~${minutes} min`;
+  return `Use transit/taxi/rental car · walking would be ~${minutes} min`;
+}
+
+function updateStopMobilityFromTmap(stop, tmapRoute, maxWalkMinutes) {
+  let changed = false;
+  const durationSeconds = Number(tmapRoute.durationSeconds);
+  const distanceMeters = Number(tmapRoute.distanceMeters);
+
+  if (Number.isFinite(distanceMeters) && distanceMeters > 0 && stop.legDistanceMeters !== Math.round(distanceMeters)) {
+    stop.legDistanceMeters = Math.round(distanceMeters);
+    changed = true;
+  }
+
+  if (!isReasonableTmapDuration(durationSeconds)) {
+    return { changed, isWalkable: stop.legSuggestedMode === 'walk' };
+  }
+
+  const actualWalkMinutes = Math.max(1, Math.round(durationSeconds / 60));
+  const nextMode = actualWalkMinutes < maxWalkMinutes ? 'walk' : 'transit_taxi_or_rental_car';
+  const nextLabel = getMobilityLabelForMode(nextMode, actualWalkMinutes);
+
+  if (stop.walk !== actualWalkMinutes) {
+    stop.walk = actualWalkMinutes;
+    changed = true;
+  }
+  if (stop.legWalkMinutes !== actualWalkMinutes) {
+    stop.legWalkMinutes = actualWalkMinutes;
+    changed = true;
+  }
+  if (stop.legSuggestedMode !== nextMode) {
+    stop.legSuggestedMode = nextMode;
+    changed = true;
+  }
+  if (stop.legMobilityLabel !== nextLabel) {
+    stop.legMobilityLabel = nextLabel;
+    changed = true;
+  }
+
+  return { changed, isWalkable: nextMode === 'walk' };
+}
+
+function refreshCurrentRouteMobilityMeta() {
+  if (!currentRoute || !Array.isArray(currentRoute.stops)) return;
+
+  const travelMinutes = currentRoute.stops.reduce((sum, stop) => sum + Number(stop.walk || 0), 0);
+  const walkingMinutes = currentRoute.stops.reduce((sum, stop) => (
+    stop.legSuggestedMode === 'walk' ? sum + Number(stop.walk || 0) : sum
+  ), 0);
+  const stayMinutes = currentRoute.stops.reduce((sum, stop) => sum + Number(stop.stay || 0), 0);
+
+  currentRoute.meta = {
+    ...(currentRoute.meta || {}),
+    total: formatMinutes(stayMinutes + travelMinutes),
+    walking: `${walkingMinutes} min`,
+  };
+}
+
+function syncRouteGeometryLabelUpdates(geometry) {
+  if (!geometry || !geometry.labelsChanged) return;
+
+  refreshCurrentRouteMobilityMeta();
+  updateRouteCopy();
+  renderStops();
+  if (state.activeStop !== null) {
+    activateStop(state.activeStop, { pan: false, scroll: false });
+  }
+}
+
+function resolveCurrentRouteGeometry() {
+  const geometryKey = getCurrentRouteGeometryKey();
+  if (!geometryKey) return Promise.resolve(null);
+
+  if (routeGeometryState.key === geometryKey && routeGeometryState.geometry) {
+    return Promise.resolve(routeGeometryState.geometry);
+  }
+
+  if (routeGeometryState.key === geometryKey && routeGeometryState.promise) {
+    return routeGeometryState.promise;
+  }
+
+  routeGeometryState.key = geometryKey;
+  routeGeometryState.geometry = null;
+  routeGeometryState.promise = buildMixedRouteGeometry()
+    .catch(() => {
+      console.warn('Mixed route geometry unavailable; using fallback route line');
+      return null;
+    })
+    .then(geometry => {
+      if (routeGeometryState.key === geometryKey) {
+        routeGeometryState.geometry = geometry;
+      }
+      return geometry;
+    })
+    .finally(() => {
+      if (routeGeometryState.key === geometryKey) {
+        routeGeometryState.promise = null;
+      }
+    });
+
+  return routeGeometryState.promise;
+}
+
+async function buildMixedRouteGeometry() {
+  const legs = getRouteLegsWithCoords();
+  const maxWalkMinutes = getMaxWalkMinutesForRefinement(currentRoute?.refinementKey);
+  const path = [];
+  const summary = {
+    tmapWalkLegs: 0,
+    naverDrivingLegs: 0,
+    fallbackLegs: 0,
+  };
+  let labelsChanged = false;
+
+  for (const leg of legs) {
+    let segmentPath = null;
+
+    if (leg.toStop.legSuggestedMode === 'walk') {
+      const tmapRoute = await getTmapPedestrianRoute(leg.start, leg.end);
+
+      if (tmapRoute) {
+        const update = updateStopMobilityFromTmap(leg.toStop, tmapRoute, maxWalkMinutes);
+        labelsChanged = labelsChanged || update.changed;
+
+        if (update.isWalkable) {
+          segmentPath = tmapRoute.path;
+          summary.tmapWalkLegs += 1;
+        }
+      }
+    }
+
+    if (!segmentPath && leg.toStop.legSuggestedMode !== 'walk') {
+      const naverDirections = await getNaverDirections([leg.start, leg.end]);
+      if (naverDirections && Array.isArray(naverDirections.path) && naverDirections.path.length >= 2) {
+        segmentPath = naverDirections.path;
+        summary.naverDrivingLegs += 1;
+      }
+    }
+
+    if (!segmentPath) {
+      segmentPath = getDirectLegPath(leg);
+      summary.fallbackLegs += 1;
+    }
+
+    appendRouteSegment(path, segmentPath);
+  }
+
+  return {
+    path,
+    labelsChanged,
+    summary,
+  };
+}
+
 function toNaverLatLngPath(points) {
   return points.map(point => new window.naver.maps.LatLng(point.lat, point.lng));
 }
@@ -2128,8 +2443,8 @@ function renderNaverRoute({ fit = false } = {}) {
     lat: stop.coords.lat,
     lng: stop.coords.lng,
   }));
-  const directionsPoints = getNaverDirectionsPoints(stopsWithCoords);
-  const directionsKey = getNaverDirectionsKey(directionsPoints);
+  const geometryKey = getCurrentRouteGeometryKey();
+  const renderToken = mapSwitchToken;
 
   if (directRoutePoints.length > 1) {
     renderNaverPolyline(directRoutePoints);
@@ -2155,19 +2470,18 @@ function renderNaverRoute({ fit = false } = {}) {
   });
 
   updateMarkerActive();
+  setRouteMetaDefault();
   if (fit) fitNaverRouteBounds();
 
-  getNaverDirections(directionsPoints).then(directions => {
-    if (!directions || mapProviderState.active !== 'naver' || !naverMapState.map) {
-      setRouteMetaDefault();
-      return;
+  resolveCurrentRouteGeometry().then(geometry => {
+    if (!geometry || mapProviderState.active !== 'naver' || !naverMapState.map) return;
+    if (renderToken !== mapSwitchToken || geometryKey !== getCurrentRouteGeometryKey()) return;
+
+    syncRouteGeometryLabelUpdates(geometry);
+    if (geometry.path.length > 1) {
+      renderNaverPolyline(geometry.path, { realRoute: true });
+      if (fit) fitNaverRouteBounds(geometry.path);
     }
-
-    if (directionsKey !== naverMapState.directionsKey) return;
-
-    renderNaverPolyline(directions.path, { realRoute: true });
-    setNaverDirectionsMeta(directions);
-    if (fit) fitNaverRouteBounds(directions.path);
   });
 }
 

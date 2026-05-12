@@ -1,0 +1,536 @@
+{
+  "generatedAt": "2026-05-12T06:23:27.535Z",
+  "inputFile": "data\\places\\processed\\miro_places_categorized.json",
+  "outputFiles": {
+    "subcategorized": "data\\places\\processed\\miro_places_subcategorized.json",
+    "reviewQueue": "data\\places\\processed\\miro_places_needs_subcategory_review.json"
+  },
+  "totalPlaces": 3273,
+  "validSubCategoryCount": 882,
+  "needsSubcategoryReviewCount": 2391,
+  "countByPrimaryCategory": {
+    "activity": 52,
+    "cafe": 1347,
+    "meal": 1449,
+    "dessert_bakery": 46,
+    "shopping": 51,
+    "bar": 299,
+    "walk_nature": 18,
+    "rest": 4,
+    "landmark_view": 7
+  },
+  "countBySubCategoryUnderPrimaryCategory": {
+    "activity": {
+      "escape_game": 2,
+      "arcade_entertainment": 2,
+      "<needs_review>": 22,
+      "exhibition_gallery": 26
+    },
+    "cafe": {
+      "<needs_review>": 954,
+      "specialty_coffee": 359,
+      "dessert_cafe": 2,
+      "bakery_cafe": 19,
+      "hanok_cafe": 2,
+      "tea_house": 10,
+      "book_cafe": 1
+    },
+    "meal": {
+      "<needs_review>": 1077,
+      "western": 78,
+      "japanese": 94,
+      "asian": 18,
+      "brunch": 8,
+      "chinese": 28,
+      "korean": 116,
+      "bunsik": 27,
+      "fusion_modern": 3
+    },
+    "dessert_bakery": {
+      "bakery": 28,
+      "donut_cookie": 4,
+      "ice_cream_gelato": 8,
+      "<needs_review>": 2,
+      "cake_patisserie": 2,
+      "bingsu": 1,
+      "traditional_dessert": 1
+    },
+    "shopping": {
+      "<needs_review>": 47,
+      "lifestyle_goods": 2,
+      "bookstore": 1,
+      "vintage": 1
+    },
+    "bar": {
+      "<needs_review>": 279,
+      "pub": 8,
+      "wine_bar": 2,
+      "izakaya": 4,
+      "traditional_alcohol": 1,
+      "brewery": 1,
+      "pocha": 4
+    },
+    "walk_nature": {
+      "mountain_hike": 6,
+      "trail_forest": 2,
+      "river_hangang": 1,
+      "park": 3,
+      "<needs_review>": 5,
+      "street_alley": 1
+    },
+    "rest": {
+      "sauna_jjimjilbang": 1,
+      "spa": 1,
+      "<needs_review>": 2
+    },
+    "landmark_view": {
+      "landmark": 3,
+      "palace_history": 1,
+      "<needs_review>": 3
+    }
+  },
+  "topRawCategoryNamesThatCouldNotBeSubcategorized": [
+    [
+      "DINING / 음식점",
+      1078
+    ],
+    [
+      "CAFE / 카페",
+      945
+    ],
+    [
+      "BAR / BAR",
+      278
+    ],
+    [
+      "SHOPPING / 쇼핑",
+      41
+    ],
+    [
+      "LIFE_CULTURE / 생활/문화",
+      20
+    ],
+    [
+      "TRAVEL / 여행",
+      9
+    ],
+    [
+      "ADDRESS / 주소/위치",
+      6
+    ],
+    [
+      "EDUCATION / 교육",
+      4
+    ],
+    [
+      "GENERAL / 일반",
+      4
+    ],
+    [
+      "SUPERMARKET / 마트/편의점",
+      3
+    ],
+    [
+      "ACCOMMODATION / 숙박",
+      1
+    ],
+    [
+      "ENTERTAINMENT / 여가",
+      1
+    ],
+    [
+      "GEO_INFO / 지도정보",
+      1
+    ]
+  ],
+  "successfulExamples": [
+    {
+      "id": "4426886372",
+      "name": "게임파티룸 힙지롤 을지로점",
+      "primaryCategory": "activity",
+      "subCategory": "escape_game",
+      "subCategoryLabel": "방탈출·게임",
+      "confidence": 0.87,
+      "matchedKeywords": [
+        "게임",
+        "게임파티룸"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [
+        "culture",
+        "friends",
+        "indoor",
+        "lively",
+        "rainy_day",
+        "tea"
+      ],
+      "reason": "Matched keyword 게임 under primaryCategory activity for subCategory escape_game"
+    },
+    {
+      "id": "4426875207",
+      "name": "포토오브제 익선점",
+      "primaryCategory": "activity",
+      "subCategory": "arcade_entertainment",
+      "subCategoryLabel": "오락·엔터테인먼트",
+      "confidence": 0.84,
+      "matchedKeywords": [
+        "포토오브제"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [
+        "culture",
+        "friends",
+        "indoor",
+        "photo_worthy",
+        "rainy_day"
+      ],
+      "reason": "Matched keyword 포토오브제 under primaryCategory activity for subCategory arcade_entertainment"
+    },
+    {
+      "id": "4426703359",
+      "name": "강남역 흑백 셀프사진관 데이트코스 오디티모드",
+      "primaryCategory": "activity",
+      "subCategory": "arcade_entertainment",
+      "subCategoryLabel": "오락·엔터테인먼트",
+      "confidence": 0.87,
+      "matchedKeywords": [
+        "셀프사진",
+        "사진관"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [
+        "culture",
+        "date",
+        "friends",
+        "indoor",
+        "photo_worthy",
+        "rainy_day"
+      ],
+      "reason": "Matched keyword 셀프사진 under primaryCategory activity for subCategory arcade_entertainment"
+    },
+    {
+      "id": "4118517317",
+      "name": "아웃백스테이크하우스 원주점",
+      "primaryCategory": "meal",
+      "subCategory": "western",
+      "subCategoryLabel": "양식",
+      "confidence": 0.84,
+      "matchedKeywords": [
+        "스테이크"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [
+        "meat"
+      ],
+      "reason": "Matched keyword 스테이크 under primaryCategory meal for subCategory western"
+    },
+    {
+      "id": "4021919400",
+      "name": "피자네버슬립스 합정상수점",
+      "primaryCategory": "meal",
+      "subCategory": "western",
+      "subCategoryLabel": "양식",
+      "confidence": 0.84,
+      "matchedKeywords": [
+        "피자"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [],
+      "reason": "Matched keyword 피자 under primaryCategory meal for subCategory western"
+    },
+    {
+      "id": "3958335176",
+      "name": "라보 스테이크하우스 청담점",
+      "primaryCategory": "meal",
+      "subCategory": "western",
+      "subCategoryLabel": "양식",
+      "confidence": 0.84,
+      "matchedKeywords": [
+        "스테이크"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [
+        "meat"
+      ],
+      "reason": "Matched keyword 스테이크 under primaryCategory meal for subCategory western"
+    },
+    {
+      "id": "3917779785",
+      "name": "아티스트베이커리 안국",
+      "primaryCategory": "dessert_bakery",
+      "subCategory": "bakery",
+      "subCategoryLabel": "베이커리",
+      "confidence": 0.84,
+      "matchedKeywords": [
+        "베이커리"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [
+        "bakery",
+        "takeout"
+      ],
+      "reason": "Matched keyword 베이커리 under primaryCategory dessert_bakery for subCategory bakery"
+    },
+    {
+      "id": "3917766493",
+      "name": "오레노라멘 인사점",
+      "primaryCategory": "meal",
+      "subCategory": "japanese",
+      "subCategoryLabel": "일식",
+      "confidence": 0.84,
+      "matchedKeywords": [
+        "라멘"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [
+        "noodle"
+      ],
+      "reason": "Matched keyword 라멘 under primaryCategory meal for subCategory japanese"
+    },
+    {
+      "id": "3917761171",
+      "name": "도마 유즈라멘",
+      "primaryCategory": "meal",
+      "subCategory": "japanese",
+      "subCategoryLabel": "일식",
+      "confidence": 0.84,
+      "matchedKeywords": [
+        "라멘"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [
+        "noodle"
+      ],
+      "reason": "Matched keyword 라멘 under primaryCategory meal for subCategory japanese"
+    },
+    {
+      "id": "3912209073",
+      "name": "왓에버타코 연남본점",
+      "primaryCategory": "meal",
+      "subCategory": "asian",
+      "subCategoryLabel": "아시안",
+      "confidence": 0.84,
+      "matchedKeywords": [
+        "타코"
+      ],
+      "sourceFields": [
+        "name",
+        "raw.name"
+      ],
+      "tags": [],
+      "reason": "Matched keyword 타코 under primaryCategory meal for subCategory asian"
+    }
+  ],
+  "reviewNeededExamples": [
+    {
+      "id": "4426690188",
+      "name": "고양이 카페 모카 강남점",
+      "primaryCategory": "cafe",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory cafe"
+    },
+    {
+      "id": "4421600825",
+      "name": "마우카",
+      "primaryCategory": "cafe",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory cafe"
+    },
+    {
+      "id": "4421595418",
+      "name": "클리프 서울",
+      "primaryCategory": "meal",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory meal"
+    },
+    {
+      "id": "4329430716",
+      "name": "데일리픽스 서울대입구",
+      "primaryCategory": "meal",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory meal"
+    },
+    {
+      "id": "4328213794",
+      "name": "에버랜드",
+      "primaryCategory": "activity",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory activity"
+    },
+    {
+      "id": "4321176463",
+      "name": "서울 서초구 잠원로 46-3",
+      "primaryCategory": "meal",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory meal"
+    },
+    {
+      "id": "4044189842",
+      "name": "익선취향",
+      "primaryCategory": "meal",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory meal"
+    },
+    {
+      "id": "4044173870",
+      "name": "어담익선",
+      "primaryCategory": "meal",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory meal"
+    },
+    {
+      "id": "3983727492",
+      "name": "라무라 합정",
+      "primaryCategory": "meal",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory meal"
+    },
+    {
+      "id": "3980162713",
+      "name": "멘야하나비 합정점",
+      "primaryCategory": "meal",
+      "subCategory": null,
+      "subCategoryLabel": null,
+      "confidence": 0,
+      "matchedKeywords": [],
+      "sourceFields": [],
+      "tags": [],
+      "reason": "No reliable subcategory keyword matched under primaryCategory meal"
+    }
+  ],
+  "tagFrequencyCounts": {
+    "coffee": 368,
+    "evening": 312,
+    "noodle": 92,
+    "culture": 60,
+    "shopping": 51,
+    "bakery": 47,
+    "grill": 46,
+    "outdoor": 43,
+    "meat": 40,
+    "rice": 36,
+    "takeout": 36,
+    "indoor": 32,
+    "lively": 32,
+    "seafood": 30,
+    "walkable": 30,
+    "dessert": 22,
+    "traditional": 21,
+    "history": 14,
+    "view": 14,
+    "tea": 13,
+    "morning": 11,
+    "beer": 10,
+    "spicy": 10,
+    "aesthetic": 9,
+    "brunch": 8,
+    "photo_worthy": 8,
+    "hands_on": 6,
+    "friends": 5,
+    "rainy_day": 5,
+    "wine": 5,
+    "modern": 4,
+    "local": 3,
+    "touristy": 3,
+    "hidden": 2,
+    "late_night": 2,
+    "quiet": 2,
+    "terrace": 2,
+    "vegetarian_friendly": 2,
+    "date": 1,
+    "makgeolli": 1,
+    "pet_friendly": 1
+  },
+  "validation": {
+    "inputCount": 3273,
+    "outputCount": 3273,
+    "expectedPlaceCount": 3273,
+    "inputCountMatchesExpected": true,
+    "outputCountMatchesExpected": true,
+    "primaryCategoriesValid": true,
+    "invalidPrimaryCategoryCount": 0,
+    "invalidPrimaryCategoryExamples": [],
+    "subcategoriesAllowedForPrimaryCategory": true,
+    "invalidSubcategoryCount": 0,
+    "invalidSubcategoryExamples": [],
+    "tagsAlwaysArray": true,
+    "tagsNotArrayCount": 0,
+    "tagsNotArrayExamples": [],
+    "existingFieldsPreserved": true,
+    "changedExistingFieldCount": 0,
+    "changedExistingFieldExamples": []
+  },
+  "validationPassed": true
+}

@@ -2860,17 +2860,9 @@ function renderKakaoRoute({ fit = false, routeToken = routeRenderToken } = {}) {
   const stopsWithCoords = getStopsWithCoords();
   if (!stopsWithCoords.length) return;
 
-  const directRoutePoints = stopsWithCoords.map(({ stop }) => ({
-    lat: stop.coords.lat,
-    lng: stop.coords.lng,
-  }));
   const geometryKey = getCurrentRouteGeometryKey();
   const renderToken = mapSwitchToken;
   const renderRouteToken = routeToken;
-
-  if (directRoutePoints.length > 1) {
-    renderKakaoPolyline(directRoutePoints);
-  }
 
   kakaoMapState.markers = currentRoute.stops.map(() => null);
   stopsWithCoords.forEach(({ stop, index }, markerIndex) => {
@@ -2896,8 +2888,8 @@ function renderKakaoRoute({ fit = false, routeToken = routeRenderToken } = {}) {
     if (isStaleMapRender(renderToken, renderRouteToken) || geometryKey !== getCurrentRouteGeometryKey()) return;
 
     syncRouteGeometryLabelUpdates(geometry);
-    if (geometry.path.length > 1) {
-      renderKakaoPolyline(geometry.path, { realRoute: true });
+    if (Array.isArray(geometry.segments) && geometry.segments.length) {
+      renderKakaoRouteSegments(geometry.segments);
       if (fit) fitKakaoRouteBounds(geometry.path);
     }
   });
@@ -3111,14 +3103,23 @@ function getTmapPedestrianRoute(start, end) {
         throw new Error('TMAP pedestrian response did not include a usable path');
       }
 
+      const path = payload.path.map(normalizeRoutePoint).filter(Boolean);
+      if (path.length < 2) {
+        throw new Error('TMAP pedestrian response did not include enough valid coordinates');
+      }
+
       return {
         ...payload,
-        path: payload.path.map(normalizeRoutePoint).filter(Boolean),
+        path,
       };
     })
-    .catch(() => {
+    .catch(error => {
       if (!routeGeometryState.tmapWarnedKeys.has(cacheKey)) {
-        console.warn('TMAP pedestrian route unavailable; using fallback geometry');
+        console.warn('[Kandid Spot] Walking leg pedestrian geometry unavailable; using fallback line', {
+          from: start?.name,
+          to: end?.name,
+          reason: error?.message || 'Unknown TMAP pedestrian routing error',
+        });
         routeGeometryState.tmapWarnedKeys.add(cacheKey);
       }
       return null;
@@ -3240,6 +3241,7 @@ async function buildMixedRouteGeometry() {
   const legs = getRouteLegsWithCoords();
   const maxWalkMinutes = getMaxWalkMinutesForRefinement(currentRoute?.refinementKey);
   const path = [];
+  const segments = [];
   const summary = {
     tmapWalkLegs: 0,
     naverDrivingLegs: 0,
@@ -3249,39 +3251,53 @@ async function buildMixedRouteGeometry() {
 
   for (const leg of legs) {
     let segmentPath = null;
+    let isFallback = false;
+    let source = '';
+    const isWalkingLeg = leg.toStop.legSuggestedMode === 'walk';
 
-    if (leg.toStop.legSuggestedMode === 'walk') {
+    if (isWalkingLeg) {
       const tmapRoute = await getTmapPedestrianRoute(leg.start, leg.end);
 
       if (tmapRoute) {
         const update = updateStopMobilityFromTmap(leg.toStop, tmapRoute, maxWalkMinutes);
         labelsChanged = labelsChanged || update.changed;
 
-        if (update.isWalkable) {
-          segmentPath = tmapRoute.path;
-          summary.tmapWalkLegs += 1;
-        }
+        segmentPath = tmapRoute.path;
+        source = 'tmap_pedestrian';
+        summary.tmapWalkLegs += 1;
       }
     }
 
-    if (!segmentPath && leg.toStop.legSuggestedMode !== 'walk') {
+    if (!segmentPath && !isWalkingLeg) {
       const naverDirections = await getNaverDirections([leg.start, leg.end]);
       if (naverDirections && Array.isArray(naverDirections.path) && naverDirections.path.length >= 2) {
         segmentPath = naverDirections.path;
+        source = 'naver_directions';
         summary.naverDrivingLegs += 1;
       }
     }
 
     if (!segmentPath) {
       segmentPath = getDirectLegPath(leg);
+      isFallback = true;
+      source = isWalkingLeg ? 'walking_fallback' : 'nonwalking_fallback';
       summary.fallbackLegs += 1;
     }
 
     appendRouteSegment(path, segmentPath);
+    segments.push({
+      index: leg.index,
+      fromStop: leg.fromStop,
+      toStop: leg.toStop,
+      path: segmentPath,
+      isFallback,
+      source,
+    });
   }
 
   return {
     path,
+    segments,
     labelsChanged,
     summary,
   };
@@ -3295,48 +3311,111 @@ function toKakaoLatLngPath(points) {
   return points.map(point => new window.kakao.maps.LatLng(point.lat, point.lng));
 }
 
-function renderKakaoPolyline(points, { realRoute = false } = {}) {
+function clearKakaoPolylines() {
+  const polylines = Array.isArray(kakaoMapState.polyline)
+    ? kakaoMapState.polyline
+    : [kakaoMapState.polyline].filter(Boolean);
+
+  polylines.forEach(polyline => polyline.setMap(null));
+  kakaoMapState.polyline = null;
+}
+
+function clearNaverPolylines() {
+  const polylines = Array.isArray(naverMapState.polyline)
+    ? naverMapState.polyline
+    : [naverMapState.polyline].filter(Boolean);
+
+  polylines.forEach(polyline => polyline.setMap(null));
+  naverMapState.polyline = null;
+}
+
+function addKakaoPolyline(polyline) {
+  kakaoMapState.polyline = [
+    ...(Array.isArray(kakaoMapState.polyline) ? kakaoMapState.polyline : [kakaoMapState.polyline].filter(Boolean)),
+    polyline,
+  ];
+}
+
+function addNaverPolyline(polyline) {
+  naverMapState.polyline = [
+    ...(Array.isArray(naverMapState.polyline) ? naverMapState.polyline : [naverMapState.polyline].filter(Boolean)),
+    polyline,
+  ];
+}
+
+function getRouteLineStyle({ fallback = false } = {}) {
+  return {
+    strokeOpacity: fallback ? 0.65 : 0.95,
+    strokeStyle: fallback ? 'shortdash' : 'solid',
+  };
+}
+
+function renderKakaoPolyline(points, { realRoute = false, fallback = false, append = false } = {}) {
   if (!points.length || !kakaoMapState.map || !window.kakao || !window.kakao.maps) return;
 
-  if (kakaoMapState.polyline) {
-    kakaoMapState.polyline.setMap(null);
-    kakaoMapState.polyline = null;
+  if (!append) {
+    clearKakaoPolylines();
   }
 
-  kakaoMapState.polyline = new window.kakao.maps.Polyline({
+  const style = getRouteLineStyle({ fallback });
+  const polyline = new window.kakao.maps.Polyline({
     path: toKakaoLatLngPath(points),
     strokeWeight: 5,
     strokeColor: '#2563EB',
-    strokeOpacity: 0.95,
-    strokeStyle: 'shortdash',
+    strokeOpacity: style.strokeOpacity,
+    strokeStyle: style.strokeStyle,
   });
-  kakaoMapState.polyline.setMap(kakaoMapState.map);
+  polyline.setMap(kakaoMapState.map);
+  addKakaoPolyline(polyline);
 
-  if (realRoute) {
+  if (realRoute && !fallback) {
     console.log('Kakao real route polyline rendered');
   }
 }
 
-function renderNaverPolyline(points, { realRoute = false } = {}) {
+function renderKakaoRouteSegments(segments) {
+  clearKakaoPolylines();
+  segments.forEach(segment => {
+    renderKakaoPolyline(segment.path, {
+      realRoute: !segment.isFallback,
+      fallback: segment.isFallback,
+      append: true,
+    });
+  });
+}
+
+function renderNaverPolyline(points, { realRoute = false, fallback = false, append = false } = {}) {
   if (!points.length || !naverMapState.map || !window.naver || !window.naver.maps) return;
 
-  if (naverMapState.polyline) {
-    naverMapState.polyline.setMap(null);
-    naverMapState.polyline = null;
+  if (!append) {
+    clearNaverPolylines();
   }
 
-  naverMapState.polyline = new window.naver.maps.Polyline({
+  const style = getRouteLineStyle({ fallback });
+  const polyline = new window.naver.maps.Polyline({
     map: naverMapState.map,
     path: toNaverLatLngPath(points),
     strokeWeight: 5,
     strokeColor: '#2563EB',
-    strokeOpacity: 0.95,
-    strokeStyle: 'shortdash',
+    strokeOpacity: style.strokeOpacity,
+    strokeStyle: style.strokeStyle,
   });
+  addNaverPolyline(polyline);
 
-  if (realRoute) {
+  if (realRoute && !fallback) {
     console.log('Naver real route polyline rendered');
   }
+}
+
+function renderNaverRouteSegments(segments) {
+  clearNaverPolylines();
+  segments.forEach(segment => {
+    renderNaverPolyline(segment.path, {
+      realRoute: !segment.isFallback,
+      fallback: segment.isFallback,
+      append: true,
+    });
+  });
 }
 
 function renderNaverRoute({ fit = false, routeToken = routeRenderToken } = {}) {
@@ -3364,17 +3443,9 @@ function renderNaverRoute({ fit = false, routeToken = routeRenderToken } = {}) {
   const stopsWithCoords = getStopsWithCoords();
   if (!stopsWithCoords.length) return;
 
-  const directRoutePoints = stopsWithCoords.map(({ stop }) => ({
-    lat: stop.coords.lat,
-    lng: stop.coords.lng,
-  }));
   const geometryKey = getCurrentRouteGeometryKey();
   const renderToken = mapSwitchToken;
   const renderRouteToken = routeToken;
-
-  if (directRoutePoints.length > 1) {
-    renderNaverPolyline(directRoutePoints);
-  }
 
   naverMapState.markers = currentRoute.stops.map(() => null);
   stopsWithCoords.forEach(({ stop, index }, markerIndex) => {
@@ -3404,18 +3475,15 @@ function renderNaverRoute({ fit = false, routeToken = routeRenderToken } = {}) {
     if (isStaleMapRender(renderToken, renderRouteToken) || geometryKey !== getCurrentRouteGeometryKey()) return;
 
     syncRouteGeometryLabelUpdates(geometry);
-    if (geometry.path.length > 1) {
-      renderNaverPolyline(geometry.path, { realRoute: true });
+    if (Array.isArray(geometry.segments) && geometry.segments.length) {
+      renderNaverRouteSegments(geometry.segments);
       if (fit) fitNaverRouteBounds(geometry.path);
     }
   });
 }
 
 function clearKakaoRouteObjects() {
-  if (kakaoMapState.polyline) {
-    kakaoMapState.polyline.setMap(null);
-    kakaoMapState.polyline = null;
-  }
+  clearKakaoPolylines();
 
   kakaoMapState.markers.forEach(marker => {
     if (marker) marker.overlay.setMap(null);
@@ -3424,10 +3492,7 @@ function clearKakaoRouteObjects() {
 }
 
 function clearNaverRouteObjects() {
-  if (naverMapState.polyline) {
-    naverMapState.polyline.setMap(null);
-    naverMapState.polyline = null;
-  }
+  clearNaverPolylines();
 
   naverMapState.markers.forEach(marker => {
     if (marker) marker.marker.setMap(null);

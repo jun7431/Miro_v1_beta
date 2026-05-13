@@ -208,6 +208,18 @@ const SUBCATEGORY_KEYWORDS = {
       '닭한마리',
       '감자탕',
       '두루치기',
+      '횟집',
+      '수산',
+      '해물',
+      '통닭',
+      '닭강정',
+      '치킨',
+      '돼지',
+      '흑돼지',
+      '한우',
+      '목살',
+      '등심',
+      '갈매기살',
     ],
     japanese: [
       '일식',
@@ -229,6 +241,12 @@ const SUBCATEGORY_KEYWORDS = {
       '야끼',
       '야키토리',
       '오코노미야키',
+      '돈가스',
+      '멘야',
+      '쇼쿠도',
+      '갓포',
+      '사케바',
+      '요쇼쿠',
     ],
     chinese: [
       '중식',
@@ -245,6 +263,10 @@ const SUBCATEGORY_KEYWORDS = {
       '홍콩반점',
       '마라탕',
       '마라샹궈',
+      '우육면',
+      '도삭면',
+      '샤오룽바오',
+      '샤오룽',
     ],
     western: [
       '양식',
@@ -264,6 +286,8 @@ const SUBCATEGORY_KEYWORDS = {
       '오스테리아',
       '리조또',
       '뇨끼',
+      '피제리아',
+      '델리',
     ],
     asian: [
       '아시안',
@@ -312,6 +336,8 @@ const SUBCATEGORY_KEYWORDS = {
       '에그베네딕트',
       '베네딕트',
       '프렌치토스트',
+      '샐러드',
+      '수프',
     ],
   },
   cafe: {
@@ -433,6 +459,8 @@ const SUBCATEGORY_KEYWORDS = {
       '초코',
       '초콜렛',
       'takeout',
+      '디저트바',
+      '디저트',
     ],
   },
   bar: {
@@ -706,6 +734,85 @@ const SUBCATEGORY_KEYWORDS = {
   },
 };
 
+const CID_PATH_SUBCATEGORY_RULES = {
+  meal: {
+    '220036>220037>220053': 'korean',
+    '220036>220037>220075>220733': 'korean',
+    '220036>220037>220075>220764>221440': 'korean',
+    '220036>220037>220075>220765>221458': 'korean',
+    '220036>220037>220076>220792>221629': 'korean',
+    '220036>220038>220081>220804': 'japanese',
+    '220036>220038>220082>220812': 'japanese',
+    '220036>220038>220087>220844': 'japanese',
+    '220036>220038>220087>1002568': 'japanese',
+    '220036>220038>220087>1005859': 'japanese',
+    '220036>220038>220089>220850': 'japanese',
+    '220036>220039>220091>220861': 'chinese',
+    '220036>220040>220094': 'asian',
+    '220036>220044>220126': 'western',
+    '220036>220044>220127>220913': 'western',
+    '220036>220044>220128': 'western',
+    '220036>220044>220129': 'western',
+    '220036>220044>220133>220932': 'brunch',
+    '220036>220044>220136>220944': 'western',
+    '220036>220044>220137>220994': 'western',
+    '220036>220044>220138>221004': 'western',
+    '220036>220049>220245': 'korean',
+  },
+  cafe: {
+    '220036>220052>220564>221161': 'bakery_cafe',
+    '220036>220052>220565>221177': 'dessert_cafe',
+  },
+  bar: {
+    '220036>220051>220552>221043': 'pocha',
+    '220036>220051>220553>221078': 'pub',
+    '220036>220051>220555>221119': 'wine_bar',
+    '220036>220051>220556>221121': 'izakaya',
+  },
+  activity: {
+    '221845>221846>221852': 'exhibition_gallery',
+    '221845>221846>221855>229126': 'exhibition_gallery',
+    '221845>221846>221856': 'exhibition_gallery',
+    '222117>222120>221851>221884': 'exhibition_gallery',
+    '222117>222120>221851>221890': 'exhibition_gallery',
+    '222117>222120>221851>221891': 'exhibition_gallery',
+    '221986>221988>222035': 'sports',
+    '223267>223270>223302': 'arcade_entertainment',
+    '223267>223270>223305': 'arcade_entertainment',
+    '223267>226396>1001484': 'one_day_class',
+  },
+  shopping: {
+    '222412>222415>222440': 'bookstore',
+    '223563>223569>223669': 'beauty_fragrance',
+    '223563>223570>223698': 'lifestyle_goods',
+    '223563>223570>223699>224214': 'select_shop',
+    '223563>223570>223702>226553': 'lifestyle_goods',
+    '223563>223571>223705>224265': 'select_shop',
+    '223563>223572>223716': 'lifestyle_goods',
+    '223563>223572>223717>224300': 'bookstore',
+    '223563>223572>223718>224313': 'lifestyle_goods',
+    '223563>223572>223718>224314': 'lifestyle_goods',
+  },
+  walk_nature: {
+    '227616>227755>227757>227761': 'street_alley',
+  },
+  landmark_view: {
+    '222117>222123>222179': 'palace_history',
+    '221845>221846>221850>221882': 'landmark',
+  },
+  rest: {
+    '222117>222121>222160>232110': 'spa',
+  },
+};
+
+const PRIMARY_CATEGORY_FALLBACKS = {
+  cafe: {
+    subCategory: 'specialty_coffee',
+    confidence: 0.74,
+    categorySignals: ['CAFE', '카페', '커피'],
+  },
+};
+
 const TAG_VOCABULARY = new Set([
   'quiet',
   'aesthetic',
@@ -972,6 +1079,98 @@ function buildSourceTexts(place, sourceFields) {
     .filter(source => source.text !== '');
 }
 
+function cidPathValue(place) {
+  const cidPath = place.raw?.cidPath;
+  return Array.isArray(cidPath) ? cidPath.map(stringValue).filter(Boolean).join('>') : '';
+}
+
+function scoreCidPathSubcategory(place, primaryCategory) {
+  const cidPath = cidPathValue(place);
+  const subCategory = CID_PATH_SUBCATEGORY_RULES[primaryCategory]?.[cidPath];
+  if (!subCategory) return null;
+
+  return {
+    subCategory,
+    score: 0.9,
+    matchedKeywords: [`cidPath:${cidPath}`],
+    sourceFields: ['raw.cidPath'],
+    priority: priorityFor(primaryCategory, subCategory),
+  };
+}
+
+function mergeCandidates(candidates) {
+  const bySubcategory = new Map();
+
+  for (const candidate of candidates.filter(Boolean)) {
+    const existing = bySubcategory.get(candidate.subCategory);
+    if (!existing) {
+      bySubcategory.set(candidate.subCategory, {
+        ...candidate,
+        matchedKeywords: [...candidate.matchedKeywords],
+        sourceFields: [...candidate.sourceFields],
+      });
+      continue;
+    }
+
+    existing.score = Math.max(existing.score, candidate.score);
+    existing.matchedKeywords = unique([
+      ...existing.matchedKeywords,
+      ...candidate.matchedKeywords,
+    ]);
+    existing.sourceFields = unique([
+      ...existing.sourceFields,
+      ...candidate.sourceFields,
+    ]);
+  }
+
+  return [...bySubcategory.values()].sort((left, right) => (
+    right.score - left.score
+    || left.priority - right.priority
+    || left.subCategory.localeCompare(right.subCategory)
+  ));
+}
+
+function getPrimaryCategoryFallback(place, primaryCategory) {
+  const fallback = PRIMARY_CATEGORY_FALLBACKS[primaryCategory];
+  if (!fallback) return null;
+
+  const signalSources = buildSourceTexts(place, [
+    'categoryCode',
+    'categoryName',
+    'raw.mcid',
+    'raw.mcidName',
+  ]);
+  const matchedSignals = [];
+  const sourceFields = [];
+
+  for (const source of signalSources) {
+    for (const signal of fallback.categorySignals) {
+      if (includesKeyword(source.text, signal)) {
+        matchedSignals.push(signal);
+        sourceFields.push(source.key);
+      }
+    }
+  }
+
+  if (matchedSignals.length === 0) return null;
+
+  return {
+    subCategory: fallback.subCategory,
+    subCategoryLabel: SUBCATEGORY_SCHEMA[primaryCategory][fallback.subCategory],
+    confidence: fallback.confidence,
+    matchedKeywords: unique(matchedSignals),
+    sourceFields: unique(sourceFields),
+    needsReview: false,
+    reason: `Applied primary-category fallback for ${primaryCategory} from ${unique(sourceFields).join(', ')}`,
+    candidateSubcategories: [{
+      subCategory: fallback.subCategory,
+      confidence: fallback.confidence,
+      matchedKeywords: unique(matchedSignals),
+      sourceFields: unique(sourceFields),
+    }],
+  };
+}
+
 function scoreSubcategory(place, primaryCategory, subCategory) {
   const keywords = SUBCATEGORY_KEYWORDS[primaryCategory]?.[subCategory] || [];
   const sources = buildSourceTexts(place, CLASSIFICATION_SOURCE_FIELDS);
@@ -1021,16 +1220,16 @@ function classifySubcategory(place) {
     };
   }
 
-  const candidates = Object.keys(SUBCATEGORY_SCHEMA[primaryCategory])
-    .map(subCategory => scoreSubcategory(place, primaryCategory, subCategory))
-    .filter(Boolean)
-    .sort((left, right) => (
-      right.score - left.score
-      || left.priority - right.priority
-      || left.subCategory.localeCompare(right.subCategory)
-    ));
+  const candidates = mergeCandidates([
+    scoreCidPathSubcategory(place, primaryCategory),
+    ...Object.keys(SUBCATEGORY_SCHEMA[primaryCategory])
+      .map(subCategory => scoreSubcategory(place, primaryCategory, subCategory)),
+  ]);
 
   if (candidates.length === 0) {
+    const fallback = getPrimaryCategoryFallback(place, primaryCategory);
+    if (fallback) return fallback;
+
     return {
       subCategory: null,
       subCategoryLabel: null,
@@ -1054,6 +1253,8 @@ function classifySubcategory(place) {
   const subCategoryLabel = subCategory ? SUBCATEGORY_SCHEMA[primaryCategory][subCategory] : null;
   const reason = hasSimilarConflict
     ? `Conflicting subcategory scores under primaryCategory ${primaryCategory}: ${top.subCategory} ${top.score}, ${second.subCategory} ${second.score}`
+    : top.sourceFields.includes('raw.cidPath')
+      ? `Matched Naver cidPath pattern ${top.matchedKeywords.find(keyword => keyword.startsWith('cidPath:'))?.replace('cidPath:', '')} under primaryCategory ${primaryCategory} for subCategory ${top.subCategory}`
     : `Matched keyword ${top.matchedKeywords[0]} under primaryCategory ${primaryCategory} for subCategory ${top.subCategory}`;
 
   return {
@@ -1231,6 +1432,105 @@ function topEntries(counts, limit = 20) {
     .slice(0, limit);
 }
 
+function topNameKeywords(places, limit = 30) {
+  const stopwords = new Set([
+    '서울',
+    '서울시',
+    '서울특별시',
+    '강남',
+    '홍대',
+    '성수',
+    '연남',
+    '압구정',
+    '합정',
+    '신사',
+    '안국',
+    '카페',
+    '맛집',
+    '본점',
+  ]);
+  const counts = {};
+
+  places.forEach(place => {
+    const text = normalizeSearchText([place.name, place.displayName].join(' '));
+    const tokens = text.match(/[가-힣a-z0-9]{2,}/g) || [];
+    tokens.forEach(token => {
+      if (stopwords.has(token) || token.endsWith('점')) return;
+      counts[token] = (counts[token] || 0) + 1;
+    });
+  });
+
+  return topEntries(counts, limit);
+}
+
+function examplesByPrimaryCategory(places, limit = 10) {
+  return places.reduce((examples, place) => {
+    if (!examples[place.primaryCategory]) examples[place.primaryCategory] = [];
+    if (examples[place.primaryCategory].length < limit) {
+      examples[place.primaryCategory].push(placeExample(place));
+    }
+    return examples;
+  }, {});
+}
+
+function reviewReasonSummary(reviewPlaces) {
+  const genericDiningReviews = reviewPlaces.filter(place => (
+    place.primaryCategory === 'meal'
+    && (place.categoryCode === 'DINING' || place.raw?.mcid === 'DINING')
+    && (place.categoryName === '음식점' || place.raw?.mcidName === '음식점')
+  ));
+  const genericBarReviews = reviewPlaces.filter(place => (
+    place.primaryCategory === 'bar'
+    && (place.categoryCode === 'BAR' || place.raw?.mcid === 'BAR')
+    && (place.categoryName === 'BAR' || place.raw?.mcidName === 'BAR')
+  ));
+  const broadCategoryReviews = reviewPlaces.filter(place => (
+    ['GENERAL', 'ADDRESS', 'LIFE_CULTURE', 'TRAVEL', 'SHOPPING'].includes(place.categoryCode)
+  ));
+  const conflictReviews = reviewPlaces.filter(place => (
+    place.subcategoryClassification.reason.startsWith('Conflicting subcategory scores')
+  ));
+  const noCandidateReviews = reviewPlaces.filter(place => (
+    place.subcategoryClassification.reason.startsWith('No reliable subcategory keyword matched')
+  ));
+
+  return [
+    {
+      reason: 'Generic DINING / 음식점 remains unresolved without a cuisine-specific cidPath or name signal',
+      count: genericDiningReviews.length,
+    },
+    {
+      reason: 'Generic BAR remains unresolved when cidPath/name does not identify wine, pub, izakaya, pocha, brewery, whiskey, or traditional alcohol',
+      count: genericBarReviews.length,
+    },
+    {
+      reason: 'Broad non-dining category metadata remains unresolved without an allowed subcategory signal',
+      count: broadCategoryReviews.length,
+    },
+    {
+      reason: 'No subcategory candidate matched any deterministic keyword, cidPath, or fallback rule',
+      count: noCandidateReviews.length,
+    },
+    {
+      reason: 'Multiple candidate subcategories had similar scores',
+      count: conflictReviews.length,
+    },
+  ].sort((left, right) => right.count - left.count);
+}
+
+function analyzeReviewPatterns(reviewPlaces) {
+  return {
+    reviewCountByPrimaryCategory: countBy(reviewPlaces, place => place.primaryCategory),
+    topCategoryNameValues: topEntries(countBy(reviewPlaces, place => stringValue(place.categoryName) || '<missing>'), 20),
+    topRawMcidNameValues: topEntries(countBy(reviewPlaces, place => stringValue(place.raw?.mcidName) || '<missing>'), 20),
+    topRawCidPathPatterns: topEntries(countBy(reviewPlaces, place => cidPathValue(place) || '<missing>'), 30),
+    topCategoryCodeValues: topEntries(countBy(reviewPlaces, place => stringValue(place.categoryCode) || '<missing>'), 20),
+    topNameKeywords: topNameKeywords(reviewPlaces, 40),
+    examplesByPrimaryCategory: examplesByPrimaryCategory(reviewPlaces, 10),
+    biggestReasonsPlacesWereNotSubcategorized: reviewReasonSummary(reviewPlaces),
+  };
+}
+
 function buildReport(inputPlaces, outputPlaces, reviewPlaces) {
   const successfulPlaces = outputPlaces.filter(place => !place.subcategoryClassification.needsReview);
   const unresolvedRawCategoryCounts = countBy(reviewPlaces, rawCategoryKey);
@@ -1249,6 +1549,7 @@ function buildReport(inputPlaces, outputPlaces, reviewPlaces) {
     countByPrimaryCategory: countBy(outputPlaces, place => place.primaryCategory),
     countBySubCategoryUnderPrimaryCategory: countSubcategoriesByPrimary(outputPlaces),
     topRawCategoryNamesThatCouldNotBeSubcategorized: topEntries(unresolvedRawCategoryCounts, 20),
+    reviewQueuePatternAnalysis: analyzeReviewPatterns(reviewPlaces),
     successfulExamples: successfulPlaces.slice(0, 10).map(placeExample),
     reviewNeededExamples: reviewPlaces.slice(0, 10).map(placeExample),
     tagFrequencyCounts: tagFrequencyCounts(outputPlaces),

@@ -3886,42 +3886,164 @@ async function shareCurrentRoute() {
 
 function getCurrentRoutePlaces() {
   return Array.isArray(currentRoute?.stops)
-    ? currentRoute.stops.filter(stop => stop && (stop.name || stop.place?.name || stop.place?.displayName))
+    ? currentRoute.stops.filter(hasValidKoreaCoord)
     : [];
 }
 
-function getPlaceMapQuery(place = {}) {
+function getPlaceLat(place = {}) {
   const sourcePlace = place.place || place;
-  return [
-    place.name || sourcePlace.displayName || sourcePlace.name,
-    sourcePlace.area || currentRoute?.label,
-    sourcePlace.address,
-  ].filter(Boolean).join(' ');
+  return Number(
+    place.lat ??
+    place.latitude ??
+    place.py ??
+    place.coords?.lat ??
+    sourcePlace.lat ??
+    sourcePlace.latitude ??
+    sourcePlace.py ??
+    sourcePlace.coords?.lat
+  );
 }
 
-function buildExternalMapUrl(place, provider = 'kakao') {
-  const query = encodeURIComponent(getPlaceMapQuery(place));
-  if (!query) return '';
-  if (provider === 'naver') {
-    return `https://map.naver.com/p/search/${query}`;
+function getPlaceLng(place = {}) {
+  const sourcePlace = place.place || place;
+  return Number(
+    place.lng ??
+    place.longitude ??
+    place.px ??
+    place.coords?.lng ??
+    sourcePlace.lng ??
+    sourcePlace.longitude ??
+    sourcePlace.px ??
+    sourcePlace.coords?.lng
+  );
+}
+
+function hasValidKoreaCoord(place) {
+  const lat = getPlaceLat(place);
+  const lng = getPlaceLng(place);
+  return Number.isFinite(lat) &&
+    Number.isFinite(lng) &&
+    lat >= 31.43 &&
+    lat <= 44.35 &&
+    lng >= 122.37 &&
+    lng <= 132.0;
+}
+
+function getPlaceName(place = {}) {
+  const sourcePlace = place.place || place;
+  return String(
+    place.name ||
+    place.title ||
+    place.label ||
+    sourcePlace.displayName ||
+    sourcePlace.name ||
+    sourcePlace.title ||
+    sourcePlace.label ||
+    'Selected place'
+  ).trim();
+}
+
+function getPlaceId(place = {}) {
+  const sourcePlace = place.place || place;
+  return String(
+    place.placeId ||
+    place.sid ||
+    place.naverPlaceId ||
+    place.kakaoPlaceId ||
+    place.id ||
+    sourcePlace.placeId ||
+    sourcePlace.sid ||
+    sourcePlace.naverPlaceId ||
+    sourcePlace.kakaoPlaceId ||
+    sourcePlace.id ||
+    ''
+  ).trim();
+}
+
+function formatMapCoord(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? String(Number(number.toFixed(7))) : '';
+}
+
+function encodeKakaoRouteStop(place) {
+  return [
+    encodeURIComponent(getPlaceName(place)),
+    formatMapCoord(getPlaceLat(place)),
+    formatMapCoord(getPlaceLng(place)),
+  ].join(',');
+}
+
+function buildKakaoWalkingDirectionsUrl(routePlaces) {
+  if (!routePlaces.length) return '';
+  const segments = routePlaces.map(encodeKakaoRouteStop);
+  if (segments.length === 1) {
+    return `https://map.kakao.com/link/to/${segments[0]}`;
   }
-  return `https://map.kakao.com/link/search/${query}`;
+  return `https://map.kakao.com/link/by/walk/${segments.join('/')}`;
+}
+
+function toNaverMapPoint(place) {
+  const lat = getPlaceLat(place);
+  const lng = getPlaceLng(place);
+  const clampedLat = Math.max(Math.min(lat, 85.05112878), -85.05112878);
+  const radians = Math.PI / 180;
+  const earthRadius = 6378137;
+  return {
+    x: earthRadius * lng * radians,
+    y: earthRadius * Math.log(Math.tan(Math.PI / 4 + (clampedLat * radians) / 2)),
+  };
+}
+
+function encodeNaverRouteStop(place) {
+  const point = toNaverMapPoint(place);
+  return [
+    formatMapCoord(point.x),
+    formatMapCoord(point.y),
+    encodeURIComponent(getPlaceName(place)),
+    encodeURIComponent(getPlaceId(place)),
+    'PLACE_POI',
+  ].join(',');
+}
+
+function buildNaverWalkingDirectionsUrl(routePlaces) {
+  if (!routePlaces.length) return '';
+  const segments = routePlaces.map(encodeNaverRouteStop);
+  const center = toNaverMapPoint(routePlaces[Math.floor(routePlaces.length / 2)]);
+  const centerQuery = [
+    formatMapCoord(center.x),
+    formatMapCoord(center.y),
+    '15.00',
+    '0',
+    '0',
+    '0',
+    'dh',
+  ].join(',');
+  const routePath = segments.length === 1
+    ? `-/${segments[0]}`
+    : segments.join('/');
+  return `https://map.naver.com/p/directions/${routePath}/-/walk?c=${centerQuery}`;
+}
+
+function buildExternalMapUrl(routePlaces, provider = 'naver') {
+  if (provider === 'kakao') {
+    return buildKakaoWalkingDirectionsUrl(routePlaces);
+  }
+  return buildNaverWalkingDirectionsUrl(routePlaces);
 }
 
 function openCurrentRouteInMap() {
   const routePlaces = getCurrentRoutePlaces();
-  const targetPlace = routePlaces.length ? routePlaces[0] : null;
-  if (!targetPlace) {
-    console.warn('[Kandid Spot] Open in map clicked but no route place exists.');
-    showToast('There is no route stop to open yet.');
+  if (!routePlaces.length) {
+    console.warn('[Kandid Spot] Open in map clicked but no valid route places exist.');
+    showToast('There are no valid route stops to open yet.');
     return;
   }
 
-  const provider = getActiveMapProvider() || 'kakao';
-  const url = buildExternalMapUrl(targetPlace, provider);
+  const provider = MAP_PROVIDERS.has(mapProviderState?.active) ? mapProviderState.active : 'naver';
+  const url = buildExternalMapUrl(routePlaces, provider);
   if (!url) {
-    console.warn('[Kandid Spot] Open in map clicked but no valid map query exists.');
-    showToast('No map search is available for this route yet.');
+    console.warn('[Kandid Spot] Open in map clicked but no valid route URL could be built.');
+    showToast('No walking route link is available for this route yet.');
     return;
   }
 
@@ -3931,8 +4053,7 @@ function openCurrentRouteInMap() {
     return;
   }
 
-  const targetName = targetPlace.name || targetPlace.place?.displayName || targetPlace.place?.name || 'this stop';
-  showToast(`Opening ${provider === 'naver' ? 'Naver' : 'Kakao'} Map for ${targetName}…`);
+  showToast(`Opening ${provider === 'naver' ? 'Naver' : 'Kakao'} Map walking directions…`);
 }
 
 document.querySelectorAll('.act-btn').forEach(btn => {

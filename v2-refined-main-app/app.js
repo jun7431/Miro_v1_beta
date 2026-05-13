@@ -354,11 +354,45 @@ const LESS_WALKING_MAX_WALK_MINUTES = 8;
 const WALKING_SPEED_M_PER_MIN = 80;
 
 const MOOD_TO_ROUTE_MODE = {
+  // legacy display labels
   'local food': 'food-focused',
   'quiet walk': 'cafe-slow-walk',
   cafes: 'cafe-slow-walk',
   'night energy': 'night-energy',
   'hidden spots': 'culture-local-streets',
+  // new onboarding display labels (lowercased)
+  'cafes & dessert': 'cafe-slow-walk',
+  'drinks & night': 'night-energy',
+  'shop & browse': 'shopping-browsing',
+  'culture & activities': 'do-something-fun',
+  'walks & views': 'culture-local-streets',
+  // new onboarding internal snake_case values
+  local_food: 'food-focused',
+  cafes_dessert: 'cafe-slow-walk',
+  drinks_night: 'night-energy',
+  shop_browse: 'shopping-browsing',
+  culture_activities: 'do-something-fun',
+  walks_views: 'culture-local-streets',
+};
+
+// Aliases for new onboarding area values. Maps lowercased display labels
+// and snake_case internal values to an existing AREA_FILTERS / ROUTES key.
+// Used by getRouteKey() to avoid silent 'hongdae' fallback for the new options.
+const AREA_KEY_ALIASES = {
+  // new onboarding display labels (lowercased)
+  'myeongdong / euljiro': 'euljiro',
+  'hongdae / yeonnam': 'hongdae',
+  'itaewon / hannam': 'hongdae', // no itaewon route data yet; safe fallback
+  'anguk / bukchon': 'anguk',
+  'gangnam / sinsa': 'gangnam',
+  'near me': 'hongdae', // placeholder: geolocation not implemented
+  // new onboarding internal snake_case values
+  myeongdong_euljiro: 'euljiro',
+  hongdae_yeonnam: 'hongdae',
+  itaewon_hannam: 'hongdae',
+  anguk_bukchon: 'anguk',
+  gangnam_sinsa_apgujeong: 'gangnam',
+  near_me: 'hongdae',
 };
 
 const MIRO_CATEGORY_LABELS = {
@@ -1272,7 +1306,11 @@ function finishBuild() {
 // ========== Route state + rendering ==========
 function getRouteKey(area) {
   const normalized = String(area || '').trim().toLowerCase();
-  return AREA_KEY_BY_LABEL[normalized] || 'hongdae';
+  return (
+    AREA_KEY_BY_LABEL[normalized] ||
+    AREA_KEY_ALIASES[normalized] ||
+    'hongdae'
+  );
 }
 
 function applyRouteForCurrentSelection() {
@@ -1282,7 +1320,9 @@ function applyRouteForCurrentSelection() {
 
 function applyResolvedRoute(route) {
   currentRoute = route;
-  state.area = currentRoute.label;
+  // Preserve the user's onboarding selection (e.g. 'Hongdae / Yeonnam' or
+  // 'Near me') in state.area so inline-builder chip sync and onboarding restart
+  // still recognize it. Route display continues to use currentRoute.label.
   state.activeStop = null;
   resetRouteGeometryCache();
 

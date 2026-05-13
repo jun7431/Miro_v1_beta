@@ -295,48 +295,247 @@ const ROUTES = {
       },
     ],
   },
+  itaewon: {
+    label: 'Itaewon / Hannam',
+    mapLabel: 'Itaewon · Hannam-dong global-local route',
+    center: { lat: 37.5345, lng: 126.9946 },
+    defaultMood: 'Drinks & night',
+    meta: { total: '2h 20m', walking: '19 min' },
+    why: '이태원과 한남은 너무 넓게 잡으면 산만해져서, 글로벌한 식사로 시작해 한남의 디자인/브라우징 무드, 카페나 바, 야경 느낌으로 이어지게 잡았어요. This is a safe prototype fallback when local place data cannot build a route.',
+    ask: {
+      why: 'Itaewon and Hannam work best when the route keeps a clear arc: global food, a browse/design pause, then a cafe or bar finish without crossing the whole district.',
+      crowd: 'Done — I would keep this one around Hannam side streets and avoid bouncing through Itaewon main road unless you want more nightlife.',
+      cafe: 'I can make the middle stop cafe-led and keep the final stop as a soft night-view option.',
+    },
+    stops: [
+      {
+        num: 1,
+        name: 'Itaewon Global Dinner Lane',
+        type: 'Global food · dinner anchor',
+        stay: 60,
+        walk: 0,
+        coords: { lat: 37.53442, lng: 126.99408 },
+        why: 'A practical food-first anchor for the area: international restaurants, easy backups, and a clear start point.',
+        next: 'Walk 7 min toward Hannam side streets →',
+        tags: ['🍽️ global', '🌙 dinner', '🚇 nearby'],
+      },
+      {
+        num: 2,
+        name: 'Hannam Design Browse Block',
+        type: 'Design shops · browse',
+        stay: 35,
+        walk: 7,
+        coords: { lat: 37.53702, lng: 127.00079 },
+        why: 'A compact browsing pause that matches Hannam without inventing ratings or specific claims.',
+        next: 'Continue 5 min toward a cafe/bar pause →',
+        tags: ['🛍️ browse', '🎨 design', '📷 visual'],
+      },
+      {
+        num: 3,
+        name: 'Hannam Cafe or Wine Bar Pause',
+        type: 'Cafe or bar · flexible stop',
+        stay: 45,
+        walk: 5,
+        coords: { lat: 37.53795, lng: 127.00237 },
+        why: 'This slot can lean cafe in the afternoon or bar in the evening while keeping the route walkable.',
+        next: 'Walk 7 min for a soft view close →',
+        tags: ['☕ cafe', '🍷 wine', '🌙 evening'],
+      },
+      {
+        num: 4,
+        name: 'Itaewon Night View Edge',
+        type: 'View finish · night option',
+        stay: 25,
+        walk: 7,
+        coords: { lat: 37.53183, lng: 126.99729 },
+        why: 'A low-commitment finish with the area feeling of Itaewon/Hannam, useful when the data-driven route is unavailable.',
+        next: 'Route complete · transit nearby',
+        tags: ['🌃 view', '🚶 walkable', '📍 fallback'],
+      },
+    ],
+  },
 };
 
 // ========== Curated Naver bookmark place data ==========
+const SUBCATEGORIZED_PLACES_URL = 'data/places/processed/miro_places_subcategorized.json';
 const CURATED_PLACES_URL = 'data/miro_places.json';
 const MOCK_ROUTES_ENABLED = new URLSearchParams(window.location.search).get('mock') === '1';
 
 const AREA_FILTERS = {
-  hongdae: {
-    label: 'Hongdae',
-    mapLabel: 'Hongdae · curated saved places',
-    center: { lat: 37.5613, lng: 126.9254 },
+  myeongdong_euljiro: {
+    label: 'Myeongdong / Euljiro',
+    mapLabel: 'Myeongdong / Euljiro · local place dataset',
+    center: { lat: 37.5663, lng: 126.9880 },
+    terms: ['명동', '을지로', '충무로', '청계', '종로', '중구'],
+    radiusM: 1800,
+  },
+  hongdae_yeonnam: {
+    label: 'Hongdae / Yeonnam',
+    mapLabel: 'Hongdae / Yeonnam · local place dataset',
+    center: { lat: 37.5563, lng: 126.9236 },
     terms: ['홍대', '연남', '서교', '동교', '합정', '상수', '망원', '마포구'],
-    radiusKm: 4,
+    radiusM: 1800,
+  },
+  itaewon_hannam: {
+    label: 'Itaewon / Hannam',
+    mapLabel: 'Itaewon / Hannam · local place dataset',
+    center: { lat: 37.5345, lng: 126.9946 },
+    terms: ['이태원', '한남', '용산구', '해방촌', '녹사평'],
+    radiusM: 2000,
   },
   seongsu: {
     label: 'Seongsu',
-    mapLabel: 'Seongsu · curated saved places',
-    center: { lat: 37.5447, lng: 127.0546 },
+    mapLabel: 'Seongsu · local place dataset',
+    center: { lat: 37.5446, lng: 127.0557 },
     terms: ['성수', '서울숲', '뚝섬', '성동구'],
-    radiusKm: 4,
+    radiusM: 1800,
   },
-  anguk: {
-    label: 'Anguk',
-    mapLabel: 'Anguk · curated saved places',
-    center: { lat: 37.5783, lng: 126.9853 },
+  anguk_bukchon: {
+    label: 'Anguk / Bukchon',
+    mapLabel: 'Anguk / Bukchon · local place dataset',
+    center: { lat: 37.5796, lng: 126.9849 },
     terms: ['안국', '북촌', '삼청', '인사', '익선', '운니', '계동', '가회', '종로구'],
-    radiusKm: 4,
+    radiusM: 1800,
   },
-  euljiro: {
-    label: 'Euljiro',
-    mapLabel: 'Euljiro · curated saved places',
-    center: { lat: 37.5668, lng: 126.9931 },
-    terms: ['을지로', '충무로', '명동', '청계', '종로', '중구'],
-    radiusKm: 4,
-  },
-  gangnam: {
-    label: 'Gangnam',
-    mapLabel: 'Gangnam · curated saved places',
-    center: { lat: 37.5011, lng: 127.0278 },
+  gangnam_sinsa_apgujeong: {
+    label: 'Gangnam / Sinsa / Apgujeong',
+    mapLabel: 'Gangnam / Sinsa / Apgujeong · local place dataset',
+    center: { lat: 37.5172, lng: 127.0286 },
     terms: ['강남', '역삼', '신논현', '논현', '신사', '압구정', '잠원', '강남구', '서초구'],
-    radiusKm: 5,
+    radiusM: 2500,
   },
+  near_me: {
+    label: 'Near me',
+    mapLabel: 'Near me · local place dataset',
+    center: null,
+    terms: [],
+    radiusM: 1200,
+  },
+};
+
+AREA_FILTERS.hongdae = AREA_FILTERS.hongdae_yeonnam;
+AREA_FILTERS.euljiro = AREA_FILTERS.myeongdong_euljiro;
+AREA_FILTERS.anguk = AREA_FILTERS.anguk_bukchon;
+AREA_FILTERS.gangnam = AREA_FILTERS.gangnam_sinsa_apgujeong;
+AREA_FILTERS.itaewon = AREA_FILTERS.itaewon_hannam;
+
+const TIME_CONFIG = {
+  time_30_60: { label: '30–60 min', targetMin: 45, minStops: 1, maxStops: 2, nearMeRadiusM: 700 },
+  time_1_2: { label: '1–2 hours', targetMin: 90, minStops: 2, maxStops: 2, nearMeRadiusM: 1200 },
+  time_2_3: { label: '2–3 hours', targetMin: 150, minStops: 2, maxStops: 3, nearMeRadiusM: 1800 },
+  time_4_6: { label: '4–6 hours', targetMin: 300, minStops: 3, maxStops: 5, nearMeRadiusM: 3000 },
+};
+
+const TIME_ALIASES = {
+  '30–60 min': 'time_30_60',
+  '30-60 min': 'time_30_60',
+  '1–2 hours': 'time_1_2',
+  '1-2 hours': 'time_1_2',
+  '2–3 hours': 'time_2_3',
+  '2-3 hours': 'time_2_3',
+  '2 hours': 'time_2_3',
+  '4–6 hours': 'time_4_6',
+  '4-6 hours': 'time_4_6',
+};
+
+const MOOD_CONFIG = {
+  local_food: {
+    label: 'Local food',
+    primaryPreferred: ['meal'],
+    secondaryPreferred: ['cafe', 'dessert_bakery'],
+    tagsPreferred: ['local', 'lunch', 'dinner', 'grill', 'noodle', 'rice'],
+  },
+  cafes_dessert: {
+    label: 'Cafes & dessert',
+    primaryPreferred: ['cafe', 'dessert_bakery'],
+    secondaryPreferred: ['shopping', 'walk_nature'],
+    tagsPreferred: ['coffee', 'dessert', 'bakery', 'aesthetic', 'afternoon'],
+  },
+  drinks_night: {
+    label: 'Drinks & night',
+    primaryPreferred: ['bar'],
+    secondaryPreferred: ['meal', 'landmark_view'],
+    tagsPreferred: ['evening', 'late_night', 'wine', 'cocktail', 'beer', 'whiskey'],
+  },
+  shop_browse: {
+    label: 'Shop & browse',
+    primaryPreferred: ['shopping'],
+    secondaryPreferred: ['cafe', 'dessert_bakery'],
+    tagsPreferred: ['shopping', 'bookstore', 'lifestyle', 'aesthetic'],
+  },
+  culture_activities: {
+    label: 'Culture & activities',
+    primaryPreferred: ['activity', 'landmark_view'],
+    secondaryPreferred: ['cafe', 'meal'],
+    tagsPreferred: ['culture', 'indoor', 'performance', 'hands_on', 'history'],
+  },
+  walks_views: {
+    label: 'Walks & views',
+    primaryPreferred: ['walk_nature', 'landmark_view'],
+    secondaryPreferred: ['cafe', 'dessert_bakery'],
+    tagsPreferred: ['outdoor', 'walkable', 'view', 'photo_worthy', 'history'],
+  },
+};
+
+const MOOD_ALIASES = {
+  'local food': 'local_food',
+  'cafes & dessert': 'cafes_dessert',
+  cafes: 'cafes_dessert',
+  'drinks & night': 'drinks_night',
+  'night energy': 'drinks_night',
+  'shop & browse': 'shop_browse',
+  'culture & activities': 'culture_activities',
+  'walks & views': 'walks_views',
+  'quiet walk': 'walks_views',
+  'hidden spots': 'culture_activities',
+};
+
+const MOOD_CATEGORY_SEQUENCES = {
+  local_food: {
+    time_30_60: ['meal', 'cafe'],
+    time_1_2: ['meal', 'cafe'],
+    time_2_3: ['meal', 'cafe', 'bar'],
+    time_4_6: ['meal', 'cafe', 'landmark_view', 'bar'],
+  },
+  cafes_dessert: {
+    time_30_60: ['cafe', 'dessert_bakery'],
+    time_1_2: ['cafe', 'dessert_bakery'],
+    time_2_3: ['cafe', 'shopping', 'dessert_bakery'],
+    time_4_6: ['cafe', 'shopping', 'dessert_bakery', 'walk_nature'],
+  },
+  drinks_night: {
+    time_30_60: ['bar'],
+    time_1_2: ['meal', 'bar'],
+    time_2_3: ['meal', 'bar', 'landmark_view'],
+    time_4_6: ['meal', 'bar', 'landmark_view', 'bar'],
+  },
+  shop_browse: {
+    time_30_60: ['shopping', 'cafe'],
+    time_1_2: ['shopping', 'cafe'],
+    time_2_3: ['cafe', 'shopping', 'dessert_bakery'],
+    time_4_6: ['meal', 'shopping', 'cafe', 'dessert_bakery'],
+  },
+  culture_activities: {
+    time_30_60: ['activity', 'cafe'],
+    time_1_2: ['activity', 'cafe'],
+    time_2_3: ['activity', 'cafe', 'meal'],
+    time_4_6: ['activity', 'cafe', 'meal', 'landmark_view'],
+  },
+  walks_views: {
+    time_30_60: ['walk_nature', 'cafe'],
+    time_1_2: ['landmark_view', 'cafe'],
+    time_2_3: ['cafe', 'walk_nature', 'dessert_bakery'],
+    time_4_6: ['cafe', 'walk_nature', 'meal', 'landmark_view'],
+  },
+};
+
+const MOCK_ROUTE_KEY_ALIASES = {
+  myeongdong_euljiro: 'euljiro',
+  hongdae_yeonnam: 'hongdae',
+  itaewon_hannam: 'itaewon',
+  anguk_bukchon: 'anguk',
+  gangnam_sinsa_apgujeong: 'gangnam',
+  near_me: 'hongdae',
 };
 
 const ROUTE_TEMPLATES = {
@@ -380,19 +579,22 @@ const MOOD_TO_ROUTE_MODE = {
 // Used by getRouteKey() to avoid silent 'hongdae' fallback for the new options.
 const AREA_KEY_ALIASES = {
   // new onboarding display labels (lowercased)
-  'myeongdong / euljiro': 'euljiro',
-  'hongdae / yeonnam': 'hongdae',
-  'itaewon / hannam': 'hongdae', // no itaewon route data yet; safe fallback
-  'anguk / bukchon': 'anguk',
-  'gangnam / sinsa': 'gangnam',
-  'near me': 'hongdae', // placeholder: geolocation not implemented
+  'myeongdong / euljiro': 'myeongdong_euljiro',
+  'hongdae / yeonnam': 'hongdae_yeonnam',
+  'itaewon / hannam': 'itaewon_hannam',
+  itaewon: 'itaewon_hannam',
+  hannam: 'itaewon_hannam',
+  'anguk / bukchon': 'anguk_bukchon',
+  'gangnam / sinsa': 'gangnam_sinsa_apgujeong',
+  'gangnam / sinsa / apgujeong': 'gangnam_sinsa_apgujeong',
+  'near me': 'near_me',
   // new onboarding internal snake_case values
-  myeongdong_euljiro: 'euljiro',
-  hongdae_yeonnam: 'hongdae',
-  itaewon_hannam: 'hongdae',
-  anguk_bukchon: 'anguk',
-  gangnam_sinsa_apgujeong: 'gangnam',
-  near_me: 'hongdae',
+  myeongdong_euljiro: 'myeongdong_euljiro',
+  hongdae_yeonnam: 'hongdae_yeonnam',
+  itaewon_hannam: 'itaewon_hannam',
+  anguk_bukchon: 'anguk_bukchon',
+  gangnam_sinsa_apgujeong: 'gangnam_sinsa_apgujeong',
+  near_me: 'near_me',
 };
 
 const MIRO_CATEGORY_LABELS = {
@@ -448,6 +650,10 @@ function normalizeRealPlace(place) {
   const source = String(place.source || 'naver').trim() || 'naver';
   const categoryCode = String(place.categoryCode || '').trim();
   const categoryName = String(place.categoryName || '').trim();
+  const primaryCategory = String(place.primaryCategory || '').trim();
+  const primaryCategoryLabel = String(place.primaryCategoryLabel || '').trim();
+  const subCategory = place.subCategory === null ? null : String(place.subCategory || '').trim();
+  const subCategoryLabel = place.subCategoryLabel === null ? null : String(place.subCategoryLabel || '').trim();
 
   return {
     ...place,
@@ -459,7 +665,16 @@ function normalizeRealPlace(place) {
     address: String(place.address || ''),
     categoryCode,
     categoryName,
-    miroCategory: inferMiroCategory({ ...place, categoryCode, categoryName }),
+    primaryCategory,
+    primaryCategoryLabel,
+    subCategory,
+    subCategoryLabel,
+    tags: Array.isArray(place.tags) ? place.tags.filter(Boolean).map(String) : [],
+    estimatedStayMin: place.estimatedStayMin && typeof place.estimatedStayMin === 'object'
+      ? place.estimatedStayMin
+      : null,
+    routeRoles: Array.isArray(place.routeRoles) ? place.routeRoles.filter(Boolean).map(String) : [],
+    miroCategory: inferMiroCategory({ ...place, categoryCode, categoryName, primaryCategory }),
     source,
     sourceFile,
     sourceKind: String(place.sourceKind || source || 'naver'),
@@ -478,6 +693,20 @@ function numberOrNull(value) {
 }
 
 function inferMiroCategory(place) {
+  const primaryCategory = String(place.primaryCategory || '').trim();
+  const primaryMap = {
+    meal: 'eat',
+    cafe: 'cafe',
+    dessert_bakery: 'cafe',
+    bar: 'night',
+    activity: 'activity',
+    shopping: 'shop',
+    walk_nature: 'walk',
+    landmark_view: 'see',
+    rest: 'activity',
+  };
+  if (primaryMap[primaryCategory]) return primaryMap[primaryCategory];
+
   const code = String(place.miroCategory || place.categoryCode || '').toUpperCase();
   const name = String(place.categoryName || '').toLowerCase();
 
@@ -503,11 +732,11 @@ function loadCuratedPlaces() {
     return Promise.resolve([]);
   }
 
-  console.log(`Miro real places dataset URL: ${CURATED_PLACES_URL}`);
-  return fetch(CURATED_PLACES_URL, { cache: 'no-store' })
+  console.log(`Miro local place dataset URL: ${SUBCATEGORIZED_PLACES_URL}`);
+  return fetch(SUBCATEGORIZED_PLACES_URL, { cache: 'no-store' })
     .then(response => {
       if (!response.ok) {
-        throw new Error(`miro_places.json returned ${response.status}`);
+        throw new Error(`miro_places_subcategorized.json returned ${response.status}`);
       }
       return response.json();
     })
@@ -517,16 +746,37 @@ function loadCuratedPlaces() {
       curatedPlaceState.failed = false;
       curatedPlaceState.meta = normalized.meta;
       curatedPlaceState.places = normalized.places;
-      console.log(`Miro real places loaded: ${normalized.places.length}`);
+      console.log(`Miro local subcategorized places loaded: ${normalized.places.length}`);
+      console.log(`Miro places with valid lat/lng: ${normalized.places.filter(hasValidCoords).length}`);
       return normalized.places;
     })
     .catch(error => {
-      curatedPlaceState.loaded = true;
-      curatedPlaceState.failed = true;
-      curatedPlaceState.meta = null;
-      curatedPlaceState.places = [];
-      console.warn('Miro real places dataset failed to load; not using mock fallback.', error);
-      return [];
+      console.warn('Miro subcategorized dataset failed to load; trying legacy local places.', error);
+      return fetch(CURATED_PLACES_URL, { cache: 'no-store' })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`miro_places.json returned ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(payload => {
+          const normalized = normalizeCuratedPlacesPayload(payload);
+          curatedPlaceState.loaded = true;
+          curatedPlaceState.failed = false;
+          curatedPlaceState.meta = normalized.meta;
+          curatedPlaceState.places = normalized.places;
+          console.log(`Miro legacy local places loaded: ${normalized.places.length}`);
+          console.log(`Miro places with valid lat/lng: ${normalized.places.filter(hasValidCoords).length}`);
+          return normalized.places;
+        })
+        .catch(fallbackError => {
+          curatedPlaceState.loaded = true;
+          curatedPlaceState.failed = true;
+          curatedPlaceState.meta = null;
+          curatedPlaceState.places = [];
+          console.warn('Miro local place datasets failed to load; using route fallback.', fallbackError);
+          return [];
+        });
     });
 }
 
@@ -548,8 +798,71 @@ function getRouteMode(mood) {
   return MOOD_TO_ROUTE_MODE[String(mood || '').trim().toLowerCase()] || 'balanced';
 }
 
-function getAreaConfig(routeKey) {
-  return AREA_FILTERS[routeKey] || AREA_FILTERS.hongdae;
+function normalizeTimeKey(value) {
+  const raw = String(value || '').trim();
+  return TIME_CONFIG[raw] ? raw : TIME_ALIASES[raw] || TIME_ALIASES[raw.toLowerCase()] || 'time_2_3';
+}
+
+function getTimeConfig(value = state.time) {
+  const key = normalizeTimeKey(value);
+  return { key, ...TIME_CONFIG[key] };
+}
+
+function normalizeMoodKeys(value = state.mood) {
+  const values = Array.isArray(value) ? value : [value];
+  const normalized = values
+    .map(item => String(item || '').trim())
+    .filter(Boolean)
+    .map(item => MOOD_CONFIG[item] ? item : MOOD_ALIASES[item.toLowerCase()])
+    .filter(Boolean);
+  return uniqueStrings(normalized);
+}
+
+function getMoodContext(value = state.mood) {
+  const moodKeys = normalizeMoodKeys(value);
+  const compositionMoodKeys = moodKeys.slice(0, 2);
+  const softMoodKeys = moodKeys.slice(2);
+  const activeMoodKeys = compositionMoodKeys.length ? compositionMoodKeys : ['local_food'];
+  const primaryPreferred = uniqueStrings(activeMoodKeys.flatMap(key => MOOD_CONFIG[key]?.primaryPreferred || []));
+  const secondaryPreferred = uniqueStrings(activeMoodKeys.flatMap(key => MOOD_CONFIG[key]?.secondaryPreferred || []));
+  const tagsPreferred = uniqueStrings([
+    ...activeMoodKeys.flatMap(key => MOOD_CONFIG[key]?.tagsPreferred || []),
+    ...softMoodKeys.flatMap(key => MOOD_CONFIG[key]?.tagsPreferred || []),
+  ]);
+
+  return {
+    keys: moodKeys,
+    compositionKeys: activeMoodKeys,
+    labels: activeMoodKeys.map(key => MOOD_CONFIG[key]?.label || key),
+    primaryPreferred,
+    secondaryPreferred,
+    tagsPreferred,
+  };
+}
+
+function uniqueStrings(values) {
+  return [...new Set(values.filter(Boolean).map(String))];
+}
+
+function getAreaRadiusM(areaConfig) {
+  if (Number.isFinite(Number(areaConfig.radiusM))) return Number(areaConfig.radiusM);
+  if (Number.isFinite(Number(areaConfig.radiusKm))) return Number(areaConfig.radiusKm) * 1000;
+  return 1800;
+}
+
+function getAreaConfig(routeKey, runtimeContext = {}) {
+  const base = AREA_FILTERS[routeKey] || AREA_FILTERS.hongdae_yeonnam;
+  const timeConfig = getTimeConfig();
+  const center = runtimeContext.center || base.center || AREA_FILTERS.hongdae_yeonnam.center;
+  const radiusM = routeKey === 'near_me'
+    ? timeConfig.nearMeRadiusM
+    : getAreaRadiusM(base);
+  return {
+    ...base,
+    center,
+    radiusM: runtimeContext.radiusM || radiusM,
+    radiusKm: (runtimeContext.radiusM || radiusM) / 1000,
+  };
 }
 
 function addressMatchesArea(place, areaConfig) {
@@ -586,6 +899,61 @@ function estimateWalkMinutesFromDistanceMeters(distanceMeters) {
 
 function getMaxWalkMinutesForRefinement(refinementKey) {
   return refinementKey === 'walk' ? LESS_WALKING_MAX_WALK_MINUTES : DEFAULT_MAX_WALK_MINUTES;
+}
+
+function updateRouteLoadingMessage(message) {
+  const inlineStep = document.getElementById('loading-step');
+  const onboardingStep = document.getElementById('ob-loading-step');
+  if (inlineStep) inlineStep.textContent = message;
+  if (onboardingStep) onboardingStep.textContent = message;
+}
+
+function getCurrentBrowserLocation() {
+  if (!navigator.geolocation) {
+    return Promise.reject(new Error('Browser geolocation is unavailable.'));
+  }
+
+  updateRouteLoadingMessage('Finding nearby spots...');
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        resolve({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      error => {
+        reject(error);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 8000,
+        maximumAge: 5 * 60 * 1000,
+      }
+    );
+  });
+}
+
+async function getRouteRuntimeContext(routeKey) {
+  if (routeKey !== 'near_me') return {};
+
+  try {
+    const coords = await getCurrentBrowserLocation();
+    nearMeState.coords = coords;
+    nearMeState.error = null;
+    console.log('Miro Near me location acquired locally.');
+    return {
+      center: coords,
+      locationSource: 'browser_geolocation',
+    };
+  } catch (error) {
+    nearMeState.coords = null;
+    nearMeState.error = error;
+    console.warn('Miro Near me geolocation failed; using mock fallback.', error);
+    return {
+      locationError: 'Near me could not access your browser location, so this route uses a safe fallback.',
+    };
+  }
 }
 
 function classifyLegMobility(fromPlace, toPlace, maxWalkMinutes = DEFAULT_MAX_WALK_MINUTES) {
@@ -884,7 +1252,319 @@ function selectBestPlace(candidates, context, selectedKeys) {
   return best;
 }
 
-function buildCuratedRoute(routeKey, mood, refinementKey = null) {
+function getRouteCategorySequence(moodContext, timeConfig) {
+  const primaryMood = moodContext.compositionKeys[0] || 'local_food';
+  const template = MOOD_CATEGORY_SEQUENCES[primaryMood]?.[timeConfig.key]
+    || MOOD_CATEGORY_SEQUENCES.local_food[timeConfig.key]
+    || ['meal', 'cafe'];
+  return template.slice(0, timeConfig.maxStops);
+}
+
+function getPlaceStayMinutes(place) {
+  const stay = place.estimatedStayMin;
+  if (stay && Number.isFinite(Number(stay.min)) && Number.isFinite(Number(stay.max))) {
+    return Math.round((Number(stay.min) + Number(stay.max)) / 2);
+  }
+  return CATEGORY_STAY_MINUTES[place.miroCategory] || CATEGORY_STAY_MINUTES.unknown;
+}
+
+function getPlaceDistanceM(place, center) {
+  const km = distanceKm(place, center);
+  return Number.isFinite(km) ? km * 1000 : Infinity;
+}
+
+function getDataDrivenCandidates(places, areaConfig, timeConfig) {
+  const usablePlaces = places.filter(place => (
+    place.name
+    && hasValidCoords(place)
+    && place.available !== false
+    && place.primaryCategory
+  ));
+  const radiusM = getAreaRadiusM(areaConfig);
+  const withDistance = usablePlaces.map(place => ({
+    place,
+    distanceM: getPlaceDistanceM(place, areaConfig.center),
+  }));
+  let matches = withDistance.filter(item => item.distanceM <= radiusM);
+
+  if (matches.length < timeConfig.minStops) {
+    matches = withDistance.filter(item => item.distanceM <= radiusM * 1.5);
+  }
+
+  return matches
+    .map(item => ({ ...item.place, __distanceM: item.distanceM }))
+    .sort((left, right) => left.__distanceM - right.__distanceM);
+}
+
+function scoreDataDrivenPlace(place, context) {
+  if (!hasValidCoords(place) || place.available === false) return -Infinity;
+
+  const distanceM = Number(place.__distanceM ?? getPlaceDistanceM(place, context.areaConfig.center));
+  const radiusM = getAreaRadiusM(context.areaConfig);
+  let score = 0;
+
+  if (distanceM <= radiusM) score += 25;
+  if (Number.isFinite(distanceM)) {
+    score += Math.max(0, 10 * (1 - Math.min(distanceM, radiusM) / radiusM));
+  }
+
+  if (context.moodContext.primaryPreferred.includes(place.primaryCategory)) score += 35;
+  if (context.moodContext.secondaryPreferred.includes(place.primaryCategory)) score += 15;
+  if (context.targetCategory && place.primaryCategory === context.targetCategory) score += 22;
+
+  const tags = Array.isArray(place.tags) ? place.tags : [];
+  const matchedTags = tags.filter(tag => context.moodContext.tagsPreferred.includes(tag));
+  score += Math.min(matchedTags.length * 5, 20);
+
+  const routeRoles = Array.isArray(place.routeRoles) ? place.routeRoles : [];
+  if (context.stopIndex === 0 && routeRoles.includes('main_stop')) score += 5;
+  if (context.stopIndex > 0 && routeRoles.includes('sub_stop')) score += 5;
+  if (context.isFinalStop && routeRoles.includes('finale')) score += 5;
+  if (routeRoles.includes('filler') && context.timeConfig.maxStops > 2) score += 3;
+
+  const stay = getPlaceStayMinutes(place);
+  if (stay <= Math.max(context.timeConfig.targetMin, 45)) score += 5;
+
+  if (place.available === true) score += 5;
+  if (place.isMatched === true) score += 3;
+  if (place.subCategory) score += 3;
+  if (place.address) score += 2;
+
+  const selectedPrimaryCount = context.categoryCounts[place.primaryCategory] || 0;
+  const repeatAllowed = context.moodContext.compositionKeys.some(key => (
+    key === 'cafes_dessert' || key === 'drinks_night'
+  ));
+  if (selectedPrimaryCount > 0 && !repeatAllowed) score -= selectedPrimaryCount * 30;
+
+  if (context.previousPlace) {
+    const mobility = classifyLegMobility(context.previousPlace, place, DEFAULT_MAX_WALK_MINUTES);
+    if (mobility.isWalkable) score += Math.max(0, 8 - mobility.estimatedWalkMinutes * 0.4);
+    else score -= 18;
+  }
+
+  return score;
+}
+
+function selectDataDrivenPlace(candidates, context, selectedKeys, targetCategory = null) {
+  const pool = targetCategory
+    ? candidates.filter(place => place.primaryCategory === targetCategory)
+    : candidates;
+  const usablePool = pool.length ? pool : candidates;
+  let best = null;
+  let bestScore = -Infinity;
+
+  usablePool.forEach(place => {
+    const key = getRuntimePlaceKey(place);
+    if (selectedKeys.has(key)) return;
+    const score = scoreDataDrivenPlace(place, { ...context, targetCategory });
+    if (score > bestScore) {
+      best = place;
+      bestScore = score;
+    }
+  });
+
+  return best;
+}
+
+function orderPlacesNearestNeighbor(places, center) {
+  const remaining = [...places];
+  const ordered = [];
+  let cursor = center;
+
+  while (remaining.length) {
+    let bestIndex = 0;
+    let bestDistance = Infinity;
+    remaining.forEach((place, index) => {
+      const distance = getPlaceDistanceM(place, cursor);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestIndex = index;
+      }
+    });
+    const [next] = remaining.splice(bestIndex, 1);
+    ordered.push(next);
+    cursor = next;
+  }
+
+  return ordered;
+}
+
+function buildDataDrivenPlaceWhy(place, context, matchedTags) {
+  const parts = [];
+  if (context.moodContext.primaryPreferred.includes(place.primaryCategory)) {
+    parts.push(`matches ${context.moodContext.labels.join(' + ')}`);
+  } else if (context.moodContext.secondaryPreferred.includes(place.primaryCategory)) {
+    parts.push('adds a supporting stop');
+  }
+  if (matchedTags.length) parts.push(`tag match: ${matchedTags.slice(0, 3).join(', ')}`);
+  if (Number.isFinite(place.__distanceM)) parts.push(`${formatDistanceMeters(place.__distanceM)} from ${context.areaConfig.label}`);
+  return parts.length ? parts.join(' · ') : 'Selected from local place data for this area.';
+}
+
+function dataPlaceToRouteStop(place, index, previousPlace, totalStops, context) {
+  const mobility = index === 0
+    ? null
+    : classifyLegMobility(previousPlace, place, DEFAULT_MAX_WALK_MINUTES);
+  const matchedTags = (place.tags || []).filter(tag => context.moodContext.tagsPreferred.includes(tag));
+  const primaryLabel = place.primaryCategoryLabel || MIRO_CATEGORY_LABELS[place.miroCategory] || place.categoryName || 'Place';
+  const subLabel = place.subCategoryLabel || '';
+  const categoryType = [primaryLabel, subLabel].filter(Boolean).join(' · ');
+  const addressTag = getShortAddress(place.address);
+
+  return {
+    num: index + 1,
+    name: place.displayName || place.name,
+    type: addressTag ? `${categoryType} · ${addressTag}` : categoryType,
+    stay: getPlaceStayMinutes(place),
+    walk: mobility ? mobility.estimatedWalkMinutes : 0,
+    legDistanceMeters: mobility ? mobility.distanceMeters : 0,
+    legWalkMinutes: mobility ? mobility.estimatedWalkMinutes : 0,
+    legSuggestedMode: mobility ? mobility.suggestedMode : null,
+    legMobilityLabel: mobility
+      ? `${mobility.label}${Number.isFinite(mobility.distanceMeters) ? ` · ${formatDistanceMeters(mobility.distanceMeters)}` : ''}`
+      : '',
+    coords: { lat: Number(place.lat), lng: Number(place.lng) },
+    why: buildDataDrivenPlaceWhy(place, context, matchedTags),
+    next: index === totalStops - 1 ? 'Route complete' : 'Continue to the next local place',
+    tags: uniqueStrings([primaryLabel, subLabel, ...matchedTags, addressTag]).slice(0, 5),
+    place,
+  };
+}
+
+function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeContext = {}) {
+  const places = curatedPlaceState.places;
+  if (!places.some(place => place.primaryCategory)) return null;
+
+  if (routeKey === 'near_me' && !runtimeContext.center) {
+    console.warn('Miro route source: near_me mock fallback because geolocation is unavailable.');
+    return null;
+  }
+
+  const timeConfig = getTimeConfig(state.time);
+  const moodContext = getMoodContext(mood);
+  const areaConfig = getAreaConfig(routeKey, runtimeContext);
+  const candidates = filterCandidatesForRefinement(
+    getDataDrivenCandidates(places, areaConfig, timeConfig),
+    refinementKey
+  );
+  const scoredCandidates = candidates
+    .map(place => ({ place, score: scoreDataDrivenPlace(place, {
+      areaConfig,
+      timeConfig,
+      moodContext,
+      categoryCounts: {},
+      refinementKey,
+      stopIndex: 0,
+      isFinalStop: false,
+      previousPlace: null,
+    }) }))
+    .filter(item => Number.isFinite(item.score) && item.score > 0)
+    .sort((left, right) => right.score - left.score)
+    .map(item => item.place);
+
+  console.log('Miro local route diagnostics:', {
+    placesLoaded: places.length,
+    validCoords: places.filter(hasValidCoords).length,
+    area: areaConfig.label,
+    radiusM: Math.round(getAreaRadiusM(areaConfig)),
+    candidatesAfterArea: candidates.length,
+    candidatesAfterMoodScoring: scoredCandidates.length,
+  });
+
+  if (scoredCandidates.length < timeConfig.minStops) return null;
+
+  const selected = [];
+  const selectedKeys = new Set();
+  const categoryCounts = {};
+  const sequence = getRouteCategorySequence(moodContext, timeConfig);
+
+  sequence.slice(0, timeConfig.maxStops).forEach((targetCategory, stopIndex) => {
+    const place = selectDataDrivenPlace(scoredCandidates, {
+      areaConfig,
+      timeConfig,
+      moodContext,
+      categoryCounts,
+      refinementKey,
+      stopIndex,
+      isFinalStop: stopIndex === timeConfig.maxStops - 1,
+      previousPlace: selected[selected.length - 1] || null,
+    }, selectedKeys, targetCategory);
+    if (!place) return;
+    selected.push(place);
+    selectedKeys.add(getRuntimePlaceKey(place));
+    categoryCounts[place.primaryCategory] = (categoryCounts[place.primaryCategory] || 0) + 1;
+  });
+
+  while (selected.length < timeConfig.minStops) {
+    const place = selectDataDrivenPlace(scoredCandidates, {
+      areaConfig,
+      timeConfig,
+      moodContext,
+      categoryCounts,
+      refinementKey,
+      stopIndex: selected.length,
+      isFinalStop: selected.length === timeConfig.maxStops - 1,
+      previousPlace: selected[selected.length - 1] || null,
+    }, selectedKeys);
+    if (!place) break;
+    selected.push(place);
+    selectedKeys.add(getRuntimePlaceKey(place));
+    categoryCounts[place.primaryCategory] = (categoryCounts[place.primaryCategory] || 0) + 1;
+  }
+
+  if (selected.length < timeConfig.minStops) return null;
+
+  const orderedPlaces = orderPlacesNearestNeighbor(selected.slice(0, timeConfig.maxStops), areaConfig.center);
+  const routeContext = { areaConfig, timeConfig, moodContext };
+  const stops = orderedPlaces.map((place, index) => (
+    dataPlaceToRouteStop(place, index, orderedPlaces[index - 1], orderedPlaces.length, routeContext)
+  ));
+  const travelMinutes = stops.reduce((sum, stop) => sum + Number(stop.walk || 0), 0);
+  const walkingMinutes = stops.reduce((sum, stop) => (
+    stop.legSuggestedMode === 'walk' ? sum + Number(stop.walk || 0) : sum
+  ), 0);
+  const stayMinutes = stops.reduce((sum, stop) => sum + Number(stop.stay || 0), 0);
+  const distanceMeters = stops.reduce((sum, stop) => sum + Number(stop.legDistanceMeters || 0), 0);
+
+  return {
+    label: areaConfig.label,
+    mapLabel: areaConfig.mapLabel,
+    center: getRouteCenter(stops) || areaConfig.center,
+    defaultMood: moodContext.labels.join(' + '),
+    meta: {
+      total: formatMinutes(stayMinutes + travelMinutes),
+      walking: `${walkingMinutes} min`,
+      distance: formatDistanceMeters(distanceMeters),
+    },
+    why: [
+      `Generated from the local subcategorized place dataset for ${areaConfig.label}.`,
+      `Time: ${timeConfig.label}. Mood: ${moodContext.labels.join(' + ')}.`,
+      'Stops are ranked by area distance, category fit, tag match, route role, stay time, and availability.',
+    ].join(' '),
+    ask: {
+      why: `This route is generated from local place data and ranked for ${areaConfig.label}, ${timeConfig.label}, and ${moodContext.labels.join(' + ')}.`,
+      crowd: 'This prototype does not check live crowd levels, but it favors closer local candidates and existing category tags.',
+      cafe: 'I can prioritize cafe and dessert categories when the selected mood supports it.',
+    },
+    sourceKind: 'local_dataset',
+    sourceLabel: 'Local place dataset',
+    mode: getRouteMode(mood),
+    refinementKey,
+    stops,
+  };
+}
+
+function buildCuratedRoute(routeKey, mood, refinementKey = null, runtimeContext = {}) {
+  const dataDrivenRoute = buildDataDrivenRoute(routeKey, mood, refinementKey, runtimeContext);
+  if (dataDrivenRoute) {
+    console.log('Miro route source: local dataset');
+    return dataDrivenRoute;
+  }
+
+  return buildLegacyCuratedRoute(routeKey, mood, refinementKey);
+}
+
+function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
   const places = curatedPlaceState.places;
   if (!places.length) return null;
 
@@ -1047,6 +1727,13 @@ function formatMinutes(minutes) {
   return remainder ? `${hours}h ${String(remainder).padStart(2, '0')}m` : `${hours}h`;
 }
 
+function formatDistanceMeters(distanceMeters) {
+  if (!Number.isFinite(Number(distanceMeters))) return '';
+  const meters = Math.round(Number(distanceMeters));
+  if (meters < 1000) return `${meters} m`;
+  return `${(meters / 1000).toFixed(1)} km`;
+}
+
 function getStopsWithCoords() {
   if (!currentRoute || !Array.isArray(currentRoute.stops)) return [];
   return currentRoute.stops
@@ -1054,13 +1741,16 @@ function getStopsWithCoords() {
     .filter(item => hasValidCoords(item.stop.coords));
 }
 
-function buildMockFallbackRoute(routeKey) {
-  const fallback = ROUTES[routeKey] || ROUTES.hongdae;
+function buildMockFallbackRoute(routeKey, notice = '') {
+  const mockRouteKey = MOCK_ROUTE_KEY_ALIASES[routeKey] || routeKey;
+  const fallback = ROUTES[mockRouteKey] || ROUTES.hongdae;
   console.warn('Miro route source: mock');
   return {
     ...fallback,
+    why: notice ? `${notice} ${fallback.why}` : fallback.why,
     sourceKind: 'mock',
     sourceLabel: 'Prototype fallback',
+    fallbackNotice: notice,
   };
 }
 
@@ -1088,28 +1778,27 @@ function buildEmptyRealRoute(routeKey, message) {
   };
 }
 
-function resolveRouteForCurrentSelection(routeKey, refinementKey = state.activeRefinement) {
-  const realRoute = buildCuratedRoute(routeKey, state.mood, refinementKey);
+function resolveRouteForCurrentSelection(routeKey, refinementKey = state.activeRefinement, runtimeContext = {}) {
+  const realRoute = buildCuratedRoute(routeKey, state.mood, refinementKey, runtimeContext);
   if (realRoute) {
-    console.log('Miro route source: real');
     return realRoute;
   }
 
   if (MOCK_ROUTES_ENABLED) {
-    return buildMockFallbackRoute(routeKey);
+    return buildMockFallbackRoute(routeKey, 'Using prototype fallback because mock mode is enabled.');
   }
 
-  console.warn('No matching real places found; not using mock fallback');
-
   if (curatedPlaceState.failed) {
-    return buildEmptyRealRoute(routeKey, 'Real place data could not be loaded. Check that the processed places file is deployed.');
+    return buildMockFallbackRoute(routeKey, 'Local place data could not be loaded, so this is a prototype fallback.');
   }
 
   if (!curatedPlaceState.places.length) {
-    return buildEmptyRealRoute(routeKey, 'No real places are loaded yet.');
+    return buildMockFallbackRoute(routeKey, 'No local places are loaded yet, so this is a prototype fallback.');
   }
 
-  return buildEmptyRealRoute(routeKey, 'No matching real places found for this area and mood.');
+  const notice = runtimeContext.locationError
+    || 'Not enough local dataset places matched this area, time, and mood, so this is a prototype fallback.';
+  return buildMockFallbackRoute(routeKey, notice);
 }
 
 const AREA_KEY_BY_LABEL = Object.values(ROUTES).reduce((acc, route) => {
@@ -1231,6 +1920,10 @@ const state = {
 
 let currentRoute = null;
 let realPlacesLoadPromise = null;
+const nearMeState = {
+  coords: null,
+  error: null,
+};
 
 // ========== Builder collapse ==========
 const builderToggle = document.getElementById('builder-toggle');
@@ -1282,16 +1975,17 @@ buildBtn.addEventListener('click', () => {
     i++;
     if (i >= steps.length) {
       clearInterval(interval);
-      loadingState.classList.remove('active');
-      finishBuild();
+      finishBuild().finally(() => {
+        loadingState.classList.remove('active');
+      });
     } else {
       loadingStep.textContent = steps[i];
     }
   }, 460);
 });
 
-function finishBuild() {
-  applyRouteForCurrentSelection();
+async function finishBuild() {
+  await applyRouteForCurrentSelection();
   const why = document.querySelector('.why-card');
   why.style.transition = 'transform 0.3s, box-shadow 0.3s';
   why.style.transform = 'scale(1.015)';
@@ -1307,15 +2001,16 @@ function finishBuild() {
 function getRouteKey(area) {
   const normalized = String(area || '').trim().toLowerCase();
   return (
-    AREA_KEY_BY_LABEL[normalized] ||
     AREA_KEY_ALIASES[normalized] ||
+    AREA_KEY_BY_LABEL[normalized] ||
     'hongdae'
   );
 }
 
-function applyRouteForCurrentSelection() {
+async function applyRouteForCurrentSelection() {
   state.routeKey = getRouteKey(state.area);
-  applyResolvedRoute(resolveRouteForCurrentSelection(state.routeKey));
+  const runtimeContext = await getRouteRuntimeContext(state.routeKey);
+  applyResolvedRoute(resolveRouteForCurrentSelection(state.routeKey, state.activeRefinement, runtimeContext));
 }
 
 function applyResolvedRoute(route) {
@@ -1364,7 +2059,7 @@ function setRouteMetaItem(index, value, label) {
 function setRouteMetaDefault() {
   setRouteMetaItem(0, String(currentRoute.stops.length), 'stops');
   setRouteMetaItem(1, currentRoute.meta.total, 'total');
-  setRouteMetaItem(2, currentRoute.meta.walking, 'walking');
+  setRouteMetaItem(2, [currentRoute.meta.walking, currentRoute.meta.distance].filter(Boolean).join(' · '), 'walking');
 }
 
 function setNaverDirectionsMeta(directions) {
@@ -1405,6 +2100,8 @@ function renderStops() {
 
     const place = s.place || {};
     const roleLabel =
+      place.primaryCategoryLabel ||
+      place.subCategoryLabel ||
       MIRO_CATEGORY_LABELS[place.miroCategory] ||
       place.categoryName ||
       'Stop';
@@ -2816,28 +3513,31 @@ function setActiveRefinement(key) {
 }
 
 function getCurrentAreaCandidates() {
-  return getAreaCandidates(curatedPlaceState.places, getAreaConfig(getRouteKey(state.area)));
+  const routeKey = getRouteKey(state.area);
+  const runtimeContext = routeKey === 'near_me' && nearMeState.coords ? { center: nearMeState.coords } : {};
+  return getAreaCandidates(curatedPlaceState.places, getAreaConfig(routeKey, runtimeContext));
 }
 
 function applyRefinement(key) {
   if (!REFINE_TEXTS[key]) return;
 
-  ensureRealPlacesLoaded().then(() => {
+  ensureRealPlacesLoaded().then(async () => {
     if (state.activeRefinement === key) {
       setActiveRefinement(null);
-      applyRouteForCurrentSelection();
+      await applyRouteForCurrentSelection();
       showToast(REFINE_TEXTS[key].undo);
       return;
     }
 
     const routeKey = getRouteKey(state.area);
+    const runtimeContext = await getRouteRuntimeContext(routeKey);
     const candidates = getCurrentAreaCandidates();
     if (key === 'open' && !hasOpenNowDataForCandidates(candidates)) {
       showToast(REFINE_TEXTS.open.unavailable);
       return;
     }
 
-    const refinedRoute = buildCuratedRoute(routeKey, state.mood, key);
+    const refinedRoute = buildCuratedRoute(routeKey, state.mood, key, runtimeContext);
     if (!refinedRoute || !refinedRoute.stops.length) {
       showToast('Not enough matching saved places for that refinement yet.');
       return;
@@ -3260,8 +3960,8 @@ const onboarding = {
     loadingState.classList.remove('active');
     this.loadingStepEl.textContent = 'Loading real places...';
 
-    ensureRealPlacesLoaded().then(() => {
-      applyRouteForCurrentSelection();
+    ensureRealPlacesLoaded().then(async () => {
+      await applyRouteForCurrentSelection();
 
       this.loadingEl.classList.remove('active');
       this.loadingEl.setAttribute('aria-hidden', 'true');

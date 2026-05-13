@@ -2015,19 +2015,21 @@ async function applyRouteForCurrentSelection() {
 
 function applyResolvedRoute(route) {
   currentRoute = route;
+  const routeToken = bumpRouteRenderToken();
   // Preserve the user's onboarding selection (e.g. 'Hongdae / Yeonnam' or
   // 'Near me') in state.area so inline-builder chip sync and onboarding restart
   // still recognize it. Route display continues to use currentRoute.label.
   state.activeStop = null;
   resetRouteGeometryCache();
+  clearRouteOverlays();
 
   updateRouteCopy();
   renderStops();
   hideFloatCard();
   updateMarkerActive();
 
-  if (kakaoMapState.map || naverMapState.map) {
-    renderActiveMapRoute({ fit: true });
+  if (isMainAppVisible() || kakaoMapState.map || naverMapState.map) {
+    renderActiveMapRoute({ fit: true, routeToken });
   }
 }
 
@@ -2219,6 +2221,21 @@ const mapStatus = document.getElementById('map-status');
 const kakaoMapLoggedErrors = new Set();
 const naverMapLoggedErrors = new Set();
 let mapSwitchToken = 0;
+let routeRenderToken = 0;
+
+function bumpRouteRenderToken() {
+  routeRenderToken += 1;
+  return routeRenderToken;
+}
+
+function isStaleMapRender(providerToken, routeToken) {
+  return providerToken !== mapSwitchToken || routeToken !== routeRenderToken;
+}
+
+function isMainAppVisible() {
+  const mainApp = document.getElementById('main-app');
+  return Boolean(mainApp && !mainApp.classList.contains('hidden'));
+}
 
 function logKakaoMapError(message) {
   if (kakaoMapLoggedErrors.has(message)) return;
@@ -2299,20 +2316,20 @@ function getNaverMapsKeyId() {
   return key;
 }
 
-function ensureActiveMap() {
+function ensureActiveMap(options = {}) {
   if (mapProviderState.active === 'naver') {
-    ensureNaverMap();
+    ensureNaverMap(0, options);
     return;
   }
-  ensureKakaoMap();
+  ensureKakaoMap(options);
 }
 
-function renderActiveMapRoute({ fit = false } = {}) {
+function renderActiveMapRoute({ fit = false, routeToken = routeRenderToken } = {}) {
   if (mapProviderState.active === 'naver') {
-    renderNaverRoute({ fit });
+    renderNaverRoute({ fit, routeToken });
     return;
   }
-  renderKakaoRoute({ fit });
+  renderKakaoRoute({ fit, routeToken });
 }
 
 function setMapProvider(provider) {
@@ -2373,7 +2390,7 @@ function resetMapContainer() {
   mapEl.replaceWith(freshMapEl);
 }
 
-function ensureKakaoMap() {
+function ensureKakaoMap({ routeToken = routeRenderToken } = {}) {
   kakaoMapState.requested = true;
 
   const mapEl = getMapElement();
@@ -2384,7 +2401,7 @@ function ensureKakaoMap() {
 
   if (kakaoMapState.map) {
     relayoutKakaoMap();
-    renderKakaoRoute({ fit: true });
+    renderKakaoRoute({ fit: true, routeToken });
     return;
   }
 
@@ -2396,10 +2413,11 @@ function ensureKakaoMap() {
   }
 
   const renderToken = mapSwitchToken;
+  const renderRouteToken = routeToken;
   setMapStatus('Loading Kakao Map…', 'loading');
   loadKakaoSdk(appKey)
     .then(() => {
-      if (renderToken !== mapSwitchToken) return;
+      if (isStaleMapRender(renderToken, renderRouteToken)) return;
       if (mapProviderState.active !== 'kakao') return;
 
       const mapEl = getMapElement();
@@ -2420,14 +2438,14 @@ function ensureKakaoMap() {
 
       hideMapStatus();
       window.requestAnimationFrame(() => {
-        if (renderToken !== mapSwitchToken || mapProviderState.active !== 'kakao') return;
+        if (isStaleMapRender(renderToken, renderRouteToken) || mapProviderState.active !== 'kakao') return;
         relayoutKakaoMap();
-        renderKakaoRoute({ fit: true });
+        renderKakaoRoute({ fit: true, routeToken: renderRouteToken });
       });
     })
     .catch(() => {
       kakaoMapState.sdkPromise = null;
-      if (renderToken !== mapSwitchToken || mapProviderState.active !== 'kakao') return;
+      if (isStaleMapRender(renderToken, renderRouteToken) || mapProviderState.active !== 'kakao') return;
       setMapStatus('Kakao Map could not load. Check the JavaScript key, allowed domains, and network access.', 'error');
     });
 }
@@ -2507,17 +2525,17 @@ function getLoggedNaverMapContainerSize(mapEl) {
   return size;
 }
 
-function scheduleNaverMapRetry(renderToken, attempt) {
+function scheduleNaverMapRetry(renderToken, routeToken, attempt) {
   if (attempt >= 10) {
     setMapStatus('Naver map is waiting for the map container to become visible.', 'warning');
     return;
   }
 
   const retry = () => {
-    if (renderToken !== mapSwitchToken) return;
+    if (isStaleMapRender(renderToken, routeToken)) return;
     if (mapProviderState.active !== 'naver') return;
     if (naverMapState.map) return;
-    ensureNaverMap(attempt + 1);
+    ensureNaverMap(attempt + 1, { routeToken });
   };
 
   if (attempt < 2) {
@@ -2528,7 +2546,7 @@ function scheduleNaverMapRetry(renderToken, attempt) {
   window.setTimeout(retry, 120);
 }
 
-function ensureNaverMap(attempt = 0) {
+function ensureNaverMap(attempt = 0, { routeToken = routeRenderToken } = {}) {
   naverMapState.requested = true;
 
   const mapEl = getMapElement();
@@ -2539,7 +2557,7 @@ function ensureNaverMap(attempt = 0) {
 
   if (naverMapState.map) {
     relayoutNaverMap();
-    renderNaverRoute({ fit: true });
+    renderNaverRoute({ fit: true, routeToken });
     return;
   }
 
@@ -2551,15 +2569,16 @@ function ensureNaverMap(attempt = 0) {
   }
 
   const renderToken = mapSwitchToken;
+  const renderRouteToken = routeToken;
   setMapStatus('Loading Naver Map…', 'loading');
   loadNaverSdk(ncpKeyId)
     .then(() => {
-      if (renderToken !== mapSwitchToken) return;
+      if (isStaleMapRender(renderToken, renderRouteToken)) return;
       if (mapProviderState.active !== 'naver') return;
       if (!window.naver || !window.naver.maps) return;
       if (naverMapState.map) {
         relayoutNaverMap();
-        renderNaverRoute({ fit: true });
+        renderNaverRoute({ fit: true, routeToken: renderRouteToken });
         return;
       }
 
@@ -2571,7 +2590,7 @@ function ensureNaverMap(attempt = 0) {
 
       const size = getLoggedNaverMapContainerSize(mapEl);
       if (!size.width || !size.height) {
-        scheduleNaverMapRetry(renderToken, attempt);
+        scheduleNaverMapRetry(renderToken, renderRouteToken, attempt);
         return;
       }
 
@@ -2588,14 +2607,14 @@ function ensureNaverMap(attempt = 0) {
 
       hideMapStatus();
       window.requestAnimationFrame(() => {
-        if (renderToken !== mapSwitchToken || mapProviderState.active !== 'naver') return;
+        if (isStaleMapRender(renderToken, renderRouteToken) || mapProviderState.active !== 'naver') return;
         relayoutNaverMap();
-        renderNaverRoute({ fit: true });
+        renderNaverRoute({ fit: true, routeToken: renderRouteToken });
       });
     })
     .catch(() => {
       naverMapState.sdkPromise = null;
-      if (renderToken !== mapSwitchToken || mapProviderState.active !== 'naver') return;
+      if (isStaleMapRender(renderToken, renderRouteToken) || mapProviderState.active !== 'naver') return;
       setMapStatus('Naver Map could not load. Check the NCP Key ID, allowed domains, and network access.', 'error');
     });
 }
@@ -2660,15 +2679,20 @@ function loadNaverSdk(ncpKeyId = getNaverMapsKeyId()) {
   return naverMapState.sdkPromise;
 }
 
-function renderKakaoRoute({ fit = false } = {}) {
+function renderKakaoRoute({ fit = false, routeToken = routeRenderToken } = {}) {
+  if (routeToken !== routeRenderToken) return;
+
   if (!kakaoMapState.map) {
-    ensureKakaoMap();
+    ensureKakaoMap({ routeToken });
     return;
   }
 
   if (!window.kakao || !window.kakao.maps) {
     loadKakaoSdk()
-      .then(() => renderKakaoRoute({ fit }))
+      .then(() => {
+        if (routeToken !== routeRenderToken) return;
+        renderKakaoRoute({ fit, routeToken });
+      })
       .catch(() => {
         kakaoMapState.sdkPromise = null;
       });
@@ -2686,6 +2710,7 @@ function renderKakaoRoute({ fit = false } = {}) {
   }));
   const geometryKey = getCurrentRouteGeometryKey();
   const renderToken = mapSwitchToken;
+  const renderRouteToken = routeToken;
 
   if (directRoutePoints.length > 1) {
     renderKakaoPolyline(directRoutePoints);
@@ -2712,7 +2737,7 @@ function renderKakaoRoute({ fit = false } = {}) {
 
   resolveCurrentRouteGeometry().then(geometry => {
     if (!geometry || mapProviderState.active !== 'kakao' || !kakaoMapState.map) return;
-    if (renderToken !== mapSwitchToken || geometryKey !== getCurrentRouteGeometryKey()) return;
+    if (isStaleMapRender(renderToken, renderRouteToken) || geometryKey !== getCurrentRouteGeometryKey()) return;
 
     syncRouteGeometryLabelUpdates(geometry);
     if (geometry.path.length > 1) {
@@ -2779,7 +2804,9 @@ function getNaverDirections(points) {
         throw new Error('Naver Directions response did not include a usable path');
       }
 
-      naverMapState.directions = payload;
+      if (naverMapState.directionsKey === directionsKey) {
+        naverMapState.directions = payload;
+      }
       console.log('Naver Directions response ok');
       console.log(`Naver real route path points: ${payload.path.length}`);
       return payload;
@@ -3156,15 +3183,20 @@ function renderNaverPolyline(points, { realRoute = false } = {}) {
   }
 }
 
-function renderNaverRoute({ fit = false } = {}) {
+function renderNaverRoute({ fit = false, routeToken = routeRenderToken } = {}) {
+  if (routeToken !== routeRenderToken) return;
+
   if (!naverMapState.map) {
-    ensureNaverMap();
+    ensureNaverMap(0, { routeToken });
     return;
   }
 
   if (!window.naver || !window.naver.maps) {
     loadNaverSdk()
-      .then(() => renderNaverRoute({ fit }))
+      .then(() => {
+        if (routeToken !== routeRenderToken) return;
+        renderNaverRoute({ fit, routeToken });
+      })
       .catch(() => {
         naverMapState.sdkPromise = null;
       });
@@ -3182,6 +3214,7 @@ function renderNaverRoute({ fit = false } = {}) {
   }));
   const geometryKey = getCurrentRouteGeometryKey();
   const renderToken = mapSwitchToken;
+  const renderRouteToken = routeToken;
 
   if (directRoutePoints.length > 1) {
     renderNaverPolyline(directRoutePoints);
@@ -3212,7 +3245,7 @@ function renderNaverRoute({ fit = false } = {}) {
 
   resolveCurrentRouteGeometry().then(geometry => {
     if (!geometry || mapProviderState.active !== 'naver' || !naverMapState.map) return;
-    if (renderToken !== mapSwitchToken || geometryKey !== getCurrentRouteGeometryKey()) return;
+    if (isStaleMapRender(renderToken, renderRouteToken) || geometryKey !== getCurrentRouteGeometryKey()) return;
 
     syncRouteGeometryLabelUpdates(geometry);
     if (geometry.path.length > 1) {
@@ -3244,6 +3277,11 @@ function clearNaverRouteObjects() {
     if (marker) marker.marker.setMap(null);
   });
   naverMapState.markers = [];
+}
+
+function clearRouteOverlays() {
+  clearKakaoRouteObjects();
+  clearNaverRouteObjects();
 }
 
 function createKakaoMarkerElement(stop, idx) {

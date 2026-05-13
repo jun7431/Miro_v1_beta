@@ -26,23 +26,6 @@ html, body {
 }
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 
-.back-link {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--gray);
-  text-decoration: none;
-  background: white;
-  border: 1px solid var(--border);
-  padding: 8px 12px;
-  border-radius: 999px;
-  z-index: 100;
-  transition: all 0.15s;
-}
-.back-link:hover { color: var(--primary); border-color: var(--primary); }
-
 .device {
   max-width: 420px;
   margin: 60px auto 80px;
@@ -56,7 +39,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 @media (max-width: 480px) {
   .device { margin: 0; border-radius: 0; box-shadow: none; max-width: 100%; }
-  .back-link { top: 12px; left: 12px; }
 }
 
 .app-bar {

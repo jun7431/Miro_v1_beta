@@ -529,6 +529,25 @@ const MOOD_CATEGORY_SEQUENCES = {
   },
 };
 
+const MOOD_REQUIRED_PRIMARY_CATEGORIES = {
+  local_food: ['meal'],
+  cafes_dessert: ['cafe', 'dessert_bakery'],
+  drinks_night: ['bar'],
+  shop_browse: ['shopping'],
+  culture_activities: ['activity', 'landmark_view'],
+  walks_views: ['walk_nature', 'landmark_view'],
+};
+
+const MIRO_CATEGORY_TO_PRIMARY_CATEGORY = {
+  eat: 'meal',
+  cafe: 'cafe',
+  night: 'bar',
+  shop: 'shopping',
+  activity: 'activity',
+  walk: 'walk_nature',
+  see: 'landmark_view',
+};
+
 const MOCK_ROUTE_KEY_ALIASES = {
   myeongdong_euljiro: 'euljiro',
   hongdae_yeonnam: 'hongdae',
@@ -842,6 +861,31 @@ function getMoodContext(value = state.mood) {
 
 function uniqueStrings(values) {
   return [...new Set(values.filter(Boolean).map(String))];
+}
+
+function getMoodRequiredPrimaryCategories(moodContext) {
+  const primaryMood = moodContext?.compositionKeys?.[0] || 'local_food';
+  return MOOD_REQUIRED_PRIMARY_CATEGORIES[primaryMood] || [];
+}
+
+function getPlacePrimaryCategory(place = {}) {
+  const primaryCategory = String(place.primaryCategory || '').trim();
+  if (primaryCategory) return primaryCategory;
+
+  const miroCategory = String(place.miroCategory || '').trim();
+  return MIRO_CATEGORY_TO_PRIMARY_CATEGORY[miroCategory] || '';
+}
+
+function placeMatchesRequiredPrimaryCategory(place, requiredCategories) {
+  if (!requiredCategories.length) return true;
+  return requiredCategories.includes(getPlacePrimaryCategory(place));
+}
+
+function hasRequiredPrimaryCategory(places, requiredCategories) {
+  return (
+    !requiredCategories.length ||
+    places.some(place => placeMatchesRequiredPrimaryCategory(place, requiredCategories))
+  );
 }
 
 function getAreaRadiusM(areaConfig) {
@@ -1252,6 +1296,42 @@ function selectBestPlace(candidates, context, selectedKeys) {
   return best;
 }
 
+function enforceLegacyRequiredCategory(selected, candidates, context, selectedKeys, categoryCounts, requiredCategories, maxStops) {
+  if (hasRequiredPrimaryCategory(selected, requiredCategories)) return true;
+
+  const requiredPlace = selectBestPlace(
+    candidates.filter(place => placeMatchesRequiredPrimaryCategory(place, requiredCategories)),
+    {
+      ...context,
+      targetCategory: null,
+      previousPlace: selected[selected.length - 1] || null,
+    },
+    selectedKeys
+  );
+
+  if (!requiredPlace) return false;
+
+  if (selected.length < maxStops) {
+    selected.push(requiredPlace);
+  } else {
+    const replaceIndex = selected.findIndex(place => (
+      !placeMatchesRequiredPrimaryCategory(place, requiredCategories)
+    ));
+    if (replaceIndex === -1) return false;
+
+    const removed = selected[replaceIndex];
+    selectedKeys.delete(getRuntimePlaceKey(removed));
+    const removedCategory = removed.miroCategory || 'unknown';
+    categoryCounts[removedCategory] = Math.max(0, (categoryCounts[removedCategory] || 0) - 1);
+    selected[replaceIndex] = requiredPlace;
+  }
+
+  selectedKeys.add(getRuntimePlaceKey(requiredPlace));
+  const category = requiredPlace.miroCategory || 'unknown';
+  categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+  return true;
+}
+
 function getRouteCategorySequence(moodContext, timeConfig) {
   const primaryMood = moodContext.compositionKeys[0] || 'local_food';
   const template = MOOD_CATEGORY_SEQUENCES[primaryMood]?.[timeConfig.key]
@@ -1366,6 +1446,46 @@ function selectDataDrivenPlace(candidates, context, selectedKeys, targetCategory
   return best;
 }
 
+function enforceDataDrivenRequiredCategory(selected, candidates, context, selectedKeys, categoryCounts, requiredCategories) {
+  if (hasRequiredPrimaryCategory(selected, requiredCategories)) return true;
+
+  const requiredPlace = selectDataDrivenPlace(
+    candidates.filter(place => placeMatchesRequiredPrimaryCategory(place, requiredCategories)),
+    {
+      ...context,
+      stopIndex: selected.length,
+      isFinalStop: selected.length >= context.timeConfig.maxStops - 1,
+      previousPlace: selected[selected.length - 1] || null,
+    },
+    selectedKeys
+  );
+
+  if (!requiredPlace) return false;
+
+  if (selected.length < context.timeConfig.maxStops) {
+    selected.push(requiredPlace);
+  } else {
+    const replaceIndex = selected.findIndex(place => (
+      !placeMatchesRequiredPrimaryCategory(place, requiredCategories)
+    ));
+    if (replaceIndex === -1) return false;
+
+    const removed = selected[replaceIndex];
+    selectedKeys.delete(getRuntimePlaceKey(removed));
+    if (removed.primaryCategory) {
+      categoryCounts[removed.primaryCategory] = Math.max(
+        0,
+        (categoryCounts[removed.primaryCategory] || 0) - 1
+      );
+    }
+    selected[replaceIndex] = requiredPlace;
+  }
+
+  selectedKeys.add(getRuntimePlaceKey(requiredPlace));
+  categoryCounts[requiredPlace.primaryCategory] = (categoryCounts[requiredPlace.primaryCategory] || 0) + 1;
+  return true;
+}
+
 function orderPlacesNearestNeighbor(places, center) {
   const remaining = [...places];
   const ordered = [];
@@ -1477,6 +1597,7 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
   const selectedKeys = new Set();
   const categoryCounts = {};
   const sequence = getRouteCategorySequence(moodContext, timeConfig);
+  const requiredCategories = getMoodRequiredPrimaryCategories(moodContext);
 
   sequence.slice(0, timeConfig.maxStops).forEach((targetCategory, stopIndex) => {
     const place = selectDataDrivenPlace(scoredCandidates, {
@@ -1512,6 +1633,22 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
     categoryCounts[place.primaryCategory] = (categoryCounts[place.primaryCategory] || 0) + 1;
   }
 
+  const hasRequiredCategory = enforceDataDrivenRequiredCategory(
+    selected,
+    scoredCandidates,
+    {
+      areaConfig,
+      timeConfig,
+      moodContext,
+      categoryCounts,
+      refinementKey,
+    },
+    selectedKeys,
+    categoryCounts,
+    requiredCategories
+  );
+
+  if (!hasRequiredCategory) return null;
   if (selected.length < timeConfig.minStops) return null;
 
   const orderedPlaces = orderPlacesNearestNeighbor(selected.slice(0, timeConfig.maxStops), areaConfig.center);
@@ -1569,6 +1706,7 @@ function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
   if (!places.length) return null;
 
   const areaConfig = getAreaConfig(routeKey);
+  const moodContext = getMoodContext(mood);
   const mode = getRouteMode(mood);
   const template = getRouteTemplate(mode, refinementKey);
   const candidates = filterCandidatesForRefinement(getAreaCandidates(places, areaConfig), refinementKey);
@@ -1579,6 +1717,7 @@ function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
   const categoryCounts = {};
   const maxStops = Math.min(refinementKey === 'walk' ? 3 : 4, candidates.length);
   const maxWalkMinutes = getMaxWalkMinutesForRefinement(refinementKey);
+  const requiredCategories = getMoodRequiredPrimaryCategories(moodContext);
 
   template.slice(0, maxStops).forEach(targetCategory => {
     const exactMatches = candidates.filter(place => place.miroCategory === targetCategory);
@@ -1616,6 +1755,23 @@ function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
     categoryCounts[place.miroCategory] = (categoryCounts[place.miroCategory] || 0) + 1;
   }
 
+  const hasRequiredCategory = enforceLegacyRequiredCategory(
+    selected,
+    candidates,
+    {
+      areaConfig,
+      mode,
+      categoryCounts,
+      refinementKey,
+      maxWalkMinutes,
+    },
+    selectedKeys,
+    categoryCounts,
+    requiredCategories,
+    maxStops
+  );
+
+  if (!hasRequiredCategory) return null;
   if (!selected.length) return null;
 
   const stops = selected.map((place, index) => (
@@ -3728,50 +3884,55 @@ async function shareCurrentRoute() {
   }
 }
 
-function getPrimaryRouteStop() {
-  if (!currentRoute || !currentRoute.stops.length) return null;
-  if (Number.isInteger(state.activeStop) && currentRoute.stops[state.activeStop]) {
-    return currentRoute.stops[state.activeStop];
+function getCurrentRoutePlaces() {
+  return Array.isArray(currentRoute?.stops)
+    ? currentRoute.stops.filter(stop => stop && (stop.name || stop.place?.name || stop.place?.displayName))
+    : [];
+}
+
+function getPlaceMapQuery(place = {}) {
+  const sourcePlace = place.place || place;
+  return [
+    place.name || sourcePlace.displayName || sourcePlace.name,
+    sourcePlace.area || currentRoute?.label,
+    sourcePlace.address,
+  ].filter(Boolean).join(' ');
+}
+
+function buildExternalMapUrl(place, provider = 'kakao') {
+  const query = encodeURIComponent(getPlaceMapQuery(place));
+  if (!query) return '';
+  if (provider === 'naver') {
+    return `https://map.naver.com/p/search/${query}`;
   }
-  return currentRoute.stops[0];
-}
-
-function getKakaoStopUrl(stop) {
-  if (!stop || !hasValidCoords(stop.coords)) return '';
-  return `https://map.kakao.com/link/map/${encodeURIComponent(stop.name)},${stop.coords.lat},${stop.coords.lng}`;
-}
-
-function getNaverStopUrl(stop) {
-  if (!stop) return '';
-  const naverUrl = typeof stop.place?.naverMapUrl === 'string' ? stop.place.naverMapUrl.trim() : '';
-  if (naverUrl) return naverUrl;
-
-  const query = [stop.name, stop.place?.address || ''].filter(Boolean).join(' ');
-  return query ? `https://map.naver.com/p/search/${encodeURIComponent(query)}` : '';
+  return `https://map.kakao.com/link/search/${query}`;
 }
 
 function openCurrentRouteInMap() {
-  const stop = getPrimaryRouteStop();
-  if (!stop) {
+  const routePlaces = getCurrentRoutePlaces();
+  const targetPlace = routePlaces.length ? routePlaces[0] : null;
+  if (!targetPlace) {
+    console.warn('[Kandid Spot] Open in map clicked but no route place exists.');
     showToast('There is no route stop to open yet.');
     return;
   }
 
-  const provider = getActiveMapProvider();
-  const url = provider === 'naver' ? getNaverStopUrl(stop) : getKakaoStopUrl(stop);
+  const provider = getActiveMapProvider() || 'kakao';
+  const url = buildExternalMapUrl(targetPlace, provider);
   if (!url) {
-    showToast(`No ${provider === 'naver' ? 'Naver' : 'Kakao'} map link is available for this stop.`);
+    console.warn('[Kandid Spot] Open in map clicked but no valid map query exists.');
+    showToast('No map search is available for this route yet.');
     return;
   }
 
-  const opened = window.open(url, '_blank');
+  const opened = window.open(url, '_blank', 'noopener,noreferrer');
   if (!opened) {
     showToast('Allow popups to open this map link.');
     return;
   }
-  opened.opener = null;
 
-  showToast(`Opening ${provider === 'naver' ? 'Naver' : 'Kakao'} Map for ${stop.name}…`);
+  const targetName = targetPlace.name || targetPlace.place?.displayName || targetPlace.place?.name || 'this stop';
+  showToast(`Opening ${provider === 'naver' ? 'Naver' : 'Kakao'} Map for ${targetName}…`);
 }
 
 document.querySelectorAll('.act-btn').forEach(btn => {

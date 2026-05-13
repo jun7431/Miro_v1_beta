@@ -1159,6 +1159,35 @@ input { font-family: inherit; }
 .ob-options-time {
   grid-template-columns: repeat(4, 1fr);
 }
+.ob-options-area {
+  grid-template-columns: repeat(3, 1fr);
+}
+.ob-options-mood {
+  grid-template-columns: repeat(3, 1fr);
+}
+.ob-option-wide {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  row-gap: 2px;
+  align-items: center;
+  padding: 14px 18px;
+}
+.ob-option-wide .ob-emoji {
+  grid-row: 1 / span 2;
+  align-self: center;
+  margin-bottom: 0;
+  font-size: 24px;
+}
+.ob-option-wide .ob-option-label {
+  grid-column: 2;
+  align-self: end;
+}
+.ob-option-wide .ob-option-sub {
+  grid-column: 2;
+  align-self: start;
+}
 
 .ob-option {
   background: var(--card);

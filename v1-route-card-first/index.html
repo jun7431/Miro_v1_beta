@@ -29,7 +29,7 @@
     <div class="hello">
       <div class="greet">Hi there 👋</div>
       <h1 class="prompt-h1">Where are you, and how much time do you have?</h1>
-      <p class="prompt-sub">Tell Miro three things. Get one local route you can start right now.</p>
+      <p class="prompt-sub">Tell Kandid Spot three things. Get one local route you can start right now.</p>
     </div>
 
     <section class="card builder-card">
@@ -39,11 +39,13 @@
           <span>Area</span>
         </div>
         <div class="chip-row" data-group="area">
-          <button class="chip selected" data-value="Hongdae">Hongdae</button>
-          <button class="chip" data-value="Seongsu">Seongsu</button>
-          <button class="chip" data-value="Itaewon">Itaewon</button>
-          <button class="chip" data-value="Bukchon">Bukchon</button>
-          <button class="chip" data-value="Yeonnam">Yeonnam</button>
+          <button class="chip" data-value="Myeongdong / Euljiro" data-internal-value="myeongdong_euljiro">Myeongdong / Euljiro</button>
+          <button class="chip selected" data-value="Hongdae / Yeonnam" data-internal-value="hongdae_yeonnam">Hongdae / Yeonnam</button>
+          <button class="chip" data-value="Itaewon / Hannam" data-internal-value="itaewon_hannam">Itaewon / Hannam</button>
+          <button class="chip" data-value="Anguk / Bukchon" data-internal-value="anguk_bukchon">Anguk / Bukchon</button>
+          <button class="chip" data-value="Gangnam / Sinsa" data-internal-value="gangnam_sinsa_apgujeong">Gangnam / Sinsa</button>
+          <button class="chip" data-value="Seongsu" data-internal-value="seongsu">Seongsu</button>
+          <button class="chip" data-value="Near me" data-internal-value="near_me">📍 Near me</button>
         </div>
       </div>
 
@@ -55,10 +57,10 @@
           <span>Available time</span>
         </div>
         <div class="chip-row" data-group="time">
-          <button class="chip" data-value="1 hour">1 hr</button>
-          <button class="chip selected" data-value="2 hours">2 hrs</button>
-          <button class="chip" data-value="3 hours">3 hrs</button>
-          <button class="chip" data-value="Half day">Half day</button>
+          <button class="chip" data-value="30–60 min" data-internal-value="time_30_60">30–60 min</button>
+          <button class="chip" data-value="1–2 hours" data-internal-value="time_1_2">1–2 hrs</button>
+          <button class="chip selected" data-value="2–3 hours" data-internal-value="time_2_3">2–3 hrs</button>
+          <button class="chip" data-value="4–6 hours" data-internal-value="time_4_6">4–6 hrs</button>
         </div>
       </div>
 
@@ -70,17 +72,18 @@
           <span>Mood</span>
         </div>
         <div class="chip-row" data-group="mood">
-          <button class="chip selected" data-value="Local food + quiet walk">🍜 Local food + quiet walk</button>
-          <button class="chip" data-value="Cafe hopping">☕ Cafe hopping</button>
-          <button class="chip" data-value="Hidden spots">🗝️ Hidden spots</button>
-          <button class="chip" data-value="Sunset stroll">🌇 Sunset stroll</button>
-          <button class="chip" data-value="Night vibe">🌙 Night vibe</button>
+          <button class="chip selected" data-value="Local food" data-internal-value="local_food">🍜 Local food</button>
+          <button class="chip" data-value="Cafes & dessert" data-internal-value="cafes_dessert">🍰 Cafes & dessert</button>
+          <button class="chip" data-value="Drinks & night" data-internal-value="drinks_night">🍷 Drinks & night</button>
+          <button class="chip" data-value="Shop & browse" data-internal-value="shop_browse">🛍️ Shop & browse</button>
+          <button class="chip" data-value="Culture & activities" data-internal-value="culture_activities">🎨 Culture & activities</button>
+          <button class="chip" data-value="Walks & views" data-internal-value="walks_views">🌳 Walks & views</button>
         </div>
       </div>
     </section>
 
     <button id="build-btn" class="cta-btn">
-      <span>Build my Miro route</span>
+      <span>Build my Kandid Spot route</span>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
     </button>
 
@@ -103,7 +106,7 @@
           <path d="M 20 60 Q 60 10 100 40 T 180 30" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/>
         </svg>
       </div>
-      <h2 class="loader-h2">Building your Miro route…</h2>
+      <h2 class="loader-h2">Building your Kandid Spot route…</h2>
       <p class="loader-step" id="loader-step">Reading the streets of Hongdae</p>
     </div>
   </main>
@@ -114,7 +117,7 @@
       <button class="back-btn" id="back-to-builder" aria-label="Back">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </button>
-      <div class="result-meta-tag" id="result-tag">Hongdae · 2 hrs · Local food + quiet walk</div>
+      <div class="result-meta-tag" id="result-tag">Hongdae / Yeonnam · 2–3 hours · Local food</div>
     </div>
 
     <section class="route-hero">

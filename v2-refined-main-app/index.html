@@ -44,7 +44,7 @@
           Find your <span class="ks-headline-accent">local spot</span>.
         </h1>
         <p class="ks-lead">
-          Pick an area, your time, your vibe. Kandid Spot gives you one route
+          Pick an area, your time, your mood. Kandid Spot gives you one route
           worth doing — no top-10 lists, no decision fatigue.
         </p>
         <ol class="ks-flow" aria-label="How it works">
@@ -52,7 +52,7 @@
           <li class="ks-flow-arrow" aria-hidden="true">→</li>
           <li><span class="ks-flow-num">2</span><span class="ks-flow-label">Time</span></li>
           <li class="ks-flow-arrow" aria-hidden="true">→</li>
-          <li><span class="ks-flow-num">3</span><span class="ks-flow-label">Vibe</span></li>
+          <li><span class="ks-flow-num">3</span><span class="ks-flow-label">Mood</span></li>
           <li class="ks-flow-arrow" aria-hidden="true">→</li>
           <li class="ks-flow-result"><span class="ks-flow-label">Your spot</span></li>
         </ol>
@@ -60,31 +60,41 @@
 
       <div class="ks-step-label">Step 1 · Where are you now?</div>
 
-      <div class="ob-options" data-group="area">
-        <button class="ob-option" data-value="Hongdae">
-          <span class="ob-emoji">🎨</span>
-          <span class="ob-option-label">Hongdae</span>
-          <span class="ob-option-sub">Indie + youth energy</span>
+      <div class="ob-options ob-options-area" data-group="area">
+        <button class="ob-option" data-value="Myeongdong / Euljiro" data-internal-value="myeongdong_euljiro">
+          <span class="ob-emoji">🏮</span>
+          <span class="ob-option-label">Myeongdong / Euljiro</span>
+          <span class="ob-option-sub">Central food + shopping</span>
         </button>
-        <button class="ob-option" data-value="Seongsu">
-          <span class="ob-emoji">🏭</span>
-          <span class="ob-option-label">Seongsu</span>
-          <span class="ob-option-sub">Cafes & workshops</span>
+        <button class="ob-option" data-value="Hongdae / Yeonnam" data-internal-value="hongdae_yeonnam">
+          <span class="ob-emoji">🎸</span>
+          <span class="ob-option-label">Hongdae / Yeonnam</span>
+          <span class="ob-option-sub">Youth, indie, late night</span>
         </button>
-        <button class="ob-option" data-value="Anguk">
+        <button class="ob-option" data-value="Itaewon / Hannam" data-internal-value="itaewon_hannam">
+          <span class="ob-emoji">🌍</span>
+          <span class="ob-option-label">Itaewon / Hannam</span>
+          <span class="ob-option-sub">Global food + design</span>
+        </button>
+        <button class="ob-option" data-value="Anguk / Bukchon" data-internal-value="anguk_bukchon">
           <span class="ob-emoji">🏯</span>
-          <span class="ob-option-label">Anguk</span>
+          <span class="ob-option-label">Anguk / Bukchon</span>
           <span class="ob-option-sub">Tradition + small lanes</span>
         </button>
-        <button class="ob-option" data-value="Euljiro">
-          <span class="ob-emoji">🍻</span>
-          <span class="ob-option-label">Euljiro</span>
-          <span class="ob-option-sub">Vintage + nightlife</span>
+        <button class="ob-option" data-value="Gangnam / Sinsa" data-internal-value="gangnam_sinsa_apgujeong">
+          <span class="ob-emoji">✨</span>
+          <span class="ob-option-label">Gangnam / Sinsa</span>
+          <span class="ob-option-sub">Polished, trendy, busy</span>
         </button>
-        <button class="ob-option" data-value="Gangnam">
-          <span class="ob-emoji">💎</span>
-          <span class="ob-option-label">Gangnam</span>
-          <span class="ob-option-sub">Polished & busy</span>
+        <button class="ob-option" data-value="Seongsu" data-internal-value="seongsu">
+          <span class="ob-emoji">☕</span>
+          <span class="ob-option-label">Seongsu</span>
+          <span class="ob-option-sub">Cafes, brands, workshops</span>
+        </button>
+        <button class="ob-option ob-option-wide" data-value="Near me" data-internal-value="near_me">
+          <span class="ob-emoji">📍</span>
+          <span class="ob-option-label">Near me</span>
+          <span class="ob-option-sub">Use my current location</span>
         </button>
       </div>
       <div class="ob-actions">
@@ -98,25 +108,25 @@
       <h1 class="ob-q-h1">How much time do you have?</h1>
       <p class="ob-q-sub">Kandid Spot keeps the route realistic for your available time.</p>
       <div class="ob-options ob-options-time" data-group="time">
-        <button class="ob-option" data-value="1 hour">
+        <button class="ob-option" data-value="30–60 min" data-internal-value="time_30_60">
           <span class="ob-emoji">⚡</span>
-          <span class="ob-option-label">1 hour</span>
-          <span class="ob-option-sub">A quick loop</span>
+          <span class="ob-option-label">30–60 min</span>
+          <span class="ob-option-sub">I arrived early</span>
         </button>
-        <button class="ob-option" data-value="2 hours">
-          <span class="ob-emoji">🚶</span>
-          <span class="ob-option-label">2 hours</span>
-          <span class="ob-option-sub">A relaxed walk</span>
+        <button class="ob-option" data-value="1–2 hours" data-internal-value="time_1_2">
+          <span class="ob-emoji">🕐</span>
+          <span class="ob-option-label">1–2 hours</span>
+          <span class="ob-option-sub">A quick nearby loop</span>
         </button>
-        <button class="ob-option" data-value="Half day">
-          <span class="ob-emoji">🌿</span>
-          <span class="ob-option-label">Half day</span>
-          <span class="ob-option-sub">Time to wander</span>
+        <button class="ob-option" data-value="2–3 hours" data-internal-value="time_2_3">
+          <span class="ob-emoji">🕒</span>
+          <span class="ob-option-label">2–3 hours</span>
+          <span class="ob-option-sub">A relaxed route</span>
         </button>
-        <button class="ob-option" data-value="Evening">
-          <span class="ob-emoji">🌙</span>
-          <span class="ob-option-label">Evening</span>
-          <span class="ob-option-sub">After-work pace</span>
+        <button class="ob-option" data-value="4–6 hours" data-internal-value="time_4_6">
+          <span class="ob-emoji">🌗</span>
+          <span class="ob-option-label">4–6 hours</span>
+          <span class="ob-option-sub">Half-day plan</span>
         </button>
       </div>
       <div class="ob-actions">
@@ -129,31 +139,36 @@
     <section class="ob-screen" data-step="3">
       <h1 class="ob-q-h1">What kind of route do you want?</h1>
       <p class="ob-q-sub">Choose the mood. Kandid Spot will handle the route.</p>
-      <div class="ob-options" data-group="mood">
-        <button class="ob-option" data-value="Local food">
+      <div class="ob-options ob-options-mood" data-group="mood">
+        <button class="ob-option" data-value="Local food" data-internal-value="local_food">
           <span class="ob-emoji">🍜</span>
           <span class="ob-option-label">Local food</span>
-          <span class="ob-option-sub">Where neighbors actually eat</span>
+          <span class="ob-option-sub">Meals locals would save</span>
         </button>
-        <button class="ob-option" data-value="Quiet walk">
-          <span class="ob-emoji">🌳</span>
-          <span class="ob-option-label">Quiet walk</span>
-          <span class="ob-option-sub">Slow lanes, fewer crowds</span>
+        <button class="ob-option" data-value="Cafes & dessert" data-internal-value="cafes_dessert">
+          <span class="ob-emoji">🍰</span>
+          <span class="ob-option-label">Cafes & dessert</span>
+          <span class="ob-option-sub">Coffee, bakeries, sweets</span>
         </button>
-        <button class="ob-option" data-value="Cafes">
-          <span class="ob-emoji">☕</span>
-          <span class="ob-option-label">Cafes</span>
-          <span class="ob-option-sub">One coffee, then the next</span>
-        </button>
-        <button class="ob-option" data-value="Night energy">
-          <span class="ob-emoji">🌃</span>
-          <span class="ob-option-label">Night energy</span>
+        <button class="ob-option" data-value="Drinks & night" data-internal-value="drinks_night">
+          <span class="ob-emoji">🍷</span>
+          <span class="ob-option-label">Drinks & night</span>
           <span class="ob-option-sub">Bars, lights, late spots</span>
         </button>
-        <button class="ob-option" data-value="Hidden spots">
-          <span class="ob-emoji">🗝️</span>
-          <span class="ob-option-label">Hidden spots</span>
-          <span class="ob-option-sub">Off the obvious map</span>
+        <button class="ob-option" data-value="Shop & browse" data-internal-value="shop_browse">
+          <span class="ob-emoji">🛍️</span>
+          <span class="ob-option-label">Shop & browse</span>
+          <span class="ob-option-sub">Shops, books, small brands</span>
+        </button>
+        <button class="ob-option" data-value="Culture & activities" data-internal-value="culture_activities">
+          <span class="ob-emoji">🎨</span>
+          <span class="ob-option-label">Culture & activities</span>
+          <span class="ob-option-sub">Exhibits, classes, games</span>
+        </button>
+        <button class="ob-option" data-value="Walks & views" data-internal-value="walks_views">
+          <span class="ob-emoji">🌳</span>
+          <span class="ob-option-label">Walks & views</span>
+          <span class="ob-option-sub">Parks, lanes, photo spots</span>
         </button>
       </div>
       <div class="ob-actions">
@@ -223,32 +238,36 @@
         <div class="builder-row">
           <label class="builder-row-label">Area</label>
           <div class="chip-scroller" data-group="area">
-            <button class="chip selected" data-value="Hongdae">Hongdae</button>
+            <button class="chip" data-value="Myeongdong / Euljiro">Myeongdong / Euljiro</button>
+            <button class="chip selected" data-value="Hongdae / Yeonnam">Hongdae / Yeonnam</button>
+            <button class="chip" data-value="Itaewon / Hannam">Itaewon / Hannam</button>
+            <button class="chip" data-value="Anguk / Bukchon">Anguk / Bukchon</button>
+            <button class="chip" data-value="Gangnam / Sinsa">Gangnam / Sinsa</button>
             <button class="chip" data-value="Seongsu">Seongsu</button>
-            <button class="chip" data-value="Anguk">Anguk</button>
-            <button class="chip" data-value="Euljiro">Euljiro</button>
-            <button class="chip" data-value="Gangnam">Gangnam</button>
+            <button class="chip" data-value="Near me">📍 Near me</button>
           </div>
         </div>
         <div class="builder-row">
           <label class="builder-row-label">Time</label>
           <div class="chip-scroller" data-group="time">
-            <button class="chip" data-value="1 hour">1 hour</button>
-            <button class="chip selected" data-value="2 hours">2 hours</button>
-            <button class="chip" data-value="Half day">Half day</button>
-            <button class="chip" data-value="Evening">Evening</button>
+            <button class="chip" data-value="30–60 min">30–60 min</button>
+            <button class="chip" data-value="1–2 hours">1–2 hours</button>
+            <button class="chip selected" data-value="2–3 hours">2–3 hours</button>
+            <button class="chip" data-value="4–6 hours">4–6 hours</button>
           </div>
         </div>
         <div class="builder-row">
           <label class="builder-row-label">Mood</label>
           <div class="chip-scroller" data-group="mood">
             <button class="chip selected" data-value="Local food">🍜 Local food</button>
-            <button class="chip" data-value="Quiet walk">🌳 Quiet walk</button>
-            <button class="chip" data-value="Cafes">☕ Cafes</button>
-            <button class="chip" data-value="Night energy">🌃 Night energy</button>
-            <button class="chip" data-value="Hidden spots">🗝️ Hidden spots</button>
+            <button class="chip" data-value="Cafes & dessert">🍰 Cafes & dessert</button>
+            <button class="chip" data-value="Drinks & night">🍷 Drinks & night</button>
+            <button class="chip" data-value="Shop & browse">🛍️ Shop & browse</button>
+            <button class="chip" data-value="Culture & activities">🎨 Culture & activities</button>
+            <button class="chip" data-value="Walks & views">🌳 Walks & views</button>
           </div>
         </div>
+
         <button class="build-btn" id="build-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path><polyline points="1 20 1 14 7 14"></polyline><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
           Build new route

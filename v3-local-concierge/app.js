@@ -144,11 +144,13 @@ async function startConversation() {
   await addMsg("Where are you, or where do you want to go?");
   state.step = 'area';
   setQuickReplies([
-    { label: 'Hongdae', onClick: () => pickArea('Hongdae') },
+    { label: 'Myeongdong / Euljiro', onClick: () => pickArea('Myeongdong / Euljiro') },
+    { label: 'Hongdae / Yeonnam', onClick: () => pickArea('Hongdae / Yeonnam') },
+    { label: 'Itaewon / Hannam', onClick: () => pickArea('Itaewon / Hannam') },
+    { label: 'Anguk / Bukchon', onClick: () => pickArea('Anguk / Bukchon') },
+    { label: 'Gangnam / Sinsa', onClick: () => pickArea('Gangnam / Sinsa') },
     { label: 'Seongsu', onClick: () => pickArea('Seongsu') },
-    { label: 'Itaewon', onClick: () => pickArea('Itaewon') },
-    { label: 'Bukchon', onClick: () => pickArea('Bukchon') },
-    { label: 'Yeonnam', onClick: () => pickArea('Yeonnam') },
+    { label: '📍 Near me', onClick: () => pickArea('Near me') },
   ]);
 }
 
@@ -160,10 +162,10 @@ async function pickArea(area) {
   await addMsg(`Nice, ${area}. ⏱ How much time do you actually have?`);
   state.step = 'time';
   setQuickReplies([
-    { label: '1 hour', onClick: () => pickTime('1 hour') },
-    { label: '2 hours', onClick: () => pickTime('2 hours') },
-    { label: '3 hours', onClick: () => pickTime('3 hours') },
-    { label: 'Half day', onClick: () => pickTime('Half day') },
+    { label: '30–60 min', onClick: () => pickTime('30–60 min') },
+    { label: '1–2 hours', onClick: () => pickTime('1–2 hours') },
+    { label: '2–3 hours', onClick: () => pickTime('2–3 hours') },
+    { label: '4–6 hours', onClick: () => pickTime('4–6 hours') },
   ]);
 }
 
@@ -172,14 +174,15 @@ async function pickTime(time) {
   clearQuickReplies();
   await addMsg(time, 'user');
   await showTyping(800);
-  await addMsg("Last thing — what's the vibe? Be honest, I won't judge a midnight ramen run.");
+  await addMsg("Last thing — what kind of route do you want? Choose the mood and I'll handle the route.");
   state.step = 'mood';
   setQuickReplies([
-    { label: '🍜 Local food + quiet walk', onClick: () => pickMood('Local food + quiet walk') },
-    { label: '☕ Cafe hopping', onClick: () => pickMood('Cafe hopping') },
-    { label: '🗝️ Hidden spots', onClick: () => pickMood('Hidden spots') },
-    { label: '🌇 Sunset stroll', onClick: () => pickMood('Sunset stroll') },
-    { label: '🌙 Night vibe', onClick: () => pickMood('Night vibe') },
+    { label: '🍜 Local food', onClick: () => pickMood('Local food') },
+    { label: '🍰 Cafes & dessert', onClick: () => pickMood('Cafes & dessert') },
+    { label: '🍷 Drinks & night', onClick: () => pickMood('Drinks & night') },
+    { label: '🛍️ Shop & browse', onClick: () => pickMood('Shop & browse') },
+    { label: '🎨 Culture & activities', onClick: () => pickMood('Culture & activities') },
+    { label: '🌳 Walks & views', onClick: () => pickMood('Walks & views') },
   ]);
 }
 

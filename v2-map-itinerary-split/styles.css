@@ -198,7 +198,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-color: var(--primary);
   color: white;
 }
-.tt-num { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.tt-num { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; }
 .tt-lbl { font-size: 11px; opacity: 0.7; }
 
 .cta-btn {

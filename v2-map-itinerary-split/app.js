@@ -52,9 +52,9 @@ const LOADING_STEPS = [
 
 // ---- State ----
 const state = {
-  area: 'Hongdae',
-  time: '2 hours',
-  mood: 'Local food + quiet walk',
+  area: 'Hongdae / Yeonnam',
+  time: '2–3 hours',
+  mood: 'Local food',
   applied: new Set(),
   activeStop: null,
 };

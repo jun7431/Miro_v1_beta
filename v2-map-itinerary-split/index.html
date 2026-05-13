@@ -22,9 +22,9 @@
       <span class="brand-tag">Local route planner</span>
     </div>
     <div class="top-meta" id="top-meta">
-      <span class="meta-pill" data-key="area">Hongdae</span>
-      <span class="meta-pill" data-key="time">2 hrs</span>
-      <span class="meta-pill" data-key="mood">Local food + quiet walk</span>
+      <span class="meta-pill" data-key="area">Hongdae / Yeonnam</span>
+      <span class="meta-pill" data-key="time">2–3 hours</span>
+      <span class="meta-pill" data-key="mood">Local food</span>
       <button class="edit-btn" id="edit-builder">Edit</button>
     </div>
   </header>
@@ -35,45 +35,46 @@
       <button class="builder-close" id="builder-close" aria-label="Close">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
-      <h2 class="builder-h2">Build your Miro route</h2>
+      <h2 class="builder-h2">Build your Kandid Spot route</h2>
       <p class="builder-sub">Three inputs. One local route in seconds.</p>
 
       <div class="builder-field">
         <label class="builder-label">Area</label>
         <div class="chip-row" data-group="area">
-          <button class="chip selected" data-value="Hongdae">Hongdae</button>
-          <button class="chip" data-value="Seongsu">Seongsu</button>
-          <button class="chip" data-value="Itaewon">Itaewon</button>
-          <button class="chip" data-value="Bukchon">Bukchon</button>
-          <button class="chip" data-value="Yeonnam">Yeonnam</button>
-          <button class="chip" data-value="Mangwon">Mangwon</button>
+          <button class="chip" data-value="Myeongdong / Euljiro" data-internal-value="myeongdong_euljiro">Myeongdong / Euljiro</button>
+          <button class="chip selected" data-value="Hongdae / Yeonnam" data-internal-value="hongdae_yeonnam">Hongdae / Yeonnam</button>
+          <button class="chip" data-value="Itaewon / Hannam" data-internal-value="itaewon_hannam">Itaewon / Hannam</button>
+          <button class="chip" data-value="Anguk / Bukchon" data-internal-value="anguk_bukchon">Anguk / Bukchon</button>
+          <button class="chip" data-value="Gangnam / Sinsa" data-internal-value="gangnam_sinsa_apgujeong">Gangnam / Sinsa</button>
+          <button class="chip" data-value="Seongsu" data-internal-value="seongsu">Seongsu</button>
+          <button class="chip" data-value="Near me" data-internal-value="near_me">📍 Near me</button>
         </div>
       </div>
 
       <div class="builder-field">
         <label class="builder-label">Available time</label>
         <div class="time-grid" data-group="time">
-          <button class="time-tile" data-value="1 hour"><span class="tt-num">1</span><span class="tt-lbl">hour</span></button>
-          <button class="time-tile selected" data-value="2 hours"><span class="tt-num">2</span><span class="tt-lbl">hours</span></button>
-          <button class="time-tile" data-value="3 hours"><span class="tt-num">3</span><span class="tt-lbl">hours</span></button>
-          <button class="time-tile" data-value="Half day"><span class="tt-num">½</span><span class="tt-lbl">day</span></button>
+          <button class="time-tile" data-value="30–60 min" data-internal-value="time_30_60"><span class="tt-num">30–60</span><span class="tt-lbl">min</span></button>
+          <button class="time-tile" data-value="1–2 hours" data-internal-value="time_1_2"><span class="tt-num">1–2</span><span class="tt-lbl">hrs</span></button>
+          <button class="time-tile selected" data-value="2–3 hours" data-internal-value="time_2_3"><span class="tt-num">2–3</span><span class="tt-lbl">hrs</span></button>
+          <button class="time-tile" data-value="4–6 hours" data-internal-value="time_4_6"><span class="tt-num">4–6</span><span class="tt-lbl">hrs</span></button>
         </div>
       </div>
 
       <div class="builder-field">
         <label class="builder-label">Mood</label>
         <div class="chip-row" data-group="mood">
-          <button class="chip selected" data-value="Local food + quiet walk">🍜 Local food + quiet walk</button>
-          <button class="chip" data-value="Cafe hopping">☕ Cafe hopping</button>
-          <button class="chip" data-value="Hidden spots">🗝️ Hidden spots</button>
-          <button class="chip" data-value="Sunset stroll">🌇 Sunset stroll</button>
-          <button class="chip" data-value="Night vibe">🌙 Night vibe</button>
-          <button class="chip" data-value="Art + design">🎨 Art + design</button>
+          <button class="chip selected" data-value="Local food" data-internal-value="local_food">🍜 Local food</button>
+          <button class="chip" data-value="Cafes & dessert" data-internal-value="cafes_dessert">🍰 Cafes & dessert</button>
+          <button class="chip" data-value="Drinks & night" data-internal-value="drinks_night">🍷 Drinks & night</button>
+          <button class="chip" data-value="Shop & browse" data-internal-value="shop_browse">🛍️ Shop & browse</button>
+          <button class="chip" data-value="Culture & activities" data-internal-value="culture_activities">🎨 Culture & activities</button>
+          <button class="chip" data-value="Walks & views" data-internal-value="walks_views">🌳 Walks & views</button>
         </div>
       </div>
 
       <button class="cta-btn" id="build-btn">
-        <span>Build my Miro route</span>
+        <span>Build my Kandid Spot route</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
       </button>
     </div>

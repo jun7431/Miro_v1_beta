@@ -3076,6 +3076,32 @@ function getDirectLegPath(leg) {
   return [leg.start, leg.end];
 }
 
+function getRouteLegRoutingMode(leg, maxWalkMinutes) {
+  const explicitMode = String(leg.toStop?.legSuggestedMode || '').trim();
+  if (explicitMode === 'walk') {
+    return { mode: 'walk', reason: 'explicit_walk_mode' };
+  }
+  if (explicitMode) {
+    return { mode: 'nonwalking', reason: `explicit_${explicitMode}` };
+  }
+
+  const routeWalkMinutes = Number(leg.toStop?.legWalkMinutes ?? leg.toStop?.walk);
+  if (Number.isFinite(routeWalkMinutes) && routeWalkMinutes > 0) {
+    return { mode: 'walk', reason: 'route_walk_minutes' };
+  }
+
+  const mobilityLabel = String(leg.toStop?.legMobilityLabel || '').trim().toLowerCase();
+  if (mobilityLabel.startsWith('walk')) {
+    return { mode: 'walk', reason: 'route_walk_label' };
+  }
+
+  const mobility = classifyLegMobility(leg.start, leg.end, maxWalkMinutes);
+  return {
+    mode: mobility.suggestedMode === 'walk' ? 'walk' : 'nonwalking',
+    reason: 'distance_classification',
+  };
+}
+
 function getTmapPedestrianRoute(start, end) {
   const cacheKey = getTmapPedestrianKey(start, end);
   if (routeGeometryState.tmapCache.has(cacheKey)) {
@@ -3246,6 +3272,7 @@ async function buildMixedRouteGeometry() {
     tmapWalkLegs: 0,
     naverDrivingLegs: 0,
     fallbackLegs: 0,
+    legs: [],
   };
   let labelsChanged = false;
 
@@ -3253,7 +3280,8 @@ async function buildMixedRouteGeometry() {
     let segmentPath = null;
     let isFallback = false;
     let source = '';
-    const isWalkingLeg = leg.toStop.legSuggestedMode === 'walk';
+    const routingMode = getRouteLegRoutingMode(leg, maxWalkMinutes);
+    const isWalkingLeg = routingMode.mode === 'walk';
 
     if (isWalkingLeg) {
       const tmapRoute = await getTmapPedestrianRoute(leg.start, leg.end);
@@ -3285,6 +3313,16 @@ async function buildMixedRouteGeometry() {
     }
 
     appendRouteSegment(path, segmentPath);
+    summary.legs.push({
+      index: leg.index,
+      from: leg.fromStop?.name || leg.start.name,
+      to: leg.toStop?.name || leg.end.name,
+      routingMode: routingMode.mode,
+      routingReason: routingMode.reason,
+      source,
+      fallback: isFallback,
+      points: Array.isArray(segmentPath) ? segmentPath.length : 0,
+    });
     segments.push({
       index: leg.index,
       fromStop: leg.fromStop,
@@ -3292,8 +3330,11 @@ async function buildMixedRouteGeometry() {
       path: segmentPath,
       isFallback,
       source,
+      routingMode: routingMode.mode,
     });
   }
+
+  console.log('[Kandid Spot] Internal route geometry sources', summary);
 
   return {
     path,
@@ -4240,7 +4281,7 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// ========== Onboarding (3-step first-use flow) ==========
+// ========== Onboarding (hybrid flow: 3 required + 2 optional) ==========
 const OB_LOADING_STEPS = [
   'Reading the streets of {area}',
   'Checking walking time',
@@ -4249,15 +4290,28 @@ const OB_LOADING_STEPS = [
   'Finding a route you can start now',
 ];
 
+const OB_REQUIRED_LAST_STEP = 3;
+const OB_FINAL_STEP = 5;
+
 const onboarding = {
   el: document.getElementById('onboarding'),
   loadingEl: document.getElementById('ob-loading'),
   loadingStepEl: document.getElementById('ob-loading-step'),
   currentEl: document.getElementById('ob-current'),
+  currentOptEl: document.getElementById('ob-current-opt'),
+  progressRequiredEl: null,
+  progressOptionalEl: null,
   step: 1,
-  selections: { area: null, time: null, mood: null },
+  // Required: area, time, mood — all three are required to gate route generation.
+  // Optional (UI-only): shape (itinerary feel), refine (per-anchor preference map).
+  selections: { area: null, time: null, mood: null, shape: null, refine: {} },
+  contextNote: '',
 
   init() {
+    this.progressRequiredEl = this.el.querySelector('[data-progress-required]');
+    this.progressOptionalEl = this.el.querySelector('[data-progress-optional]');
+
+    // Required-step option groups (area / time / mood)
     this.el.querySelectorAll('.ob-options').forEach(group => {
       const groupKey = group.dataset.group;
       group.addEventListener('click', e => {
@@ -4270,9 +4324,53 @@ const onboarding = {
       });
     });
 
+    // Optional Step 4: itinerary shape cards (UI-only state)
+    const shapeGroup = this.el.querySelector('.ob-shapes');
+    if (shapeGroup) {
+      shapeGroup.addEventListener('click', e => {
+        const btn = e.target.closest('.ob-shape');
+        if (!btn) return;
+        shapeGroup.querySelectorAll('.ob-shape').forEach(o => o.classList.remove('selected'));
+        btn.classList.add('selected');
+        this.selections.shape = btn.dataset.value;
+      });
+    }
+
+    // Optional Step 5: per-anchor preference toggles (UI-only state)
+    this.el.querySelectorAll('.ob-refine-prefs').forEach(group => {
+      const anchor = group.dataset.anchor;
+      this.selections.refine[anchor] = 'neutral';
+      group.addEventListener('click', e => {
+        const btn = e.target.closest('.ob-pref');
+        if (!btn) return;
+        group.querySelectorAll('.ob-pref').forEach(o => {
+          o.classList.remove('active');
+          o.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        this.selections.refine[anchor] = btn.dataset.pref;
+      });
+    });
+
+    // Optional context note (Step 1) — UI-only context, not parsed
+    const contextInput = this.el.querySelector('[data-context-input]');
+    if (contextInput) {
+      contextInput.addEventListener('input', () => {
+        this.contextNote = contextInput.value.trim();
+      });
+    }
+
+    // Per-screen actions
     this.el.querySelectorAll('.ob-screen').forEach(screen => {
-      screen.querySelector('.ob-next').addEventListener('click', () => this.nextStep());
-      screen.querySelector('.ob-back').addEventListener('click', () => this.prevStep());
+      const nextBtn = screen.querySelector('.ob-next');
+      const backBtn = screen.querySelector('.ob-back');
+      const customizeBtn = screen.querySelector('.ob-customize-more');
+      const skipBtn = screen.querySelector('.ob-skip');
+      if (nextBtn) nextBtn.addEventListener('click', () => this.nextStep());
+      if (backBtn) backBtn.addEventListener('click', () => this.prevStep());
+      if (customizeBtn) customizeBtn.addEventListener('click', () => this.goToStep(4));
+      if (skipBtn) skipBtn.addEventListener('click', () => this.triggerBuild());
     });
 
     document.addEventListener('keydown', e => {
@@ -4291,10 +4389,20 @@ const onboarding = {
     });
     this.el.querySelectorAll('.ob-step').forEach(s => {
       const sn = parseInt(s.dataset.step);
-      s.classList.toggle('done', sn < n);
+      s.classList.toggle('done', sn < n || n > OB_REQUIRED_LAST_STEP);
       s.classList.toggle('active', sn === n);
     });
-    this.currentEl.textContent = n;
+
+    const isOptional = n > OB_REQUIRED_LAST_STEP;
+    this.el.dataset.stage = isOptional ? 'optional' : 'required';
+    if (this.progressRequiredEl) this.progressRequiredEl.hidden = isOptional;
+    if (this.progressOptionalEl) this.progressOptionalEl.hidden = !isOptional;
+    if (isOptional && this.currentOptEl) {
+      this.currentOptEl.textContent = String(n - OB_REQUIRED_LAST_STEP);
+    } else if (this.currentEl) {
+      this.currentEl.textContent = String(n);
+    }
+
     this.el.scrollTo({ top: 0, behavior: 'smooth' });
     this.updateNextEnabled();
   },
@@ -4302,16 +4410,39 @@ const onboarding = {
   updateNextEnabled() {
     const screen = this.el.querySelector(`.ob-screen[data-step="${this.step}"]`);
     if (!screen) return;
-    const groupKey = screen.querySelector('.ob-options').dataset.group;
-    screen.querySelector('.ob-next').disabled = !this.selections[groupKey];
+    const options = screen.querySelector('.ob-options');
+    const nextBtn = screen.querySelector('.ob-next');
+    const customizeBtn = screen.querySelector('.ob-customize-more');
+    // Required steps: enable Next only when this step's group has a selection.
+    if (options && nextBtn) {
+      const groupKey = options.dataset.group;
+      const ready = Boolean(this.selections[groupKey]);
+      nextBtn.disabled = !ready;
+      if (customizeBtn) customizeBtn.disabled = !ready;
+      return;
+    }
+    // Optional steps: action buttons are always enabled (user can skip).
+    if (nextBtn) nextBtn.disabled = false;
   },
 
   nextStep() {
-    if (this.step < 3) {
-      this.goToStep(this.step + 1);
-    } else {
+    // Step 3 "Show my route" — required path is complete, build immediately.
+    if (this.step === OB_REQUIRED_LAST_STEP) {
       this.triggerBuild();
+      return;
     }
+    // Optional Step 4 "Continue" — advance to Step 5.
+    if (this.step === 4) {
+      this.goToStep(5);
+      return;
+    }
+    // Optional Step 5 "Build my route" — build using existing flow.
+    if (this.step === OB_FINAL_STEP) {
+      this.triggerBuild();
+      return;
+    }
+    // Required Steps 1–2.
+    this.goToStep(this.step + 1);
   },
 
   prevStep() {
@@ -4371,9 +4502,25 @@ const onboarding = {
         }
       });
     } else {
-      this.selections = { area: null, time: null, mood: null };
+      this.selections = { area: null, time: null, mood: null, shape: null, refine: {} };
+      this.contextNote = '';
       this.el.querySelectorAll('.ob-option').forEach(o => o.classList.remove('selected'));
+      const contextInput = this.el.querySelector('[data-context-input]');
+      if (contextInput) contextInput.value = '';
     }
+    // Optional step UI always resets (shape + refine are UI-only state).
+    this.selections.shape = null;
+    this.selections.refine = {};
+    this.el.querySelectorAll('.ob-shape').forEach(o => o.classList.remove('selected'));
+    this.el.querySelectorAll('.ob-refine-prefs').forEach(group => {
+      const anchor = group.dataset.anchor;
+      this.selections.refine[anchor] = 'neutral';
+      group.querySelectorAll('.ob-pref').forEach(o => {
+        const isNeutral = o.dataset.pref === 'neutral';
+        o.classList.toggle('active', isNeutral);
+        o.setAttribute('aria-pressed', isNeutral ? 'true' : 'false');
+      });
+    });
     document.getElementById('main-app').classList.add('hidden');
     this.loadingEl.classList.remove('active');
     this.el.classList.add('active');

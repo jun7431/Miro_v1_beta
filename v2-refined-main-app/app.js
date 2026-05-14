@@ -548,6 +548,30 @@ const MIRO_CATEGORY_TO_PRIMARY_CATEGORY = {
   see: 'landmark_view',
 };
 
+const PRIMARY_CATEGORY_TO_MIRO_CATEGORY = {
+  meal: 'eat',
+  cafe: 'cafe',
+  dessert_bakery: 'cafe',
+  bar: 'night',
+  shopping: 'shop',
+  activity: 'activity',
+  walk_nature: 'walk',
+  landmark_view: 'see',
+};
+
+const OPTIONAL_SHAPE_CATEGORY_SEQUENCES = {
+  slow_build: ['cafe', 'walk_nature', 'meal', 'bar'],
+  food_first: ['meal', 'walk_nature', 'cafe', 'bar'],
+  wander_end_loud: ['walk_nature', 'cafe', 'meal', 'bar'],
+};
+
+const OPTIONAL_ANCHOR_CATEGORY_GROUPS = {
+  meal: ['meal'],
+  cafe: ['cafe', 'dessert_bakery'],
+  walk: ['walk_nature', 'landmark_view'],
+  end: ['bar', 'dessert_bakery', 'landmark_view'],
+};
+
 const MOCK_ROUTE_KEY_ALIASES = {
   myeongdong_euljiro: 'euljiro',
   hongdae_yeonnam: 'hongdae',
@@ -868,12 +892,54 @@ function getMoodRequiredPrimaryCategories(moodContext) {
   return MOOD_REQUIRED_PRIMARY_CATEGORIES[primaryMood] || [];
 }
 
+function getOptionalRoutePreferences(source = state) {
+  const shape = String(source.shape || '').trim();
+  const shapeSequence = OPTIONAL_SHAPE_CATEGORY_SEQUENCES[shape]
+    ? OPTIONAL_SHAPE_CATEGORY_SEQUENCES[shape].slice()
+    : null;
+  const refine = source.refine && typeof source.refine === 'object' ? source.refine : {};
+  const heartAnchors = [];
+  const pinAnchors = [];
+
+  Object.entries(refine).forEach(([anchor, preference]) => {
+    if (!OPTIONAL_ANCHOR_CATEGORY_GROUPS[anchor]) return;
+    if (preference === 'heart') heartAnchors.push(anchor);
+    if (preference === 'pin') pinAnchors.push(anchor);
+  });
+
+  const heartCategories = uniqueStrings(
+    heartAnchors.flatMap(anchor => OPTIONAL_ANCHOR_CATEGORY_GROUPS[anchor])
+  );
+  const pinCategoryGroups = pinAnchors.map(anchor => ({
+    anchor,
+    categories: OPTIONAL_ANCHOR_CATEGORY_GROUPS[anchor].slice(),
+  }));
+  const pinCategories = uniqueStrings(pinCategoryGroups.flatMap(group => group.categories));
+
+  if (!shapeSequence && !heartCategories.length && !pinCategoryGroups.length) return null;
+
+  return {
+    shape,
+    shapeSequence,
+    heartAnchors,
+    heartCategories,
+    pinAnchors,
+    pinCategoryGroups,
+    pinCategories,
+  };
+}
+
 function getPlacePrimaryCategory(place = {}) {
   const primaryCategory = String(place.primaryCategory || '').trim();
   if (primaryCategory) return primaryCategory;
 
   const miroCategory = String(place.miroCategory || '').trim();
   return MIRO_CATEGORY_TO_PRIMARY_CATEGORY[miroCategory] || '';
+}
+
+function placeMatchesAnyPrimaryCategory(place, categories) {
+  if (!categories.length) return true;
+  return categories.includes(getPlacePrimaryCategory(place));
 }
 
 function placeMatchesRequiredPrimaryCategory(place, requiredCategories) {
@@ -886,6 +952,34 @@ function hasRequiredPrimaryCategory(places, requiredCategories) {
     !requiredCategories.length ||
     places.some(place => placeMatchesRequiredPrimaryCategory(place, requiredCategories))
   );
+}
+
+function hasAnyPrimaryCategory(places, categories) {
+  return (
+    !categories.length ||
+    places.some(place => placeMatchesAnyPrimaryCategory(place, categories))
+  );
+}
+
+function getRoutePreferenceScore(place, routePreferences) {
+  if (!routePreferences) return 0;
+  const primaryCategory = getPlacePrimaryCategory(place);
+  if (!primaryCategory) return 0;
+
+  let score = 0;
+  if (routePreferences.heartCategories.includes(primaryCategory)) score += 18;
+  if (routePreferences.pinCategories.includes(primaryCategory)) score += 28;
+  return score;
+}
+
+function findPreferenceReplacementIndex(selected, protectedCategories, targetCategories) {
+  return selected.findIndex(place => {
+    const primaryCategory = getPlacePrimaryCategory(place);
+    return (
+      !targetCategories.includes(primaryCategory) &&
+      !protectedCategories.has(primaryCategory)
+    );
+  });
 }
 
 function getAreaRadiusM(areaConfig) {
@@ -1105,7 +1199,13 @@ function sourceListMatchesMode(sourceList, mode) {
   return false;
 }
 
-function getRouteTemplate(mode, refinementKey = null) {
+function getRouteTemplate(mode, refinementKey = null, routePreferences = null) {
+  if (routePreferences?.shapeSequence?.length) {
+    const shapeTemplate = routePreferences.shapeSequence
+      .map(category => PRIMARY_CATEGORY_TO_MIRO_CATEGORY[category])
+      .filter(Boolean);
+    if (shapeTemplate.length) return shapeTemplate;
+  }
   return REFINEMENT_TEMPLATES[refinementKey] || ROUTE_TEMPLATES[mode] || ROUTE_TEMPLATES.balanced;
 }
 
@@ -1252,6 +1352,7 @@ function scorePlace(place, context) {
   const category = place.miroCategory || 'unknown';
 
   if (context.targetCategory && category === context.targetCategory) score += 30;
+  score += getRoutePreferenceScore(place, context.routePreferences);
   if (addressMatchesArea(place, context.areaConfig)) score += 20;
   if (sourceListMatchesMode(place.sourceList, context.mode)) score += 15;
   if (place.available === true) score += 10;
@@ -1332,7 +1433,64 @@ function enforceLegacyRequiredCategory(selected, candidates, context, selectedKe
   return true;
 }
 
-function getRouteCategorySequence(moodContext, timeConfig) {
+function enforceLegacyPinnedPreferences(
+  selected,
+  candidates,
+  context,
+  selectedKeys,
+  categoryCounts,
+  routePreferences,
+  protectedCategories = [],
+  maxStops = 4
+) {
+  if (!routePreferences?.pinCategoryGroups?.length) return;
+
+  const protectedSet = new Set(protectedCategories);
+
+  routePreferences.pinCategoryGroups.forEach(group => {
+    if (hasAnyPrimaryCategory(selected, group.categories)) {
+      group.categories.forEach(category => protectedSet.add(category));
+      return;
+    }
+
+    const pinnedPlace = selectBestPlace(
+      candidates.filter(place => placeMatchesAnyPrimaryCategory(place, group.categories)),
+      {
+        ...context,
+        routePreferences,
+        targetCategory: null,
+        previousPlace: selected[selected.length - 1] || null,
+      },
+      selectedKeys
+    );
+
+    if (!pinnedPlace) return;
+
+    if (selected.length < maxStops) {
+      selected.push(pinnedPlace);
+    } else {
+      const replaceIndex = findPreferenceReplacementIndex(selected, protectedSet, group.categories);
+      if (replaceIndex === -1) return;
+
+      const removed = selected[replaceIndex];
+      selectedKeys.delete(getRuntimePlaceKey(removed));
+      const removedCategory = removed.miroCategory || 'unknown';
+      categoryCounts[removedCategory] = Math.max(0, (categoryCounts[removedCategory] || 0) - 1);
+      selected[replaceIndex] = pinnedPlace;
+    }
+
+    selectedKeys.add(getRuntimePlaceKey(pinnedPlace));
+    const category = pinnedPlace.miroCategory || 'unknown';
+    categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+    group.categories.forEach(categoryKey => protectedSet.add(categoryKey));
+  });
+}
+
+function getRouteCategorySequence(moodContext, timeConfig, routePreferences = null) {
+  if (routePreferences?.shapeSequence?.length) {
+    return routePreferences.shapeSequence.slice(0, timeConfig.maxStops);
+  }
+
   const primaryMood = moodContext.compositionKeys[0] || 'local_food';
   const template = MOOD_CATEGORY_SEQUENCES[primaryMood]?.[timeConfig.key]
     || MOOD_CATEGORY_SEQUENCES.local_food[timeConfig.key]
@@ -1391,6 +1549,7 @@ function scoreDataDrivenPlace(place, context) {
   if (context.moodContext.primaryPreferred.includes(place.primaryCategory)) score += 35;
   if (context.moodContext.secondaryPreferred.includes(place.primaryCategory)) score += 15;
   if (context.targetCategory && place.primaryCategory === context.targetCategory) score += 22;
+  score += getRoutePreferenceScore(place, context.routePreferences);
 
   const tags = Array.isArray(place.tags) ? place.tags : [];
   const matchedTags = tags.filter(tag => context.moodContext.tagsPreferred.includes(tag));
@@ -1486,6 +1645,62 @@ function enforceDataDrivenRequiredCategory(selected, candidates, context, select
   return true;
 }
 
+function enforceDataDrivenPinnedPreferences(
+  selected,
+  candidates,
+  context,
+  selectedKeys,
+  categoryCounts,
+  routePreferences,
+  protectedCategories = []
+) {
+  if (!routePreferences?.pinCategoryGroups?.length) return;
+
+  const protectedSet = new Set(protectedCategories);
+
+  routePreferences.pinCategoryGroups.forEach(group => {
+    if (hasAnyPrimaryCategory(selected, group.categories)) {
+      group.categories.forEach(category => protectedSet.add(category));
+      return;
+    }
+
+    const pinnedPlace = selectDataDrivenPlace(
+      candidates.filter(place => placeMatchesAnyPrimaryCategory(place, group.categories)),
+      {
+        ...context,
+        routePreferences,
+        stopIndex: selected.length,
+        isFinalStop: selected.length >= context.timeConfig.maxStops - 1,
+        previousPlace: selected[selected.length - 1] || null,
+      },
+      selectedKeys
+    );
+
+    if (!pinnedPlace) return;
+
+    if (selected.length < context.timeConfig.maxStops) {
+      selected.push(pinnedPlace);
+    } else {
+      const replaceIndex = findPreferenceReplacementIndex(selected, protectedSet, group.categories);
+      if (replaceIndex === -1) return;
+
+      const removed = selected[replaceIndex];
+      selectedKeys.delete(getRuntimePlaceKey(removed));
+      if (removed.primaryCategory) {
+        categoryCounts[removed.primaryCategory] = Math.max(
+          0,
+          (categoryCounts[removed.primaryCategory] || 0) - 1
+        );
+      }
+      selected[replaceIndex] = pinnedPlace;
+    }
+
+    selectedKeys.add(getRuntimePlaceKey(pinnedPlace));
+    categoryCounts[pinnedPlace.primaryCategory] = (categoryCounts[pinnedPlace.primaryCategory] || 0) + 1;
+    group.categories.forEach(category => protectedSet.add(category));
+  });
+}
+
 function orderPlacesNearestNeighbor(places, center) {
   const remaining = [...places];
   const ordered = [];
@@ -1551,7 +1766,7 @@ function dataPlaceToRouteStop(place, index, previousPlace, totalStops, context) 
   };
 }
 
-function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeContext = {}) {
+function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeContext = {}, options = {}) {
   const places = curatedPlaceState.places;
   if (!places.some(place => place.primaryCategory)) return null;
 
@@ -1563,6 +1778,7 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
   const timeConfig = getTimeConfig(state.time);
   const moodContext = getMoodContext(mood);
   const areaConfig = getAreaConfig(routeKey, runtimeContext);
+  const routePreferences = options.routePreferences || null;
   const candidates = filterCandidatesForRefinement(
     getDataDrivenCandidates(places, areaConfig, timeConfig),
     refinementKey
@@ -1574,6 +1790,7 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
       moodContext,
       categoryCounts: {},
       refinementKey,
+      routePreferences,
       stopIndex: 0,
       isFinalStop: false,
       previousPlace: null,
@@ -1596,7 +1813,7 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
   const selected = [];
   const selectedKeys = new Set();
   const categoryCounts = {};
-  const sequence = getRouteCategorySequence(moodContext, timeConfig);
+  const sequence = getRouteCategorySequence(moodContext, timeConfig, routePreferences);
   const requiredCategories = getMoodRequiredPrimaryCategories(moodContext);
 
   sequence.slice(0, timeConfig.maxStops).forEach((targetCategory, stopIndex) => {
@@ -1606,6 +1823,7 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
       moodContext,
       categoryCounts,
       refinementKey,
+      routePreferences,
       stopIndex,
       isFinalStop: stopIndex === timeConfig.maxStops - 1,
       previousPlace: selected[selected.length - 1] || null,
@@ -1623,6 +1841,7 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
       moodContext,
       categoryCounts,
       refinementKey,
+      routePreferences,
       stopIndex: selected.length,
       isFinalStop: selected.length === timeConfig.maxStops - 1,
       previousPlace: selected[selected.length - 1] || null,
@@ -1642,6 +1861,7 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
       moodContext,
       categoryCounts,
       refinementKey,
+      routePreferences,
     },
     selectedKeys,
     categoryCounts,
@@ -1649,9 +1869,29 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
   );
 
   if (!hasRequiredCategory) return null;
+
+  enforceDataDrivenPinnedPreferences(
+    selected,
+    candidates,
+    {
+      areaConfig,
+      timeConfig,
+      moodContext,
+      categoryCounts,
+      refinementKey,
+      routePreferences,
+    },
+    selectedKeys,
+    categoryCounts,
+    routePreferences,
+    requiredCategories
+  );
+
   if (selected.length < timeConfig.minStops) return null;
 
-  const orderedPlaces = orderPlacesNearestNeighbor(selected.slice(0, timeConfig.maxStops), areaConfig.center);
+  const orderedPlaces = routePreferences?.shapeSequence?.length
+    ? selected.slice(0, timeConfig.maxStops)
+    : orderPlacesNearestNeighbor(selected.slice(0, timeConfig.maxStops), areaConfig.center);
   const routeContext = { areaConfig, timeConfig, moodContext };
   const stops = orderedPlaces.map((place, index) => (
     dataPlaceToRouteStop(place, index, orderedPlaces[index - 1], orderedPlaces.length, routeContext)
@@ -1673,11 +1913,11 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
       walking: `${walkingMinutes} min`,
       distance: formatDistanceMeters(distanceMeters),
     },
-    why: [
+    why: appendRoutePreferenceExplanation([
       `Generated from the local subcategorized place dataset for ${areaConfig.label}.`,
       `Time: ${timeConfig.label}. Mood: ${moodContext.labels.join(' + ')}.`,
       'Stops are ranked by area distance, category fit, tag match, route role, stay time, and availability.',
-    ].join(' '),
+    ].join(' '), routePreferences),
     ask: {
       why: `This route is generated from local place data and ranked for ${areaConfig.label}, ${timeConfig.label}, and ${moodContext.labels.join(' + ')}.`,
       crowd: 'This prototype does not check live crowd levels, but it favors closer local candidates and existing category tags.',
@@ -1691,24 +1931,25 @@ function buildDataDrivenRoute(routeKey, mood, refinementKey = null, runtimeConte
   };
 }
 
-function buildCuratedRoute(routeKey, mood, refinementKey = null, runtimeContext = {}) {
-  const dataDrivenRoute = buildDataDrivenRoute(routeKey, mood, refinementKey, runtimeContext);
+function buildCuratedRoute(routeKey, mood, refinementKey = null, runtimeContext = {}, options = {}) {
+  const dataDrivenRoute = buildDataDrivenRoute(routeKey, mood, refinementKey, runtimeContext, options);
   if (dataDrivenRoute) {
     console.log('Miro route source: local dataset');
     return dataDrivenRoute;
   }
 
-  return buildLegacyCuratedRoute(routeKey, mood, refinementKey);
+  return buildLegacyCuratedRoute(routeKey, mood, refinementKey, options);
 }
 
-function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
+function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null, options = {}) {
   const places = curatedPlaceState.places;
   if (!places.length) return null;
 
   const areaConfig = getAreaConfig(routeKey);
   const moodContext = getMoodContext(mood);
   const mode = getRouteMode(mood);
-  const template = getRouteTemplate(mode, refinementKey);
+  const routePreferences = options.routePreferences || null;
+  const template = getRouteTemplate(mode, refinementKey, routePreferences);
   const candidates = filterCandidatesForRefinement(getAreaCandidates(places, areaConfig), refinementKey);
   if (!candidates.length) return null;
 
@@ -1727,6 +1968,7 @@ function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
       targetCategory,
       categoryCounts,
       refinementKey,
+      routePreferences,
       maxWalkMinutes,
       previousPlace: selected[selected.length - 1] || null,
     };
@@ -1746,6 +1988,7 @@ function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
       targetCategory: null,
       categoryCounts,
       refinementKey,
+      routePreferences,
       maxWalkMinutes,
       previousPlace: selected[selected.length - 1] || null,
     }, selectedKeys);
@@ -1763,6 +2006,7 @@ function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
       mode,
       categoryCounts,
       refinementKey,
+      routePreferences,
       maxWalkMinutes,
     },
     selectedKeys,
@@ -1772,6 +2016,25 @@ function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
   );
 
   if (!hasRequiredCategory) return null;
+
+  enforceLegacyPinnedPreferences(
+    selected,
+    candidates,
+    {
+      areaConfig,
+      mode,
+      categoryCounts,
+      refinementKey,
+      routePreferences,
+      maxWalkMinutes,
+    },
+    selectedKeys,
+    categoryCounts,
+    routePreferences,
+    requiredCategories,
+    maxStops
+  );
+
   if (!selected.length) return null;
 
   const stops = selected.map((place, index) => (
@@ -1792,7 +2055,7 @@ function buildLegacyCuratedRoute(routeKey, mood, refinementKey = null) {
       total: formatMinutes(stayMinutes + estimatedTravelMinutes),
       walking: `${walkingMinutes} min`,
     },
-    why: buildRouteWhy(areaConfig.label, refinementKey),
+    why: appendRoutePreferenceExplanation(buildRouteWhy(areaConfig.label, refinementKey), routePreferences),
     ask: {
       why: `This route uses processed Naver place data first, then ranks places for ${areaConfig.label} and your selected mood.`,
       crowd: 'I can prefer quieter categories and nearby side-street matches, but this static version does not check live crowd levels.',
@@ -1818,6 +2081,22 @@ function buildRouteWhy(areaLabel, refinementKey = null) {
     open: ' This version only uses places with an explicit open-now field marked true.',
   };
   return `${base}${refinements[refinementKey] || ''}`;
+}
+
+function appendRoutePreferenceExplanation(why, routePreferences) {
+  if (!routePreferences) return why;
+
+  const notes = [];
+  if (routePreferences.shapeSequence?.length) {
+    notes.push('Customized with your selected route flow.');
+  }
+  if (routePreferences.pinCategoryGroups?.length) {
+    notes.push('Prioritized your pinned route interests where possible.');
+  } else if (routePreferences.heartCategories?.length) {
+    notes.push('Prioritized your preferred route interests where possible.');
+  }
+
+  return notes.length ? `${why} ${notes.join(' ')}` : why;
 }
 
 function placeToRouteStop(place, index, previousPlace, totalStops = 4, maxWalkMinutes = DEFAULT_MAX_WALK_MINUTES) {
@@ -1934,8 +2213,8 @@ function buildEmptyRealRoute(routeKey, message) {
   };
 }
 
-function resolveRouteForCurrentSelection(routeKey, refinementKey = state.activeRefinement, runtimeContext = {}) {
-  const realRoute = buildCuratedRoute(routeKey, state.mood, refinementKey, runtimeContext);
+function resolveRouteForCurrentSelection(routeKey, refinementKey = state.activeRefinement, runtimeContext = {}, options = {}) {
+  const realRoute = buildCuratedRoute(routeKey, state.mood, refinementKey, runtimeContext, options);
   if (realRoute) {
     return realRoute;
   }
@@ -2068,6 +2347,8 @@ const state = {
   area: 'Hongdae',
   time: '2 hours',
   mood: 'Local food',
+  shape: null,
+  refine: {},
   applied: new Set(),
   activeRefinement: null,
   activeStop: null,
@@ -2166,7 +2447,13 @@ function getRouteKey(area) {
 async function applyRouteForCurrentSelection() {
   state.routeKey = getRouteKey(state.area);
   const runtimeContext = await getRouteRuntimeContext(state.routeKey);
-  applyResolvedRoute(resolveRouteForCurrentSelection(state.routeKey, state.activeRefinement, runtimeContext));
+  const routePreferences = getOptionalRoutePreferences();
+  applyResolvedRoute(resolveRouteForCurrentSelection(
+    state.routeKey,
+    state.activeRefinement,
+    runtimeContext,
+    { routePreferences }
+  ));
 }
 
 function applyResolvedRoute(route) {
@@ -3849,7 +4136,13 @@ function applyRefinement(key) {
       return;
     }
 
-    const refinedRoute = buildCuratedRoute(routeKey, state.mood, key, runtimeContext);
+    const refinedRoute = buildCuratedRoute(
+      routeKey,
+      state.mood,
+      key,
+      runtimeContext,
+      { routePreferences: getOptionalRoutePreferences() }
+    );
     if (!refinedRoute || !refinedRoute.stops.length) {
       showToast('Not enough matching saved places for that refinement yet.');
       return;
@@ -4315,7 +4608,7 @@ const onboarding = {
   progressOptionalEl: null,
   step: 1,
   // Required: area, time, mood — all three are required to gate route generation.
-  // Optional (UI-only): shape (itinerary feel), refine (per-anchor preference map).
+  // Optional: shape (itinerary flow), refine (per-anchor route preference map).
   selections: { area: null, time: null, mood: null, shape: null, refine: {} },
   contextNote: '',
 
@@ -4336,7 +4629,7 @@ const onboarding = {
       });
     });
 
-    // Optional Step 4: itinerary shape cards (UI-only state)
+    // Optional Step 4: itinerary shape cards
     const shapeGroup = this.el.querySelector('.ob-shapes');
     if (shapeGroup) {
       shapeGroup.addEventListener('click', e => {
@@ -4348,7 +4641,7 @@ const onboarding = {
       });
     }
 
-    // Optional Step 5: per-anchor preference toggles (UI-only state)
+    // Optional Step 5: per-anchor preference toggles
     this.el.querySelectorAll('.ob-refine-prefs').forEach(group => {
       const anchor = group.dataset.anchor;
       this.selections.refine[anchor] = 'neutral';
@@ -4382,7 +4675,11 @@ const onboarding = {
       if (nextBtn) nextBtn.addEventListener('click', () => this.nextStep());
       if (backBtn) backBtn.addEventListener('click', () => this.prevStep());
       if (customizeBtn) customizeBtn.addEventListener('click', () => this.goToStep(4));
-      if (skipBtn) skipBtn.addEventListener('click', () => this.triggerBuild());
+      if (skipBtn) {
+        skipBtn.addEventListener('click', () => {
+          this.skipOptionalStep(parseInt(screen.dataset.step, 10));
+        });
+      }
     });
 
     document.addEventListener('keydown', e => {
@@ -4461,6 +4758,30 @@ const onboarding = {
     if (this.step > 1) this.goToStep(this.step - 1);
   },
 
+  clearShapeSelection() {
+    this.selections.shape = null;
+    this.el.querySelectorAll('.ob-shape').forEach(o => o.classList.remove('selected'));
+  },
+
+  resetRefinePreferences() {
+    this.selections.refine = {};
+    this.el.querySelectorAll('.ob-refine-prefs').forEach(group => {
+      const anchor = group.dataset.anchor;
+      this.selections.refine[anchor] = 'neutral';
+      group.querySelectorAll('.ob-pref').forEach(o => {
+        const isNeutral = o.dataset.pref === 'neutral';
+        o.classList.toggle('active', isNeutral);
+        o.setAttribute('aria-pressed', isNeutral ? 'true' : 'false');
+      });
+    });
+  },
+
+  skipOptionalStep(stepNumber) {
+    if (stepNumber === 4) this.clearShapeSelection();
+    if (stepNumber === 5) this.resetRefinePreferences();
+    this.triggerBuild();
+  },
+
   triggerBuild() {
     this.el.classList.remove('active');
     this.loadingEl.classList.add('active');
@@ -4520,19 +4841,9 @@ const onboarding = {
       const contextInput = this.el.querySelector('[data-context-input]');
       if (contextInput) contextInput.value = '';
     }
-    // Optional step UI always resets (shape + refine are UI-only state).
-    this.selections.shape = null;
-    this.selections.refine = {};
-    this.el.querySelectorAll('.ob-shape').forEach(o => o.classList.remove('selected'));
-    this.el.querySelectorAll('.ob-refine-prefs').forEach(group => {
-      const anchor = group.dataset.anchor;
-      this.selections.refine[anchor] = 'neutral';
-      group.querySelectorAll('.ob-pref').forEach(o => {
-        const isNeutral = o.dataset.pref === 'neutral';
-        o.classList.toggle('active', isNeutral);
-        o.setAttribute('aria-pressed', isNeutral ? 'true' : 'false');
-      });
-    });
+    // Optional route preferences reset when starting a new onboarding pass.
+    this.clearShapeSelection();
+    this.resetRefinePreferences();
     document.getElementById('main-app').classList.add('hidden');
     this.loadingEl.classList.remove('active');
     this.el.classList.add('active');

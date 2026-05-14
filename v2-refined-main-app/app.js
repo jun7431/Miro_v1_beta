@@ -3076,16 +3076,28 @@ function getDirectLegPath(leg) {
   return [leg.start, leg.end];
 }
 
+const WALKING_ROUTE_ENGINE_MAX_MINUTES = 30;
+
 function getRouteLegRoutingMode(leg, maxWalkMinutes) {
   const explicitMode = String(leg.toStop?.legSuggestedMode || '').trim();
   if (explicitMode === 'walk') {
     return { mode: 'walk', reason: 'explicit_walk_mode' };
   }
+
+  const routeWalkMinutes = Number(leg.toStop?.legWalkMinutes ?? leg.toStop?.walk);
+  if (Number.isFinite(routeWalkMinutes) && routeWalkMinutes > 0) {
+    if (routeWalkMinutes <= WALKING_ROUTE_ENGINE_MAX_MINUTES) {
+      return { mode: 'walk', reason: 'route_walk_minutes' };
+    }
+    if (explicitMode) {
+      return { mode: 'nonwalking', reason: `explicit_${explicitMode}` };
+    }
+  }
+
   if (explicitMode) {
     return { mode: 'nonwalking', reason: `explicit_${explicitMode}` };
   }
 
-  const routeWalkMinutes = Number(leg.toStop?.legWalkMinutes ?? leg.toStop?.walk);
   if (Number.isFinite(routeWalkMinutes) && routeWalkMinutes > 0) {
     return { mode: 'walk', reason: 'route_walk_minutes' };
   }
